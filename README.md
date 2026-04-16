@@ -45,6 +45,21 @@
 
 ### Infrastructure
 - **Observability**: The API exports telemetry via OTLP to the container stack. Use Grafana for dashboards and Jaeger for distributed tracing.
+
+### .env File Template
+```
+JWT_KEY=super-secret-key
+EMAIL=youremail@gmail.com
+EMAIL_PASSWORD=super-secret-password
+
+SA_PASSWORD=VeryStrongPass123!
+
+SEQ_ADMIN_PASSWORD=AnotherStrongPass
+GRAFANA_ADMIN_PASSWORD=StrongGrafanaPass
+
+DB_CONNECTION=Server=sqlserver,1433;Database=BookOrbitDb;User=sa;Password=VeryStrongPass123!;TrustServerCertificate=True;MultipleActiveResultSets=True
+```
+
 - **Database**: To reset the environment completely, use `docker compose down -v`.
 - **Images**: A default student image is bundled at `BookOrbit.Api/uploads/Students/DefaultStudentImage.png`.
 
