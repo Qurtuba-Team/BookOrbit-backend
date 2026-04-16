@@ -1,0 +1,58 @@
+﻿namespace BookOrbit.Application.Features.BookCopies.Commands.CreateBookCopy;
+public class CreateBookCopyCommandHandler(
+    ILogger<CreateBookCopyCommandHandler> logger,
+    IAppDbContext context,
+    HybridCache cache) : IRequestHandler<CreateBookCopyCommand, Result<BookCopyDtoWithBookDetails>>
+{
+    public async Task<Result<BookCopyDtoWithBookDetails>> Handle(CreateBookCopyCommand command, CancellationToken ct)
+    {
+        var book = await context.Books.FirstOrDefaultAsync(b => b.Id == command.BookId, ct);
+
+        if (book is null)
+        {
+            logger.LogWarning("Book not found. BookId: {BookId}", command.BookId);
+
+            return BookApplicationErrors.NotFoundById;
+        }
+
+        var student = await context.Students.FirstOrDefaultAsync(s => s.Id == command.OwnerId, ct);
+
+        if (student is null)
+        {
+            logger.LogWarning("Student not found. StudentId: {StudentId}", command.OwnerId);
+
+            return StudentApplicationErrors.NotFoundById;
+        }
+
+        if(student.State is not StudentState.Active)
+        {
+            logger.LogWarning("Student is not active. StudentId: {StudentId}", command.OwnerId);
+
+            return StudentApplicationErrors.StateIsNotActive;
+        }
+
+        var createdBookCopyResult = BookCopy.Create(
+            id: Guid.NewGuid(),
+            ownerId: command.OwnerId,
+            bookId: command.BookId,
+            condition: command.Condition);
+
+        if (createdBookCopyResult.IsFailure)
+        {
+            logger.LogWarning("Book copy creation failed. Errors : {Errors}", string.Join(',', createdBookCopyResult.Errors));
+            return createdBookCopyResult.Errors;
+        }
+
+        context.BookCopies.Add(createdBookCopyResult.Value);
+
+        await context.SaveChangesAsync(ct);
+        await cache.RemoveByTagAsync(BookCopyCachingConstants.BookCopyTag, ct);
+
+        logger.LogInformation("Book copy created successfully with ID: {BookCopyId}", createdBookCopyResult.Value.Id);
+
+        return BookCopyDtoWithBookDetails.FromEntity(
+            createdBookCopyResult.Value,
+            student.Name.Value,
+            BookDto.FromEntity(book));
+    }
+}

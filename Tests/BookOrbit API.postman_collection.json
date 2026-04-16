@@ -1,0 +1,2567 @@
+{
+  "info": {
+    "_postman_id": "778a0420-0534-4056-91ff-a4ccdddc81cf",
+    "name": "BookOrbit API",
+    "description": "Postman collection for BookOrbit API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52190839",
+    "_collection_link": "https://go.postman.co/collection/52190839-778a0420-0534-4056-91ff-a4ccdddc81cf?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Identity",
+      "item": [
+        {
+          "name": "Login (Generate Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('accessToken', json.accessToken);",
+                  "pm.environment.set('refreshToken', json.refreshToken);",
+                  "",
+                  "pm.test('Status code is 200 or 400/401', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        400,",
+                  "        401",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If success, response returns access token', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "        const json = pm.response.json();",
+                  "        const obj = json.data ? json.data : json;",
+                  "        pm.expect(obj).to.be.an('object');",
+                  "        pm.expect(obj).to.have.any.keys('accessToken', 'token');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If error, error payload includes details', function () {",
+                  "    if (pm.response.code >= 400) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/identity/token",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 401', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        401",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 200, response returns access token', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "        const json = pm.response.json();",
+                  "        const obj = json.data ? json.data : json;",
+                  "        pm.expect(obj).to.be.an('object');",
+                  "        pm.expect(obj).to.have.any.keys('accessToken', 'token');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 401, error payload is informative', function () {",
+                  "    if (pm.response.code === 401) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\",\n  \"expiredAccessToken\": \"{{accessToken}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/identity/token/refresh",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "token",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Current User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Response has basic user fields', function () {",
+                  "    const json = pm.response.json();",
+                  "    const obj = json.data ? json.data : json;",
+                  "    pm.expect(obj).to.be.an('object');",
+                  "    pm.expect(obj).to.have.any.keys('id', 'userId', 'email', 'username');",
+                  "})",
+                  "",
+                  "pm.test('If auth header is present, token is non-empty', function () {",
+                  "    const authHeader = pm.request.headers.get('Authorization');",
+                  "    if (authHeader) {",
+                  "        pm.expect(authHeader).to.match(/^Bearer\\s+\\S+/);",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/identity/users/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send Confirm Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is accepted/success or client error', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        202,",
+                  "        204,",
+                  "        400,",
+                  "        404,",
+                  "        409",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If response is JSON, it is parseable', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    if (ct.includes('json')) {",
+                  "        pm.expect(function () {",
+                  "            pm.response.json();",
+                  "        }).to.not.throw();",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                  "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/identity/users/{{UserId}}/send-email-confirmation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "{{UserId}}",
+                "send-email-confirmation"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "Management",
+          "item": [
+            {
+              "name": "Approve Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        400,",
+                      "        404,",
+                      "        409",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If response has JSON, it is parseable', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    if (ct.includes('json')) {",
+                      "        pm.expect(function () {",
+                      "            pm.response.json();",
+                      "        }).to.not.throw();",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                      "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/approve",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "approve"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Activate Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        400,",
+                      "        404,",
+                      "        409",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If response has JSON, it is parseable', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    if (ct.includes('json')) {",
+                      "        pm.expect(function () {",
+                      "            pm.response.json();",
+                      "        }).to.not.throw();",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                      "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/activate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "activate"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Ban Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        400,",
+                      "        404,",
+                      "        409",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If response has JSON, it is parseable', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    if (ct.includes('json')) {",
+                      "        pm.expect(function () {",
+                      "            pm.response.json();",
+                      "        }).to.not.throw();",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                      "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/ban",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "ban"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Reject Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        400,",
+                      "        404,",
+                      "        409",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If response has JSON, it is parseable', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    if (ct.includes('application/json') || ct.includes('application/problem+json')) {",
+                      "        pm.expect(function () {",
+                      "            pm.response.json();",
+                      "        }).to.not.throw();",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                      "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/reject",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "reject"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Un Ban Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        400,",
+                      "        404,",
+                      "        409",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If response has JSON, it is parseable', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    if (ct.includes('json')) {",
+                      "        pm.expect(function () {",
+                      "            pm.response.json();",
+                      "        }).to.not.throw();",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                      "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/unban",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "unban"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Queries",
+          "item": [
+            {
+              "name": "Get Students",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "})",
+                      "",
+                      "pm.test('Response is an array or a paged object containing items', function () {",
+                      "    const json = pm.response.json();",
+                      "    if (Array.isArray(json)) {",
+                      "        pm.expect(json).to.be.an('array');",
+                      "    } else {",
+                      "        pm.expect(json).to.be.an('object');",
+                      "        const items = json.items || json.data && json.data.items || json.data;",
+                      "        pm.expect(items, 'Expected items array in response').to.exist;",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('First student has basic identity fields (if list non-empty)', function () {",
+                      "    const json = pm.response.json();",
+                      "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                      "    if (Array.isArray(items) && items.length > 0) {",
+                      "        pm.expect(items[0]).to.be.an('object');",
+                      "        pm.expect(items[0]).to.have.any.keys('id', 'studentId', 'email');",
+                      "    }",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students?Page=1&PageSize=5&SortColumn=name",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "5"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": "Ahmed",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": "name"
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "asc",
+                      "disabled": true
+                    },
+                    {
+                      "key": "EmailConfirmed",
+                      "value": "true",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Approved",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Pending",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Banned",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Active",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "UnBanned",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Rejected",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "allow sorting by \\[joindate,state,name,updatedat,createdat\\] asc / desc"
+              },
+              "response": []
+            },
+            {
+              "name": "GetStudentById",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200 or 404', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        404",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If 200, response is JSON with student id', function () {",
+                      "    if (pm.response.code === 200) {",
+                      "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "        const json = pm.response.json();",
+                      "        const obj = json.data ? json.data : json;",
+                      "        pm.expect(obj).to.be.an('object');",
+                      "        pm.expect(obj).to.have.any.keys('id', 'studentId');",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 404, error payload is informative', function () {",
+                      "    if (pm.response.code === 404) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Gent Current Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "})",
+                      "",
+                      "pm.test('Response has basic student fields', function () {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json).to.be.an('object');",
+                      "    const obj = json.data ? json.data : json;",
+                      "    pm.expect(obj).to.be.an('object');",
+                      "    pm.expect(obj).to.have.any.keys('id', 'studentId', 'email', 'name', 'firstName', 'lastName');",
+                      "})",
+                      "",
+                      "pm.test('If 401, error payload is informative', function () {",
+                      "    if (pm.response.code === 401) {",
+                      "        const j = pm.response.json();",
+                      "        pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/me",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "me"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Register",
+          "item": [
+            {
+              "name": "CreateStudent",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is 200/201 or validation error (400)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        201,",
+                      "        400",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If success, response is JSON and returns created student object', function () {",
+                      "    if ([",
+                      "            200,",
+                      "            201",
+                      "        ].includes(pm.response.code)) {",
+                      "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "        const json = pm.response.json();",
+                      "        const obj = json.data ? json.data : json;",
+                      "        pm.expect(obj).to.be.an('object');",
+                      "        pm.expect(obj).to.have.any.keys('id', 'studentId');",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 400, error payload includes details', function () {",
+                      "    if (pm.response.code === 400) {",
+                      "        const j = pm.response.json();",
+                      "        pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "    }",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "description": "NOT REQUIRED , But For Created By Column If User Is Authorized",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "Name",
+                      "value": "Eyad Reda",
+                      "type": "text",
+                      "uuid": "05e7abf1-3ddd-495f-9271-ce864860521a"
+                    },
+                    {
+                      "key": "PhoneNumber",
+                      "value": "01025456586",
+                      "type": "text",
+                      "uuid": "1f345b00-9f93-460c-a896-3efceb4019b6"
+                    },
+                    {
+                      "key": "TelegramUserId",
+                      "value": "EyadDev1235",
+                      "type": "text",
+                      "uuid": "a64622a7-9400-495c-90ec-be9d4e93d82a"
+                    },
+                    {
+                      "key": "PersonalPhoto",
+                      "type": "file",
+                      "uuid": "5e879843-94bf-4515-b293-f09f8748fde9",
+                      "src": "/C:/Users/Eyad/OneDrive/Pictures/Screenshots/Screenshot 2026-03-24 184718.png"
+                    },
+                    {
+                      "key": "UniversityMailAddress",
+                      "value": "Examp6le3@std.mans.edu.eg",
+                      "type": "text",
+                      "uuid": "ec81d895-527a-4326-a43d-be7e4dd91b04"
+                    },
+                    {
+                      "key": "Password",
+                      "value": "sa123456",
+                      "type": "text",
+                      "uuid": "eef9ff5c-61df-4e64-80c6-87f57537e6f6"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Student",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        400,",
+                      "        404,",
+                      "        409",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If success and JSON, response has an object', function () {",
+                      "    if ([200].includes(pm.response.code)) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            const obj = j.data ? j.data : j;",
+                      "            pm.expect(obj).to.be.an('object');",
+                      "        }",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                      "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "Name",
+                      "value": "Ahmed Mohamed",
+                      "type": "text",
+                      "uuid": "9af90fa2-cb07-43df-80f8-328e84f81cba"
+                    },
+                    {
+                      "key": "PersonalPhoto",
+                      "type": "file",
+                      "uuid": "908d813f-963d-40b0-8aba-99528f297221",
+                      "value": null
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "item": [
+        {
+          "name": "GetStudentImage",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 304', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        304",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is an image', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    pm.expect(ct, 'Expected an image/* content-type').to.match(/^image\\//);",
+                  "})",
+                  "",
+                  "pm.test('Image response is not empty', function () {",
+                  "    pm.expect(pm.response.size().body, 'Expected image body to be non-empty').to.be.above(0);",
+                  "})",
+                  "",
+                  "pm.test('If 401, error payload is informative', function () {",
+                  "    if (pm.response.code === 401) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        } else {",
+                  "            pm.expect(pm.response.text()).to.not.equal('');",
+                  "        }",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/images/students/{{StudentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "images",
+                "students",
+                "{{StudentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetBookCoverImage",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 or 304', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        304",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('Content-Type is an image', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    pm.expect(ct).to.match(/^image\\//);",
+                  "})",
+                  "",
+                  "pm.test('Image response is not empty', function () {",
+                  "    pm.expect(pm.response.size().body).to.be.above(0);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/images/books/{{BookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "images",
+                "books",
+                "{{BookId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "API",
+      "item": [
+        {
+          "name": "Important URLs",
+          "item": [
+            {
+              "name": "Seq",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8081"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Prometheus",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Prometheus metrics endpoint returns text', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    pm.expect(ct).to.match(/text\\//);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:9090",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9090"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Grafana",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "3000"
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Jaeger",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:16686",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "16686"
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Swagger/OpenAPI document has basic structure', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('object');",
+                  "    pm.expect(json).to.have.any.keys('openapi', 'swagger');",
+                  "    pm.expect(json).to.have.property('paths');",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Health response is JSON or text', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    pm.expect(ct.includes('json') || ct.includes('text') || ct.includes('html')).to.eql(true);",
+                  "})",
+                  "",
+                  "pm.test('Body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.equal('');",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Metrics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Health response is JSON or text', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    pm.expect(ct.includes('json') || ct.includes('text') || ct.includes('html')).to.eql(true);",
+                  "})",
+                  "",
+                  "pm.test('Body is not empty', function () {",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.not.equal('');",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Metrics endpoint returns text', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    pm.expect(ct).to.match(/text\\//);",
+                  "})",
+                  "",
+                  "pm.test('Body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.equal('');",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/metrics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "metrics"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Open Api",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Metrics endpoint returns text', function () {",
+                  "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "    pm.expect(ct).to.match(/text\\//);",
+                  "})",
+                  "",
+                  "pm.test('Body is not empty', function () {",
+                  "    pm.expect(pm.response.text()).to.not.equal('');",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('OpenAPI/Swagger document has basic structure', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an('object');",
+                  "    pm.expect(json).to.have.any.keys('openapi', 'swagger');",
+                  "    pm.expect(json).to.have.property('paths');",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/openapi/v1.json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "openapi",
+                "v1.json"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Response is an array or a paged object containing items', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (Array.isArray(json)) {",
+                  "        pm.expect(json).to.be.an('array');",
+                  "    } else {",
+                  "        pm.expect(json).to.be.an('object');",
+                  "        const items = json.items || json.data && json.data.items || json.data;",
+                  "        pm.expect(items, 'Expected items array in response').to.exist;",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                  "    const json = pm.response.json();",
+                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                  "    if (Array.isArray(items) && items.length > 0) {",
+                  "        pm.expect(items[0]).to.be.an('object');",
+                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200/201 or validation error (400)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        201,",
+                  "        400",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If success, response is JSON and returns created book object', function () {",
+                  "    if ([",
+                  "            200,",
+                  "            201",
+                  "        ].includes(pm.response.code)) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "        const json = pm.response.json();",
+                  "        const obj = json.data ? json.data : json;",
+                  "        pm.expect(obj).to.be.an('object');",
+                  "        pm.expect(obj).to.have.any.keys('id', 'bookId');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 400, error payload includes details', function () {",
+                  "    if (pm.response.code === 400) {",
+                  "        const j = pm.response.json();",
+                  "        pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "Title",
+                  "value": "atomic habbits",
+                  "type": "text",
+                  "uuid": "af29102e-d665-4a49-b9ab-ba7428e48396"
+                },
+                {
+                  "key": "ISBN",
+                  "value": "9789770953571",
+                  "type": "text",
+                  "uuid": "5f38231e-6852-4d6c-8cfa-47e03f29ee74"
+                },
+                {
+                  "key": "Publisher",
+                  "value": "دار الشروق",
+                  "type": "text",
+                  "uuid": "84bd4f00-f53b-4510-9c57-501c8f200237"
+                },
+                {
+                  "key": "Author",
+                  "value": "أحمد خالد توفيق",
+                  "type": "text",
+                  "uuid": "87fe6d6c-6a57-40d4-aa9d-cc812d482be5"
+                },
+                {
+                  "key": "CoverImage",
+                  "type": "file",
+                  "uuid": "87f969e5-051f-49d9-a562-ed231db1b650",
+                  "src": "/C:/Users/Eyad/OneDrive/Pictures/Screenshots/Screenshot 2026-04-11 190224.png"
+                },
+                {
+                  "key": "Categories",
+                  "value": "Fiction",
+                  "type": "text",
+                  "uuid": "d0c31974-289c-4d95-8c6a-56a4b61a02e4"
+                },
+                {
+                  "key": "Categories",
+                  "value": "NonFiction",
+                  "type": "text",
+                  "uuid": "0494653d-1c70-424f-bc60-17dc2f7cf5c6"
+                },
+                {
+                  "key": "Categories",
+                  "value": "Horror",
+                  "type": "text",
+                  "uuid": "6014fe3f-d23f-4d4f-a6f0-d9599c029c8f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book By Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 404', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        404",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 200, response is JSON with basic book fields', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "        const json = pm.response.json();",
+                  "        const obj = json.data ? json.data : json;",
+                  "        pm.expect(obj).to.be.an('object');",
+                  "        pm.expect(obj).to.have.any.keys('id', 'bookId');",
+                  "        pm.expect(obj).to.have.any.keys('title', 'name');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 404, error payload is informative', function () {",
+                  "    if (pm.response.code === 404) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200 or 404', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        404",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 200, response is JSON with basic book fields', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "        const json = pm.response.json();",
+                  "        const obj = json.data ? json.data : json;",
+                  "        pm.expect(obj).to.be.an('object');",
+                  "        pm.expect(obj).to.have.any.keys('id', 'bookId');",
+                  "        pm.expect(obj).to.have.any.keys('title', 'name');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 404, error payload is informative', function () {",
+                  "    if (pm.response.code === 404) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "Title",
+                  "value": "ما وراء الطبيعة الجزء الأول",
+                  "type": "text",
+                  "uuid": "af29102e-d665-4a49-b9ab-ba7428e48396"
+                },
+                {
+                  "key": "ISBN",
+                  "value": "9789770933571",
+                  "type": "text",
+                  "uuid": "5f38231e-6852-4d6c-8cfa-47e03f29ee74"
+                },
+                {
+                  "key": "Publisher",
+                  "value": "دار الشروق",
+                  "type": "text",
+                  "uuid": "84bd4f00-f53b-4510-9c57-501c8f200237"
+                },
+                {
+                  "key": "Author",
+                  "value": "أحمد خالد توفيق",
+                  "type": "text",
+                  "uuid": "87fe6d6c-6a57-40d4-aa9d-cc812d482be5"
+                },
+                {
+                  "key": "CoverImage",
+                  "type": "file",
+                  "uuid": "87f969e5-051f-49d9-a562-ed231db1b650",
+                  "src": "/C:/Users/Eyad/OneDrive/Pictures/Screenshots/Screenshot 2026-02-20 160602.png"
+                },
+                {
+                  "key": "Categories",
+                  "value": "Fiction",
+                  "type": "text",
+                  "uuid": "d0c31974-289c-4d95-8c6a-56a4b61a02e4"
+                },
+                {
+                  "key": "Categories",
+                  "value": "Thriller",
+                  "type": "text",
+                  "uuid": "0494653d-1c70-424f-bc60-17dc2f7cf5c6"
+                },
+                {
+                  "key": "Categories",
+                  "value": "Horror",
+                  "type": "text",
+                  "uuid": "6014fe3f-d23f-4d4f-a6f0-d9599c029c8f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{BookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{BookId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Book",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201/200 or validation error (400)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        201,",
+                  "        400",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If success, response is JSON and returns created book object', function () {",
+                  "    if ([",
+                  "            200,",
+                  "            201",
+                  "        ].includes(pm.response.code)) {",
+                  "        pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "        const json = pm.response.json();",
+                  "        const obj = json.data ? json.data : json;",
+                  "        pm.expect(obj).to.be.an('object');",
+                  "        pm.expect(obj).to.have.any.keys('id', 'bookId');",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 400, error payload includes details', function () {",
+                  "    if (pm.response.code === 400) {",
+                  "        const j = pm.response.json();",
+                  "        pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is success (200/204) or client error (400/404/409)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        204,",
+                  "        400,",
+                  "        404,",
+                  "        409",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If success and JSON, response has book id', function () {",
+                  "    if (pm.response.code === 200) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const json = pm.response.json();",
+                  "            const obj = json.data ? json.data : json;",
+                  "            pm.expect(obj).to.be.an('object');",
+                  "            pm.expect(obj).to.have.any.keys('id', 'bookId');",
+                  "        }",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('If 4xx, error payload includes message/title/detail/errors', function () {",
+                  "    if (pm.response.code >= 400 && pm.response.code < 500) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"Title\":\"ما وراء الطبيعة الجزء الخامس\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{BookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{BookId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Books",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        204,",
+                  "        404",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 404, error payload is informative', function () {",
+                  "    if (pm.response.code === 404) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Response is an array or a paged object containing items', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (Array.isArray(json)) {",
+                  "        pm.expect(json).to.be.an('array');",
+                  "    } else {",
+                  "        pm.expect(json).to.be.an('object');",
+                  "        const items = json.items || json.data && json.data.items || json.data;",
+                  "        pm.expect(items, 'Expected items array in response').to.exist;",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                  "    const json = pm.response.json();",
+                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                  "    if (Array.isArray(items) && items.length > 0) {",
+                  "        pm.expect(items[0]).to.be.an('object');",
+                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books?Page=1&PageSize=2&SearchTerm=",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "2"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": ""
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Categories",
+                  "value": "fiction",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Book Copies",
+      "item": [
+        {
+          "name": "Create Book Copy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"bookId\":\"362ac07e-e3a1-42f3-bccd-78cfa3e73486\",\r\n    \"condition\":\"Poor\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/books/copies",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "students",
+                "{{StudentId}}",
+                "books",
+                "copies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Book Copy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"condition\":\"Acceptable\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/copies/{{bookCopyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "copies",
+                "{{bookCopyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Book Copy By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/copies/{{bookCopyId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "copies",
+                "{{bookCopyId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Copies By Book Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        204,",
+                  "        404",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 404, error payload is informative', function () {",
+                  "    if (pm.response.code === 404) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Response is an array or a paged object containing items', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (Array.isArray(json)) {",
+                  "        pm.expect(json).to.be.an('array');",
+                  "    } else {",
+                  "        pm.expect(json).to.be.an('object');",
+                  "        const items = json.items || json.data && json.data.items || json.data;",
+                  "        pm.expect(items, 'Expected items array in response').to.exist;",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                  "    const json = pm.response.json();",
+                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                  "    if (Array.isArray(items) && items.length > 0) {",
+                  "        pm.expect(items[0]).to.be.an('object');",
+                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{BookId}}/copies?Page=1&PageSize=3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{BookId}}",
+                "copies"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "3"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "available",
+                  "disabled": true
+                },
+                {
+                  "key": "Conditions",
+                  "value": "acceptable",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "Conditions",
+                  "value": "new",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Copies By Student Id",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        204,",
+                  "        404",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 404, error payload is informative', function () {",
+                  "    if (pm.response.code === 404) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Response is an array or a paged object containing items', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (Array.isArray(json)) {",
+                  "        pm.expect(json).to.be.an('array');",
+                  "    } else {",
+                  "        pm.expect(json).to.be.an('object');",
+                  "        const items = json.items || json.data && json.data.items || json.data;",
+                  "        pm.expect(items, 'Expected items array in response').to.exist;",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                  "    const json = pm.response.json();",
+                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                  "    if (Array.isArray(items) && items.length > 0) {",
+                  "        pm.expect(items[0]).to.be.an('object');",
+                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/books/copies?Page=1&PageSize=3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "students",
+                "{{StudentId}}",
+                "books",
+                "copies"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "3"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "available",
+                  "disabled": true
+                },
+                {
+                  "key": "Conditions",
+                  "value": "acceptable",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "Conditions",
+                  "value": "new",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Copies",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                  "    pm.expect([",
+                  "        200,",
+                  "        204,",
+                  "        404",
+                  "    ]).to.include(pm.response.code);",
+                  "})",
+                  "",
+                  "pm.test('If 404, error payload is informative', function () {",
+                  "    if (pm.response.code === 404) {",
+                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                  "        if (ct.includes('json')) {",
+                  "            const j = pm.response.json();",
+                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                  "        }",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response is JSON', function () {",
+                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                  "})",
+                  "",
+                  "pm.test('Response is an array or a paged object containing items', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (Array.isArray(json)) {",
+                  "        pm.expect(json).to.be.an('array');",
+                  "    } else {",
+                  "        pm.expect(json).to.be.an('object');",
+                  "        const items = json.items || json.data && json.data.items || json.data;",
+                  "        pm.expect(items, 'Expected items array in response').to.exist;",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                  "    const json = pm.response.json();",
+                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                  "    if (Array.isArray(items) && items.length > 0) {",
+                  "        pm.expect(items[0]).to.be.an('object');",
+                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                  "    }",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/copies?Page=1&PageSize=3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "copies"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "3"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "available",
+                  "disabled": true
+                },
+                {
+                  "key": "Conditions",
+                  "value": "acceptable",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "Conditions",
+                  "value": "new",
+                  "type": "text",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Collection-level default tests for BookOrbit API",
+          "// These run after every request in this collection.",
+          "",
+          "// 1) Response time threshold (override per-request if needed)",
+          "pm.test(\"Response time is under 2000ms\", function () {",
+          "  pm.expect(pm.response.responseTime).to.be.below(2000);",
+          "});",
+          "",
+          "// 2) Common error handling: if error response, body should be parseable JSON or non-empty",
+          "pm.test(\"Error responses provide a useful payload\", function () {",
+          "  if (pm.response.code >= 400) {",
+          "    const ct = (pm.response.headers.get(\"Content-Type\") || \"\").toLowerCase();",
+          "",
+          "    if (ct.includes(\"application/json\") || ct.includes(\"application/problem+json\")) {",
+          "      pm.expect(function () { pm.response.json(); }).to.not.throw();",
+          "      const err = pm.response.json();",
+          "      // Try a few common fields without being too strict",
+          "      pm.expect(",
+          "        (err && (err.message || err.title || err.error || err.detail || err.errors))",
+          "        , \"Expected error payload to include message/title/error/detail/errors\"",
+          "      ).to.exist;",
+          "    } else {",
+          "      pm.expect(pm.response.text(), \"Expected non-JSON error payload to be non-empty\").to.not.equal(\"\");",
+          "    }",
+          "  }",
+          "});",
+          "",
+          "// 3) If Authorization is used, 401 should not be returned (unless explicitly expected per-request)",
+          "pm.test(\"Auth-protected endpoints should not return 401\", function () {",
+          "  const authHeader = pm.request.headers.get(\"Authorization\");",
+          "  if (authHeader) {",
+          "    pm.expect(pm.response.code, \"Received 401 even though Authorization header is present\").to.not.equal(401);",
+          "  }",
+          "});",
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:7240"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "refreshToken",
+      "value": ""
+    },
+    {
+      "key": "StudentId",
+      "value": ""
+    },
+    {
+      "key": "BookId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "bookCopyId",
+      "value": "",
+      "type": "default"
+    }
+  ]
+}

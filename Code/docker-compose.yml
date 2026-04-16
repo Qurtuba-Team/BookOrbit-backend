@@ -1,0 +1,130 @@
+﻿services:
+  bookorbit-api:
+    container_name: bookorbit-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+
+    env_file:
+      - .env 
+
+    ports:
+      - "7240:80"
+
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+
+
+      - JwtSettings__Key=${JWT_KEY}
+      - EmailSettings__Email=${EMAIL}
+      - EmailSettings__Password=${EMAIL_PASSWORD}
+      - EmailSettings__Host=smtp.gmail.com
+      - EmailSettings__Port=587
+      - EmailSettings__EnableSsl=true
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION}
+
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      seq:
+        condition: service_started
+      jaeger:
+        condition: service_started
+    networks:
+    - bookorbit-net
+    restart: unless-stopped
+
+  sqlserver:
+    container_name: bookorbit-sql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    env_file:
+      - .env
+
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SA_PASSWORD}
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${SA_PASSWORD}\" -Q \"SELECT 1\" -C || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    networks:
+      - bookorbit-net
+    restart: always
+
+
+  seq:
+   image: datalust/seq:latest
+   container_name: seq
+   volumes:
+    - ./containers/seq:/data
+   env_file:
+     - .env
+   environment:
+      - ACCEPT_EULA=Y
+      - SEQ_FIRSTRUN_NOAUTHENTICATION=false
+      - SEQ_FIRSTRUN_ADMINPASSWORD=${SEQ_ADMIN_PASSWORD}
+   networks:
+     - bookorbit-net
+   ports:
+     - "5341:5341"
+     - "8081:80"
+   restart: unless-stopped
+
+
+  prometheus:
+   image: prom/prometheus:latest
+   container_name: prometheus
+   volumes:
+     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+   ports:
+     - "9090:9090"
+   networks:
+     - bookorbit-net
+   depends_on:
+     - bookorbit-api
+   restart: unless-stopped
+
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    env_file:
+      - .env
+
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    networks:
+      - bookorbit-net
+    depends_on:
+      - prometheus
+      - jaeger
+    restart: unless-stopped
+
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    networks:
+      - bookorbit-net
+    
+networks:
+  bookorbit-net:
+    driver: bridge
+
+volumes:
+  grafana-data:
+  sqlserver-data:
