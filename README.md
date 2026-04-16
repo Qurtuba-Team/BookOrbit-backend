@@ -5,16 +5,19 @@
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running.
 
 ### Quick Start
-1. **Clone & Navigate**:
+1. **Clone**:
    ```bash
    git clone https://github.com/Qurtuba-Team/BookOrbit-backend.git
-   cd BookOrbit/Code
    ```
-2. **Launch Stack**:
+2. **Navigate**
+   ```bash
+   cd BookOrbit-backend/Code
+   ```
+3. **Launch Stack**:
    ```bash
    docker compose up --build
    ```
-3. **Verify Health**: Visit `http://localhost:7240/health`. It should return `Healthy`.
+4. **Verify Health**: Visit `http://localhost:7240/health`. It should return `Healthy`.
 
 ---
 
