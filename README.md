@@ -26,11 +26,11 @@
 | Service | URL | Credentials (User / Pass) |
 | :--- | :--- | :--- |
 | **API (HTTP)** | `http://localhost:7240` | - |
-| **Grafana** | `http://localhost:3000` | `admin` / `sa123456` |
-| **Seq** | `http://localhost:8081` | `admin` / `MyStrongPass123!` |
+| **Grafana** | `http://localhost:3000` | From .env File |
+| **Seq** | `http://localhost:8081` | From .env File |
 | **Prometheus** | `http://localhost:9090` | - |
 | **Jaeger (UI)**| `http://localhost:16686`| - |
-| **SQL Server** | `localhost, 1433` | `sa` / `MyStrongPass123!` |
+| **SQL Server** | `localhost, 1433` | From .env File |
 
 ### 🔑 Seeded Test Users
 - **Admin**: `admin@bookorbit.com` / `Admin@123456`
