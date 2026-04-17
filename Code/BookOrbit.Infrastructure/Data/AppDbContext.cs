@@ -1,4 +1,5 @@
 ﻿using BookOrbit.Domain.BookCopies;
+using BookOrbit.Domain.LendingListings;
 
 namespace BookOrbit.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options), IAppDbContext
@@ -10,6 +11,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<Book> Books => Set<Book>();
 
     public DbSet<BookCopy> BookCopies => Set<BookCopy>();
+
+    public DbSet<LendingListRecord> LendingListRecords => Set<LendingListRecord>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

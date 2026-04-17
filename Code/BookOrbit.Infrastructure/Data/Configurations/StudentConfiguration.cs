@@ -1,7 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-
-namespace BookOrbit.Infrastructure.Data.Configurations;
+﻿namespace BookOrbit.Infrastructure.Data.Configurations;
 
 public class StudentConfiguration : IEntityTypeConfiguration<Student>
 {

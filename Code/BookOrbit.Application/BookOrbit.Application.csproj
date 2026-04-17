@@ -19,4 +19,9 @@
 		<ProjectReference Include="..\BookOrbit.Domain\BookOrbit.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Features\LendingListings\Queries\" />
+	  <Folder Include="Features\LendingListings\StateMachien\" />
+	</ItemGroup>
+
 </Project>

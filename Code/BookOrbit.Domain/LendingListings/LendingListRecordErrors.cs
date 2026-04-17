@@ -11,4 +11,8 @@ static public class LendingListRecordErrors
     static public readonly Error InvalidCostInPoints = DomainCommonErrors.InvalidProp(ClassName, "CostInPoints", "Cost In Points", $"It must be between {LendingListRecord.MinCostInPoints} and {LendingListRecord.MaxCostInPoints} points.");
     static public readonly Error InvalidExpirationDate = DomainCommonErrors.DateShouldBeInFuture(ClassName, "ExpirationDate", "Expiration Date");
 
+    static public Error InvalidStateTransition(LendingListRecordState currentState, LendingListRecordState newState)
+    {
+        return DomainCommonErrors.InvalidStateTransition(ClassName, currentState.ToString(), newState.ToString());
+    }
 }

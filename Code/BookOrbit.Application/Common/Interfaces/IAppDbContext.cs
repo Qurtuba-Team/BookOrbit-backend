@@ -6,6 +6,7 @@ public interface IAppDbContext
     public DbSet<Book> Books { get; }
     public DbSet<BookCopy> BookCopies { get; }
     public DbSet<RefreshToken> RefreshTokens { get; }
+    public DbSet<LendingListRecord> LendingListRecords { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 

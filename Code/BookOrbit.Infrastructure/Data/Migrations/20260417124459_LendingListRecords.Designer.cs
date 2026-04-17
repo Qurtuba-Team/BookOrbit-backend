@@ -4,6 +4,7 @@ using BookOrbit.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookOrbit.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260417124459_LendingListRecords")]
+    partial class LendingListRecords
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -469,7 +472,47 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                             b1.HasKey("BookId");
 
-                            b1.ToTable("Books", (string)null);
+                            b1.ToTable("Books");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookId");
+                        });
+
+                    b.OwnsOne("BookOrbit.Domain.Books.ValueObjects.BookPublisher", "Publisher", b1 =>
+                        {
+                            b1.Property<Guid>("BookId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(150)
+                                .HasColumnType("nvarchar(150)")
+                                .HasColumnName("Publisher");
+
+                            b1.HasKey("BookId");
+
+                            b1.ToTable("Books");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BookId");
+                        });
+
+                    b.OwnsOne("BookOrbit.Domain.Books.ValueObjects.BookTitle", "Title", b1 =>
+                        {
+                            b1.Property<Guid>("BookId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(200)
+                                .HasColumnType("nvarchar(200)")
+                                .HasColumnName("Title");
+
+                            b1.HasKey("BookId");
+
+                            b1.HasIndex("Value");
+
+                            b1.ToTable("Books");
 
                             b1.WithOwner()
                                 .HasForeignKey("BookId");
@@ -492,47 +535,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                             b1.HasIndex("Value")
                                 .IsUnique();
 
-                            b1.ToTable("Books", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("BookId");
-                        });
-
-                    b.OwnsOne("BookOrbit.Domain.Books.ValueObjects.BookPublisher", "Publisher", b1 =>
-                        {
-                            b1.Property<Guid>("BookId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(150)
-                                .HasColumnType("nvarchar(150)")
-                                .HasColumnName("Publisher");
-
-                            b1.HasKey("BookId");
-
-                            b1.ToTable("Books", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("BookId");
-                        });
-
-                    b.OwnsOne("BookOrbit.Domain.Books.ValueObjects.BookTitle", "Title", b1 =>
-                        {
-                            b1.Property<Guid>("BookId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(200)
-                                .HasColumnType("nvarchar(200)")
-                                .HasColumnName("Title");
-
-                            b1.HasKey("BookId");
-
-                            b1.HasIndex("Value");
-
-                            b1.ToTable("Books", (string)null);
+                            b1.ToTable("Books");
 
                             b1.WithOwner()
                                 .HasForeignKey("BookId");
@@ -579,7 +582,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                             b1.HasKey("LendingListRecordId");
 
-                            b1.ToTable("LendingListRecords", (string)null);
+                            b1.ToTable("LendingListRecords");
 
                             b1.WithOwner()
                                 .HasForeignKey("LendingListRecordId");
@@ -599,25 +602,6 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("BookOrbit.Domain.Students.ValueObjects.StudentName", "Name", b1 =>
-                        {
-                            b1.Property<Guid>("StudentId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasMaxLength(50)
-                                .HasColumnType("nvarchar(50)")
-                                .HasColumnName("Name");
-
-                            b1.HasKey("StudentId");
-
-                            b1.ToTable("Students", (string)null);
-
-                            b1.WithOwner()
-                                .HasForeignKey("StudentId");
-                        });
-
                     b.OwnsOne("BookOrbit.Domain.Common.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
                         {
                             b1.Property<Guid>("StudentId")
@@ -633,7 +617,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                             b1.HasIndex("Value");
 
-                            b1.ToTable("Students", (string)null);
+                            b1.ToTable("Students");
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentId");
@@ -652,7 +636,26 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                             b1.HasKey("StudentId");
 
-                            b1.ToTable("Students", (string)null);
+                            b1.ToTable("Students");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StudentId");
+                        });
+
+                    b.OwnsOne("BookOrbit.Domain.Students.ValueObjects.StudentName", "Name", b1 =>
+                        {
+                            b1.Property<Guid>("StudentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)")
+                                .HasColumnName("Name");
+
+                            b1.HasKey("StudentId");
+
+                            b1.ToTable("Students");
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentId");
@@ -675,7 +678,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                             b1.HasIndex("Value")
                                 .IsUnique();
 
-                            b1.ToTable("Students", (string)null);
+                            b1.ToTable("Students");
 
                             b1.WithOwner()
                                 .HasForeignKey("StudentId");

@@ -37,3 +37,7 @@ global using System.Linq.Expressions;
 global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text.Json.Serialization;
+global using BookOrbit.Domain.LendingListings;
+global using BookOrbit.Domain.LendingListings.Enums;
+global using BookOrbit.Application.Features.LendingListings.Dtos;
+global using BookOrbit.Application.Features.BookCopies;

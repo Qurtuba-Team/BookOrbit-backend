@@ -1,4 +1,7 @@
-﻿namespace BookOrbit.Api.Controllers.BookCopies;
+﻿using BookOrbit.Application.Features.LendingListings.Commands.CreateLendingListRecord;
+using BookOrbit.Application.Features.LendingListings.Dtos;
+
+namespace BookOrbit.Api.Controllers.BookCopies;
 
 [Route("api/v{version:apiVersion}")]
 [ApiVersion("1.0")]
@@ -189,4 +192,30 @@ public class BookCopyController(
            e => Problem(e, HttpContext));
     }
 
+
+    [HttpPost("students/{id:guid}/books/copies/{copyid:guid}/list")]
+    [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
+    [ProducesResponseType(typeof(LendingListRecordDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Add a book copy to the lending list.")]
+    [EndpointDescription("Creates a lending list record for the specified book copy owned by the student, making it available for borrowing for the given duration.")]
+    [EndpointName("AddBookCopyToLendingList")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<LendingListRecordDto>> AddBookCopyToLendingList([FromRoute] Guid id, [FromRoute] Guid copyid, [FromQuery] int borrowingDurationInDays, CancellationToken ct)
+    {
+        var result = await sender.Send(
+    new CreateLendingListRecordCommand(copyid, id, borrowingDurationInDays
+        ),
+    ct);
+
+        return result.Match(
+           response => Created(string.Empty, response),
+           e => Problem(e, HttpContext));
+    }
 }
