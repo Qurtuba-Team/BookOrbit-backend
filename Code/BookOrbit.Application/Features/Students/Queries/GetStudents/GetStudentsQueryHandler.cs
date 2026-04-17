@@ -50,10 +50,10 @@ public class GetStudentsQueryHandler(IAppDbContext context,IStudentQueryService 
         var normalizedTelegramUserId = TelegramUserId.Normalize(searchQuery.SearchTerm);
 
         query = query.Where(s =>
-            s.Name.Value.StartsWith(normalizedName) ||
-            (s.PhoneNumber != null && s.PhoneNumber.Value.StartsWith(normalizedPhoneNumber)) ||
-            s.UniversityMail.Value.StartsWith(normalizedMail) ||
-            (s.TelegramUserId != null && s.TelegramUserId.Value.StartsWith(normalizedTelegramUserId)));
+            s.Name.Value.Contains(normalizedName) ||
+            (s.PhoneNumber != null && s.PhoneNumber.Value.Contains(normalizedPhoneNumber)) ||
+            s.UniversityMail.Value.Contains(normalizedMail) ||
+            (s.TelegramUserId != null && s.TelegramUserId.Value.Contains(normalizedTelegramUserId)));
 
 
         return query;

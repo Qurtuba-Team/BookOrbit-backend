@@ -8,6 +8,7 @@ public record BookCopyDtoWithBookDetails
     public BookCopyState State { get; set; }
     public string OwnerName { get; set; } = string.Empty;
     public BookDto Book { get; set; }
+    public bool IsListed { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -15,13 +16,14 @@ public record BookCopyDtoWithBookDetails
     private BookCopyDtoWithBookDetails() { }
 
     private BookCopyDtoWithBookDetails(
-        Guid id, 
+        Guid id,
         Guid bookId,
         Guid ownerId,
         BookCopyCondition condition,
         BookCopyState state,
         string ownerName,
-        BookDto book)
+        BookDto book,
+        bool isListed)
     {
         Id = id;
         BookId = bookId;
@@ -30,12 +32,14 @@ public record BookCopyDtoWithBookDetails
         State = state;
         OwnerName = ownerName;
         Book = book;
+        IsListed = isListed;
     }
 
     static public BookCopyDtoWithBookDetails FromEntity(
         BookCopy bookCopy,
         string ownerName,
-        BookDto book)
+        BookDto book,
+        bool isListed)
         =>
         new(
             bookCopy.Id,
@@ -44,5 +48,6 @@ public record BookCopyDtoWithBookDetails
             bookCopy.Condition,
             bookCopy.State,
             ownerName,
-            book);
+            book,
+            isListed);
 }

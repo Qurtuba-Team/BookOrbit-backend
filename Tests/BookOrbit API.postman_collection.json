@@ -1,11 +1,11 @@
 {
   "info": {
-    "_postman_id": "778a0420-0534-4056-91ff-a4ccdddc81cf",
+    "_postman_id": "950fb965-8c0d-4c42-a360-d63634f445db",
     "name": "BookOrbit API",
     "description": "Postman collection for BookOrbit API v1",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "52190839",
-    "_collection_link": "https://go.postman.co/collection/52190839-778a0420-0534-4056-91ff-a4ccdddc81cf?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/52190839-950fb965-8c0d-4c42-a360-d63634f445db?source=collection_link"
   },
   "item": [
     {
@@ -66,7 +66,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}"
+              "raw": "{\n    \"email\": \"student5@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/identity/token",
@@ -661,7 +661,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/students?Page=1&PageSize=5&SortColumn=name",
+                  "raw": "{{baseUrl}}/api/v1/students?Page=1&PageSize=5",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -686,7 +686,8 @@
                     },
                     {
                       "key": "SortColumn",
-                      "value": "name"
+                      "value": "name",
+                      "disabled": true
                     },
                     {
                       "key": "SortDirection",
@@ -1596,7 +1597,7 @@
                   "key": "CoverImage",
                   "type": "file",
                   "uuid": "87f969e5-051f-49d9-a562-ed231db1b650",
-                  "src": "/C:/Users/Eyad/OneDrive/Pictures/Screenshots/Screenshot 2026-04-11 190224.png"
+                  "src": "/C:/Users/Eyad/OneDrive/Pictures/dark1.jpg"
                 },
                 {
                   "key": "Categories",
@@ -1951,7 +1952,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/books?Page=1&PageSize=2&SearchTerm=",
+              "raw": "{{baseUrl}}/api/v1/books?Page=1&PageSize=5&SearchTerm=العادات",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -1967,11 +1968,11 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "2"
+                  "value": "5"
                 },
                 {
                   "key": "SearchTerm",
-                  "value": ""
+                  "value": "العادات"
                 },
                 {
                   "key": "SortColumn",
@@ -1993,12 +1994,504 @@
             "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]"
           },
           "response": []
+        },
+        {
+          "name": "DeleteBook",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/books/{{BookId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{BookId}}"
+              ],
+              "query": [
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Categories",
+                  "value": "fiction",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
     {
       "name": "Book Copies",
       "item": [
+        {
+          "name": "Queries",
+          "item": [
+            {
+              "name": "Get Book Copy By Id",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/books/copies/{{bookCopyId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies",
+                    "{{bookCopyId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Copies By Book Id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        404",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If 404, error payload is informative', function () {",
+                      "    if (pm.response.code === 404) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "})",
+                      "",
+                      "pm.test('Response is an array or a paged object containing items', function () {",
+                      "    const json = pm.response.json();",
+                      "    if (Array.isArray(json)) {",
+                      "        pm.expect(json).to.be.an('array');",
+                      "    } else {",
+                      "        pm.expect(json).to.be.an('object');",
+                      "        const items = json.items || json.data && json.data.items || json.data;",
+                      "        pm.expect(items, 'Expected items array in response').to.exist;",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                      "    const json = pm.response.json();",
+                      "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                      "    if (Array.isArray(items) && items.length > 0) {",
+                      "        pm.expect(items[0]).to.be.an('object');",
+                      "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                      "    }",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/books/{{BookId}}/copies?Page=1&PageSize=5&SortDirection=booktitle",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "{{BookId}}",
+                    "copies"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "5"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "booktitle"
+                    },
+                    {
+                      "key": "States",
+                      "value": "available",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new",
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Copies By Student Id",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        404",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If 404, error payload is informative', function () {",
+                      "    if (pm.response.code === 404) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "})",
+                      "",
+                      "pm.test('Response is an array or a paged object containing items', function () {",
+                      "    const json = pm.response.json();",
+                      "    if (Array.isArray(json)) {",
+                      "        pm.expect(json).to.be.an('array');",
+                      "    } else {",
+                      "        pm.expect(json).to.be.an('object');",
+                      "        const items = json.items || json.data && json.data.items || json.data;",
+                      "        pm.expect(items, 'Expected items array in response').to.exist;",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                      "    const json = pm.response.json();",
+                      "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                      "    if (Array.isArray(items) && items.length > 0) {",
+                      "        pm.expect(items[0]).to.be.an('object');",
+                      "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                      "    }",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/books/copies?Page=1&PageSize=15",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "books",
+                    "copies"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "available",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "15"
+                    }
+                  ]
+                },
+                "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
+              },
+              "response": []
+            },
+            {
+              "name": "Get Copies",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "pm.test('Status code is success (200/204) or not found (404)', function () {",
+                      "    pm.expect([",
+                      "        200,",
+                      "        204,",
+                      "        404",
+                      "    ]).to.include(pm.response.code);",
+                      "})",
+                      "",
+                      "pm.test('If 404, error payload is informative', function () {",
+                      "    if (pm.response.code === 404) {",
+                      "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "        if (ct.includes('json')) {",
+                      "            const j = pm.response.json();",
+                      "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
+                      "        }",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Response is JSON', function () {",
+                      "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
+                      "})",
+                      "",
+                      "pm.test('Response is an array or a paged object containing items', function () {",
+                      "    const json = pm.response.json();",
+                      "    if (Array.isArray(json)) {",
+                      "        pm.expect(json).to.be.an('array');",
+                      "    } else {",
+                      "        pm.expect(json).to.be.an('object');",
+                      "        const items = json.items || json.data && json.data.items || json.data;",
+                      "        pm.expect(items, 'Expected items array in response').to.exist;",
+                      "    }",
+                      "})",
+                      "",
+                      "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
+                      "    const json = pm.response.json();",
+                      "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
+                      "    if (Array.isArray(items) && items.length > 0) {",
+                      "        pm.expect(items[0]).to.be.an('object');",
+                      "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
+                      "    }",
+                      "})"
+                    ],
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {}
+                  }
+                }
+              ],
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/books/copies?Page=1&PageSize=3",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "3"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "available",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable",
+                      "type": "text",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new",
+                      "type": "text",
+                      "disabled": true
+                    }
+                  ]
+                },
+                "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Management",
+          "item": [
+            {
+              "name": "ListBookCopy",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accessToken}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/books/copies/{{bookCopyId}}/list?borrowingDurationInDays=10",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{StudentId}}",
+                    "books",
+                    "copies",
+                    "{{bookCopyId}}",
+                    "list"
+                  ],
+                  "query": [
+                    {
+                      "key": "borrowingDurationInDays",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
         {
           "name": "Create Book Copy",
           "request": {
@@ -2071,9 +2564,68 @@
             }
           },
           "response": []
+        }
+      ]
+    },
+    {
+      "name": "Lending List",
+      "item": [
+        {
+          "name": "GetAll",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/lendinglist?Page=1&PageSize=3",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist"
+              ],
+              "query": [
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "available",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
         },
         {
-          "name": "Get Book Copy By Id",
+          "name": "GetById",
           "request": {
             "method": "GET",
             "header": [
@@ -2084,396 +2636,17 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/books/copies/{{bookCopyId}}",
+              "raw": "{{baseUrl}}/api/v1/lendinglist/{{lendingListRecordId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "books",
-                "copies",
-                "{{bookCopyId}}"
+                "lendinglist",
+                "{{lendingListRecordId}}"
               ]
             }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Copies By Book Id",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
-                  "    pm.expect([",
-                  "        200,",
-                  "        204,",
-                  "        404",
-                  "    ]).to.include(pm.response.code);",
-                  "})",
-                  "",
-                  "pm.test('If 404, error payload is informative', function () {",
-                  "    if (pm.response.code === 404) {",
-                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
-                  "        if (ct.includes('json')) {",
-                  "            const j = pm.response.json();",
-                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
-                  "        }",
-                  "    }",
-                  "})",
-                  "",
-                  "pm.test('Status code is 200', function () {",
-                  "    pm.response.to.have.status(200);",
-                  "})",
-                  "",
-                  "pm.test('Response is JSON', function () {",
-                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
-                  "})",
-                  "",
-                  "pm.test('Response is an array or a paged object containing items', function () {",
-                  "    const json = pm.response.json();",
-                  "    if (Array.isArray(json)) {",
-                  "        pm.expect(json).to.be.an('array');",
-                  "    } else {",
-                  "        pm.expect(json).to.be.an('object');",
-                  "        const items = json.items || json.data && json.data.items || json.data;",
-                  "        pm.expect(items, 'Expected items array in response').to.exist;",
-                  "    }",
-                  "})",
-                  "",
-                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
-                  "    const json = pm.response.json();",
-                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
-                  "    if (Array.isArray(items) && items.length > 0) {",
-                  "        pm.expect(items[0]).to.be.an('object');",
-                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
-                  "    }",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books/{{BookId}}/copies?Page=1&PageSize=3",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "{{BookId}}",
-                "copies"
-              ],
-              "query": [
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "PageSize",
-                  "value": "3"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "States",
-                  "value": "available",
-                  "disabled": true
-                },
-                {
-                  "key": "Conditions",
-                  "value": "acceptable",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "Conditions",
-                  "value": "new",
-                  "type": "text",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Copies By Student Id",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
-                  "    pm.expect([",
-                  "        200,",
-                  "        204,",
-                  "        404",
-                  "    ]).to.include(pm.response.code);",
-                  "})",
-                  "",
-                  "pm.test('If 404, error payload is informative', function () {",
-                  "    if (pm.response.code === 404) {",
-                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
-                  "        if (ct.includes('json')) {",
-                  "            const j = pm.response.json();",
-                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
-                  "        }",
-                  "    }",
-                  "})",
-                  "",
-                  "pm.test('Status code is 200', function () {",
-                  "    pm.response.to.have.status(200);",
-                  "})",
-                  "",
-                  "pm.test('Response is JSON', function () {",
-                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
-                  "})",
-                  "",
-                  "pm.test('Response is an array or a paged object containing items', function () {",
-                  "    const json = pm.response.json();",
-                  "    if (Array.isArray(json)) {",
-                  "        pm.expect(json).to.be.an('array');",
-                  "    } else {",
-                  "        pm.expect(json).to.be.an('object');",
-                  "        const items = json.items || json.data && json.data.items || json.data;",
-                  "        pm.expect(items, 'Expected items array in response').to.exist;",
-                  "    }",
-                  "})",
-                  "",
-                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
-                  "    const json = pm.response.json();",
-                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
-                  "    if (Array.isArray(items) && items.length > 0) {",
-                  "        pm.expect(items[0]).to.be.an('object');",
-                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
-                  "    }",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/students/{{StudentId}}/books/copies?Page=1&PageSize=3",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "students",
-                "{{StudentId}}",
-                "books",
-                "copies"
-              ],
-              "query": [
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "PageSize",
-                  "value": "3"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "States",
-                  "value": "available",
-                  "disabled": true
-                },
-                {
-                  "key": "Conditions",
-                  "value": "acceptable",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "Conditions",
-                  "value": "new",
-                  "type": "text",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
-          },
-          "response": []
-        },
-        {
-          "name": "Get Copies",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is success (200/204) or not found (404)', function () {",
-                  "    pm.expect([",
-                  "        200,",
-                  "        204,",
-                  "        404",
-                  "    ]).to.include(pm.response.code);",
-                  "})",
-                  "",
-                  "pm.test('If 404, error payload is informative', function () {",
-                  "    if (pm.response.code === 404) {",
-                  "        const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
-                  "        if (ct.includes('json')) {",
-                  "            const j = pm.response.json();",
-                  "            pm.expect(j.message || j.title || j.error || j.detail || j.errors).to.exist;",
-                  "        }",
-                  "    }",
-                  "})",
-                  "",
-                  "pm.test('Status code is 200', function () {",
-                  "    pm.response.to.have.status(200);",
-                  "})",
-                  "",
-                  "pm.test('Response is JSON', function () {",
-                  "    pm.expect(pm.response.headers.get('Content-Type') || '').to.include('application/json');",
-                  "})",
-                  "",
-                  "pm.test('Response is an array or a paged object containing items', function () {",
-                  "    const json = pm.response.json();",
-                  "    if (Array.isArray(json)) {",
-                  "        pm.expect(json).to.be.an('array');",
-                  "    } else {",
-                  "        pm.expect(json).to.be.an('object');",
-                  "        const items = json.items || json.data && json.data.items || json.data;",
-                  "        pm.expect(items, 'Expected items array in response').to.exist;",
-                  "    }",
-                  "})",
-                  "",
-                  "pm.test('Each book item has at least an id/title field (if list is non-empty)', function () {",
-                  "    const json = pm.response.json();",
-                  "    const items = Array.isArray(json) ? json : json.items || json.data && json.data.items || (Array.isArray(json.data) ? json.data : []);",
-                  "    if (Array.isArray(items) && items.length > 0) {",
-                  "        pm.expect(items[0]).to.be.an('object');",
-                  "        pm.expect(items[0]).to.have.any.keys('id', 'bookId', 'title', 'name');",
-                  "    }",
-                  "})"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/v1/books/copies?Page=1&PageSize=3",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "copies"
-              ],
-              "query": [
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "PageSize",
-                  "value": "3"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "States",
-                  "value": "available",
-                  "disabled": true
-                },
-                {
-                  "key": "Conditions",
-                  "value": "acceptable",
-                  "type": "text",
-                  "disabled": true
-                },
-                {
-                  "key": "Conditions",
-                  "value": "new",
-                  "type": "text",
-                  "disabled": true
-                }
-              ]
-            },
-            "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc"
           },
           "response": []
         }

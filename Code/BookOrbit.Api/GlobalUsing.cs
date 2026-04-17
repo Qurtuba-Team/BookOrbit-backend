@@ -75,3 +75,7 @@ global using System.Text.Json;
 global using System.Text.Json.Serialization;
 global using System.Threading.RateLimiting;
 global using BookOrbit.Application.Features.Books.Commands.DeleteBook;
+global using BookOrbit.Api.Contracts.Requests.LendingListRecords;
+global using BookOrbit.Application.Features.LendingListings.Dtos;
+global using BookOrbit.Application.Features.LendingListings.Queries.GetLendingListRecordById;
+global using BookOrbit.Application.Features.LendingListings.Queries.GetLendingListRecords;

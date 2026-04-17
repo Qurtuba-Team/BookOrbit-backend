@@ -50,10 +50,18 @@ public class CreateBookCopyCommandHandler(
 
         logger.LogInformation("Book copy created successfully with ID: {BookCopyId}", createdBookCopyResult.Value.Id);
 
+        bool isListed = await context.LendingListRecords.AnyAsync(l => 
+        l.BookCopyId == createdBookCopyResult.Value.Id &&
+                (l.State == LendingListRecordState.Available
+                ||
+                l.State == LendingListRecordState.Reserved
+                ||
+                l.State == LendingListRecordState.Borrowed), ct);
 
         return BookCopyDtoWithBookDetails.FromEntity(
             createdBookCopyResult.Value,
             student.Name.Value,
-            BookDto.FromEntity(book));
+            BookDto.FromEntity(book),
+            isListed);
     }
 }

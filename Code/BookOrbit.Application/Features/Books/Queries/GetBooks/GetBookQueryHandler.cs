@@ -66,10 +66,10 @@ public class GetBookQueryHandler(
         var normalizedAuthor = BookAuthor.Normalize(searchQuery.SearchTerm);
 
         query = query.Where(b =>
-        b.Title.Value.StartsWith(normalizedTitle) ||
-        b.ISBN.Value.StartsWith(normalizedISBN) ||
-        b.Publisher.Value.StartsWith(normalizedPublisher) ||
-        b.Author.Value.StartsWith(normalizedAuthor));
+        b.Title.Value.Contains(normalizedTitle) ||
+        b.ISBN.Value.Contains(normalizedISBN) ||
+        b.Publisher.Value.Contains(normalizedPublisher) ||
+        b.Author.Value.Contains(normalizedAuthor));
 
         return query;
     }

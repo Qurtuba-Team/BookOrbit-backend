@@ -7,23 +7,46 @@ public class GetBookCopiesQueryHandler(
         var bookCopyQuery = context.BookCopies.AsNoTracking();
 
         bookCopyQuery = ApplyFilters(bookCopyQuery, query);
-
         bookCopyQuery = ApplySearchTerm(bookCopyQuery, query);
-
         bookCopyQuery = ApplySorting(bookCopyQuery, query.SortColumn, query.SortDirection);
 
-        int count = await bookCopyQuery.CountAsync(ct);
+        var queryWithIsListed = bookCopyQuery
+            .Select(b => new BookCopyWithIsListedDto
+            {
+                Id = b.Id,
+                BookId = b.BookId,
+                OwnerId = b.OwnerId,
+                Condition = b.Condition,
+                State = b.State,
+                OwnerName = b.Owner!.Name.Value,
+                Title = b.Book!.Title.Value,
+                IsListed = context.LendingListRecords.Any(l => l.BookCopyId == b.Id &&
+                (l.State == LendingListRecordState.Available
+                ||
+                l.State == LendingListRecordState.Reserved
+                ||
+                l.State == LendingListRecordState.Borrowed))
+            });
+
+        int count = await queryWithIsListed.CountAsync(ct);
 
         int page = Math.Max(1, query.Page);
         int pageSize = Math.Max(1, query.PageSize);
 
-        bookCopyQuery = bookCopyQuery.ApplyPagination(page, pageSize);
+        var items = await queryWithIsListed
+            .ApplyPagination(page, pageSize)
+            .Select(s => new BookCopyListItemDto(
+                s.Id,
+                s.BookId,
+                s.OwnerId,
+                s.Condition,
+                s.State,
+                s.OwnerName,
+                s.Title,
+                s.IsListed
+            ))
 
-        var items = await bookCopyQuery
-            .Select(BookCopyListItemDto.Projection)
-            .ToListAsync(ct);
-
-        return new PaginatedList<BookCopyListItemDto>
+            .ToListAsync(ct); return new PaginatedList<BookCopyListItemDto>
         {
             Items = items,
             Page = page,
@@ -62,8 +85,8 @@ public class GetBookCopiesQueryHandler(
         var normalizedStudentName = StudentName.Normalize(searchQuery.SearchTerm);
 
         query = query.Where(b =>
-        (b.Book!.Title.Value.StartsWith(normalizedTitle)) ||
-        (b.Owner!.Name.Value.StartsWith(normalizedStudentName)));
+        (b.Book!.Title.Value.Contains(normalizedTitle)) ||
+        (b.Owner!.Name.Value.Contains(normalizedStudentName)));
 
         return query;
     }

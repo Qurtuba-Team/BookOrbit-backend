@@ -1,5 +1,5 @@
 ﻿namespace BookOrbit.Application.Features.BookCopies.Dtos;
-public record BookCopyListItemDto
+public class BookCopyWithIsListedDto
 {
     public Guid Id { get; set; } = Guid.Empty;
     public Guid BookId { get; set; } = Guid.Empty;
@@ -10,18 +10,15 @@ public record BookCopyListItemDto
     public string Title { get; set; } = string.Empty;
     public bool IsListed { get; set; }
 
-    [JsonConstructor]
-    private BookCopyListItemDto() { }
-
-    public BookCopyListItemDto(
-        Guid id,
-        Guid bookId,
-        Guid ownerId,
-        BookCopyCondition condition,
-        BookCopyState state,
-        string ownerName,
-        string title,
-        bool isListed)
+    public BookCopyWithIsListedDto(
+    Guid id,
+    Guid bookId,
+    Guid ownerId,
+    BookCopyCondition condition,
+    BookCopyState state,
+    string ownerName,
+    string title,
+    bool isListed)
     {
         Id = id;
         BookId = bookId;
@@ -33,4 +30,7 @@ public record BookCopyListItemDto
         IsListed = isListed;
     }
 
+    public BookCopyWithIsListedDto()
+    {
+    }
 }

@@ -19,9 +19,18 @@ public class GetBookCopyByIdQueryHandler(
             return BookCopyApplicationErrors.NotFoundById;
         }
 
+        bool isListed = await context.LendingListRecords.AnyAsync(l =>
+l.BookCopyId == query.BookCopyId&&
+        (l.State == LendingListRecordState.Available
+        ||
+        l.State == LendingListRecordState.Reserved
+        ||
+        l.State == LendingListRecordState.Borrowed), ct);
+
         return BookCopyDtoWithBookDetails.FromEntity(
             bookCopy,
             bookCopy.Owner!.Name.Value,
-            BookDto.FromEntity(bookCopy.Book!));
+            BookDto.FromEntity(bookCopy.Book!),
+            isListed);
     }
 }

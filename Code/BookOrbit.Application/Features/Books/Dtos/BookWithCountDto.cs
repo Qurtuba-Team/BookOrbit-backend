@@ -26,8 +26,6 @@ public record BookWithCountDto
         Author = author;
         AvailableCopiesCount = availableCopiesCount;
     }
-
-    [JsonConstructor]
     public BookWithCountDto()
     {
     }

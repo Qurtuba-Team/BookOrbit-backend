@@ -10,7 +10,7 @@ public record BookListItemDto
     public int AvailableCopiesCount { get; set; }
 
     [JsonConstructor]
-    public BookListItemDto() { }
+    private BookListItemDto() { }
 
     public BookListItemDto(
         Guid id,
