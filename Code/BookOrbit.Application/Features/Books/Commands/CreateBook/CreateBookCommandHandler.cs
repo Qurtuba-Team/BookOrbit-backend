@@ -1,4 +1,6 @@
-﻿namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
+﻿using BookOrbit.Domain.Books;
+
+namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
 public class CreateBookCommandHandler(
     ILogger<CreateBookCommandHandler> logger,
     IAppDbContext context,

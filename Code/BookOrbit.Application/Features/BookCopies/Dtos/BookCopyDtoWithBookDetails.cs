@@ -9,6 +9,8 @@ public record BookCopyDtoWithBookDetails
     public string OwnerName { get; set; } = string.Empty;
     public BookDto Book { get; set; }
 
+#pragma warning disable CS8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
     [JsonConstructor]
     private BookCopyDtoWithBookDetails() { }
 

@@ -8,20 +8,40 @@ public class GetBookQueryHandler(
         var bookQuery = context.Books.AsNoTracking();
 
         bookQuery = ApplyFilters(bookQuery, query);
-        
+
         bookQuery = ApplySearchTerm(bookQuery, query);
-        
+
         bookQuery = ApplySorting(bookQuery, query.SortColumn, query.SortDirection);
 
-        int count = await bookQuery.CountAsync(ct);
+        var bookQueryWithCount = bookQuery
+    .Select(b => new BookWithCountDto
+    {
+        Id = b.Id,
+        Title = b.Title.Value,
+        ISBN = b.ISBN.Value,
+        Publisher = b.Publisher.Value,
+        Category = b.Category,
+        Author = b.Author.Value,
+        AvailableCopiesCount = context.BookCopies
+            .Where(c => c.BookId == b.Id && c.State == BookCopyState.Available)
+            .Count()
+    });
 
-        int page = Math.Max(1, query.Page);
-        int pageSize = Math.Max(1, query.PageSize);
+        int count = await bookQueryWithCount.CountAsync(ct);
 
-        bookQuery = bookQuery.ApplyPagination(page, pageSize);
+        var page = Math.Max(1, query.Page);
+        var pageSize = Math.Max(1, query.PageSize);
 
-        var items = await bookQuery
-            .Select(BookListItemDto.Projection)
+        var items = await bookQueryWithCount
+            .ApplyPagination(page, pageSize)
+            .Select(s => new BookListItemDto(
+                s.Id,
+                s.Title,
+                s.ISBN,
+                s.Publisher,
+                s.Category,
+                s.Author,
+                s.AvailableCopiesCount))
             .ToListAsync(ct);
 
         return new PaginatedList<BookListItemDto>
@@ -45,7 +65,7 @@ public class GetBookQueryHandler(
         var normalizedPublisher = BookPublisher.Normalize(searchQuery.SearchTerm);
         var normalizedAuthor = BookAuthor.Normalize(searchQuery.SearchTerm);
 
-        query = query.Where(b=>
+        query = query.Where(b =>
         b.Title.Value.StartsWith(normalizedTitle) ||
         b.ISBN.Value.StartsWith(normalizedISBN) ||
         b.Publisher.Value.StartsWith(normalizedPublisher) ||
@@ -75,7 +95,7 @@ public class GetBookQueryHandler(
     {
         if (string.IsNullOrWhiteSpace(sortColumn))
             sortColumn = "createdat";
-        
+
         if (string.IsNullOrWhiteSpace(sortDirection))
             sortDirection = "desc";
 
@@ -85,9 +105,9 @@ public class GetBookQueryHandler(
         {
             "createdat" => isDescending ? query.OrderByDescending(b => b.CreatedAtUtc) : query.OrderBy(b => b.CreatedAtUtc),
             "updatedat" => isDescending ? query.OrderByDescending(b => b.LastModifiedUtc) : query.OrderBy(b => b.LastModifiedUtc),
-            "title" => isDescending ? query.OrderByDescending(b => b.Title) : query.OrderBy(b => b.Title),
-            "publisher" => isDescending ? query.OrderByDescending(b => b.Publisher) : query.OrderBy(b => b.Publisher),
-            "author" => isDescending ? query.OrderByDescending(b => b.Author) : query.OrderBy(b => b.Author),
+            "title" => isDescending ? query.OrderByDescending(b => b.Title.Value) : query.OrderBy(b => b.Title.Value),
+            "publisher" => isDescending ? query.OrderByDescending(b => b.Publisher.Value) : query.OrderBy(b => b.Publisher.Value),
+            "author" => isDescending ? query.OrderByDescending(b => b.Author.Value) : query.OrderBy(b => b.Author.Value),
             _ => query.OrderByDescending(b => b.CreatedAtUtc)
         };
     }

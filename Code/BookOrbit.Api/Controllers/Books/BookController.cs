@@ -1,4 +1,5 @@
-﻿namespace BookOrbit.Api.Controllers.Books;
+﻿
+namespace BookOrbit.Api.Controllers.Books;
 
 [Route("api/v{version:apiVersion}/books")]
 [ApiVersion("1.0")]
@@ -83,6 +84,33 @@ public class BookController(
     }
 
 
+    [HttpDelete("{id:guid}")]
+    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Delete a book record.")]
+    [EndpointDescription("Deletes the specified book from the catalog when it is not referenced by any book copies.")]
+    [EndpointName("DeleteBookById")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult> DeleteBookById([FromRoute] Guid id, CancellationToken ct)
+    {
+        var result = await sender.Send(
+            new DeleteBookCommand(
+                id),
+            ct);
+
+        return result.Match(
+           response => NoContent(),
+           e => Problem(e, HttpContext));
+    }
+
+
 
     [HttpGet("{id:guid}", Name = "GetBookById")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
@@ -139,4 +167,8 @@ public class BookController(
            Ok,
            e => Problem(e, HttpContext));
     }
+
+
+
+
 }

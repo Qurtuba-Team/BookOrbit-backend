@@ -1,0 +1,56 @@
+Identity : Done
+
+Student : Done
+
+Books : 
+    - Delete : Done
+
+BookCopies : 
+    - Delete (After Implementing the rest of features)
+    - MakeUnAvilable (Internal / Api)
+    - MakeAvilable (Internal / Api)
+    - Borrow (Internal Only)
+    - Reserve (Internal Only)
+    - MakeLost (Internal Only)
+    - MakeDamage (Internal Only)
+LendingList : 
+    - Add (Internal / Api)
+    - Update (Internal / Api)
+    - Reserve (Internal / Api)
+    - Close (Internal / Api) 
+    - Borrow (Internal Only)
+    - Expire (Internal Only)
+    - MakeAvilable (Internal)
+    - FindById (Internal/Api)
+    - ListAll (Internal/Api)
+Borrowing Requests : 
+    - Add (Internal/Api)
+    - Approve (Internal/Api)
+    - Reject (Internal/Api)
+    - Cancel (Internal/Api)
+    - Expired (Internal Only)
+    - FindById (Internal/Api)
+    - ListAll (Internal/Api)
+BorrowingTransaction : 
+    - Add (Internal/Api)
+    - Extend Deadline (Internal/Api)
+    - Borrow (Internal Only)
+    - Return (Internal Only)
+    - MakeOverDue (Internal Only)
+    - MakeLost (Internal Only)
+    - FindById (Internal/Api)
+    - ListAll (Internal/Api)
+
+    BorrowingReview : 
+    - Add (Internal/Api)
+    - FindById (Internal/Api)
+    - ListAll (Internal/Api)
+
+    BorrowingTransactionEvent : 
+    - Add
+    - FindById (Internal/Api)
+    - ListAll (Internal/Api)
+PointTransaction : 
+    - Add
+    - FindById (Internal/Api)
+    - ListAll (Internal/Api)

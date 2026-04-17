@@ -7,4 +7,3 @@ public enum BorrowingTransactionState
     Overdue,
     Lost
 }
-

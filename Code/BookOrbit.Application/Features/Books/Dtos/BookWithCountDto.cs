@@ -1,5 +1,5 @@
 ﻿namespace BookOrbit.Application.Features.Books.Dtos;
-public record BookListItemDto
+public record BookWithCountDto
 {
     public Guid Id { get; set; } = Guid.Empty;
     public string Title { get; set; } = string.Empty;
@@ -9,14 +9,11 @@ public record BookListItemDto
     public string Author { get; set; } = string.Empty;
     public int AvailableCopiesCount { get; set; }
 
-    [JsonConstructor]
-    public BookListItemDto() { }
-
-    public BookListItemDto(
-        Guid id,
+    public BookWithCountDto(
+        Guid id, 
         string title,
-        string iSBN,
-        string publisher,
+        string iSBN, 
+        string publisher, 
         BookCategory category,
         string author,
         int availableCopiesCount)
@@ -28,5 +25,10 @@ public record BookListItemDto
         Category = category;
         Author = author;
         AvailableCopiesCount = availableCopiesCount;
+    }
+
+    [JsonConstructor]
+    public BookWithCountDto()
+    {
     }
 }

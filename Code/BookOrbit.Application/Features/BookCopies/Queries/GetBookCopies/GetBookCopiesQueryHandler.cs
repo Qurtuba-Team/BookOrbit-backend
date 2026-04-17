@@ -1,8 +1,4 @@
-﻿
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-
-namespace BookOrbit.Application.Features.BookCopies.Queries.GetBookCopies;
+﻿namespace BookOrbit.Application.Features.BookCopies.Queries.GetBookCopies;
 public class GetBookCopiesQueryHandler(
     IAppDbContext context) : IRequestHandler<GetBookCopiesQuery, Result<PaginatedList<BookCopyListItemDto>>>
 {

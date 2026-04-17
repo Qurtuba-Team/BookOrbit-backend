@@ -50,6 +50,7 @@ public class CreateBookCopyCommandHandler(
 
         logger.LogInformation("Book copy created successfully with ID: {BookCopyId}", createdBookCopyResult.Value.Id);
 
+
         return BookCopyDtoWithBookDetails.FromEntity(
             createdBookCopyResult.Value,
             student.Name.Value,
