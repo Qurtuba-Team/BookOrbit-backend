@@ -66,7 +66,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student5@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}"
+              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/identity/token",
@@ -2392,7 +2392,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseUrl}}/api/v1/books/copies?Page=1&PageSize=3",
+                  "raw": "{{baseUrl}}/api/v1/books/copies?Page=1&PageSize=55",
                   "host": [
                     "{{baseUrl}}"
                   ],
@@ -2406,10 +2406,6 @@
                     {
                       "key": "Page",
                       "value": "1"
-                    },
-                    {
-                      "key": "PageSize",
-                      "value": "3"
                     },
                     {
                       "key": "SearchTerm",
@@ -2442,6 +2438,10 @@
                       "value": "new",
                       "type": "text",
                       "disabled": true
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "55"
                     }
                   ]
                 },
@@ -2733,6 +2733,11 @@
     },
     {
       "key": "bookCopyId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "lendingListRecordId",
       "value": "",
       "type": "default"
     }
