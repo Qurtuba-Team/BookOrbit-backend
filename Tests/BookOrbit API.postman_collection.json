@@ -2620,7 +2620,8 @@
                   "value": "3"
                 }
               ]
-            }
+            },
+            "description": "Support \\[createdat,updatedat,cost,borrowingduration,expirationdate,state\\]"
           },
           "response": []
         },
