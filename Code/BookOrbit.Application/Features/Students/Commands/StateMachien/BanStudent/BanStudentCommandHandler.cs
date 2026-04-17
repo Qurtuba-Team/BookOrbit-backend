@@ -16,7 +16,7 @@ public class BanStudentCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var banResult = student.Ban();
+        var banResult = student.MarkAsBanned();
 
         if (banResult.IsFailure)
             return banResult.Errors;

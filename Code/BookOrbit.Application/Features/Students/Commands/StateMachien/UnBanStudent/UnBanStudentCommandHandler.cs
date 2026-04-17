@@ -16,7 +16,7 @@ public class UnBanStudentCommandHandler
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var unBanResult = student.UnBan();
+        var unBanResult = student.MarkAsUnBanned();
 
         if (unBanResult.IsFailure)
             return unBanResult.Errors;

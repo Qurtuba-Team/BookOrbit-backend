@@ -32,7 +32,7 @@ public class ApproveStudentCommandHandler (
             return StudentApplicationErrors.StateTransitionFailedEmailNotConfirmed;
         }
 
-        var approveResult = student.Approve(timeProvider.GetUtcNow());
+        var approveResult = student.MarkAsApproved(timeProvider.GetUtcNow());
 
         if (approveResult.IsFailure)
             return approveResult.Errors;

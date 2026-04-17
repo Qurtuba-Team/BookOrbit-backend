@@ -392,7 +392,7 @@ public class AppDbContextInitialiser(
         if (rand.NextDouble() < 0.5)
         {
             //Activate the student
-            studentResult.Value.Activate();
+            studentResult.Value.MarkAsActivated();
         }
 
         context.Students.Add(studentResult.Value);

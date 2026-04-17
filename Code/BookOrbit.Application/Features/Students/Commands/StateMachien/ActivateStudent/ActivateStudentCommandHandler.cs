@@ -15,7 +15,7 @@ public class ActivateStudentCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var activationResult = student.Activate();
+        var activationResult = student.MarkAsActivated();
 
         if (activationResult.IsFailure)
             return activationResult.Errors;

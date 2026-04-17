@@ -124,7 +124,7 @@ public class Student : AuditableEntity
         return Result.Updated;
     }
 
-    public Result<Updated> Approve(DateTimeOffset joinDateUtc)
+    public Result<Updated> MarkAsApproved(DateTimeOffset joinDateUtc)
     {
         if (joinDateUtc < CreatedAtUtc)
             return StudentErrors.InvalidJoinDate;
@@ -139,18 +139,18 @@ public class Student : AuditableEntity
         return result;
     }
 
-    public Result<Updated> Activate() =>
+    public Result<Updated> MarkAsActivated() =>
         UpdateState(StudentState.Active);
 
-    public Result<Updated> Reject() =>
+    public Result<Updated> MarkAsRejected() =>
         UpdateState(StudentState.Rejected);
 
-    public Result<Updated> Ban() =>
+    public Result<Updated> MarkAsBanned() =>
         UpdateState(StudentState.Banned);
 
-    public Result<Updated> Pend() =>
+    public Result<Updated> MarkAsPend() =>
         UpdateState(StudentState.Pending);
 
-    public Result<Updated> UnBan() =>
+    public Result<Updated> MarkAsUnBanned() =>
     UpdateState(StudentState.UnBanned);
 }

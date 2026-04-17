@@ -16,7 +16,7 @@ public class PendStudentCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var pendResult = student.Pend();
+        var pendResult = student.MarkAsPend();
 
         if (pendResult.IsFailure)
             return pendResult.Errors;

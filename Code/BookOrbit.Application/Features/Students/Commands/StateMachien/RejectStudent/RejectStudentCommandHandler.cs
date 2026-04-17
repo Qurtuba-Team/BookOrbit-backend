@@ -17,7 +17,7 @@ public class RejectStudentCommandHandler
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var rejectResult = student.Reject();
+        var rejectResult = student.MarkAsRejected();
 
         if (rejectResult.IsFailure)
             return rejectResult.Errors;

@@ -283,7 +283,7 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Ban();
+        student.MarkAsBanned();
 
         var newName = CreateValidName("New Name");
 
@@ -329,7 +329,7 @@ public class StudentTests
         var joinDate = student.CreatedAtUtc.AddDays(1);
 
         // Act
-        var result = student.Approve(joinDate);
+        var result = student.MarkAsApproved(joinDate);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -348,7 +348,7 @@ public class StudentTests
         var invalidJoinDate = student.CreatedAtUtc.AddDays(-1);
 
         // Act
-        var result = student.Approve(invalidJoinDate);
+        var result = student.MarkAsApproved(invalidJoinDate);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -364,7 +364,7 @@ public class StudentTests
         var joinDate = student.CreatedAtUtc;
 
         // Act
-        var result = student.Approve(joinDate);
+        var result = student.MarkAsApproved(joinDate);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -384,7 +384,7 @@ public class StudentTests
         student.SetCreatedAt(DateTimeOffset.UtcNow);
 
         // Act
-        var result = student.Approve(student.CreatedAtUtc.AddDays(1));
+        var result = student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -399,7 +399,7 @@ public class StudentTests
         var student = CreateValidStudent();
 
         // Act
-        var result = student.Reject();
+        var result = student.MarkAsRejected();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -413,7 +413,7 @@ public class StudentTests
         var student = CreateValidStudent();
 
         // Act
-        var result = student.Ban();
+        var result = student.MarkAsBanned();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -427,7 +427,7 @@ public class StudentTests
         var student = CreateValidStudent();
 
         // Act
-        var result = student.Activate();
+        var result = student.MarkAsActivated();
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -443,10 +443,10 @@ public class StudentTests
         // Arrange
         var student = CreateValidStudent();
         student.SetCreatedAt(DateTimeOffset.UtcNow);
-        student.Approve(student.CreatedAtUtc.AddDays(1));
+        student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
 
         // Act
-        var result = student.Activate();
+        var result = student.MarkAsActivated();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -460,10 +460,10 @@ public class StudentTests
         // Arrange
         var student = CreateValidStudent();
         student.SetCreatedAt(DateTimeOffset.UtcNow);
-        student.Approve(student.CreatedAtUtc.AddDays(1));
+        student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
 
         // Act
-        var result = student.Ban();
+        var result = student.MarkAsBanned();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -477,10 +477,10 @@ public class StudentTests
         // Arrange
         var student = CreateValidStudent();
         student.SetCreatedAt(DateTimeOffset.UtcNow);
-        student.Approve(student.CreatedAtUtc.AddDays(1));
+        student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
 
         // Act
-        var result = student.Reject();
+        var result = student.MarkAsRejected();
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -497,11 +497,11 @@ public class StudentTests
         // Arrange
         var student = CreateValidStudent();
         student.SetCreatedAt(DateTimeOffset.UtcNow);
-        student.Approve(student.CreatedAtUtc.AddDays(1));
-        student.Activate();
+        student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
+        student.MarkAsActivated();
 
         // Act
-        var result = student.Ban();
+        var result = student.MarkAsBanned();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -515,11 +515,11 @@ public class StudentTests
         // Arrange
         var student = CreateValidStudent();
         student.SetCreatedAt(DateTimeOffset.UtcNow);
-        student.Approve(student.CreatedAtUtc.AddDays(1));
-        student.Activate();
+        student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
+        student.MarkAsActivated();
 
         // Act
-        var result = student.Approve(student.CreatedAtUtc.AddDays(2));
+        var result = student.MarkAsApproved(student.CreatedAtUtc.AddDays(2));
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -532,11 +532,11 @@ public class StudentTests
         // Arrange
         var student = CreateValidStudent();
         student.SetCreatedAt(DateTimeOffset.UtcNow);
-        student.Approve(student.CreatedAtUtc.AddDays(1));
-        student.Activate();
+        student.MarkAsApproved(student.CreatedAtUtc.AddDays(1));
+        student.MarkAsActivated();
 
         // Act
-        var result = student.Reject();
+        var result = student.MarkAsRejected();
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -552,10 +552,10 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Ban();
+        student.MarkAsBanned();
 
         // Act
-        var result = student.UnBan();
+        var result = student.MarkAsUnBanned();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -567,10 +567,10 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Ban();
+        student.MarkAsBanned();
 
         // Act
-        var result = student.Approve(DateTimeOffset.UtcNow.AddDays(1));
+        var result = student.MarkAsApproved(DateTimeOffset.UtcNow.AddDays(1));
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -585,10 +585,10 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Reject();
+        student.MarkAsRejected();
 
         // Act
-        var result = student.Pend();
+        var result = student.MarkAsPend();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -600,10 +600,10 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Reject();
+        student.MarkAsRejected();
 
         // Act
-        var result = student.Ban();
+        var result = student.MarkAsBanned();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -615,10 +615,10 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Reject();
+        student.MarkAsRejected();
 
         // Act
-        var result = student.Approve(DateTimeOffset.UtcNow.AddDays(1));
+        var result = student.MarkAsApproved(DateTimeOffset.UtcNow.AddDays(1));
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -633,11 +633,11 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Ban();
-        student.UnBan();
+        student.MarkAsBanned();
+        student.MarkAsUnBanned();
 
         // Act
-        var result = student.Activate();
+        var result = student.MarkAsActivated();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -649,11 +649,11 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Ban();
-        student.UnBan();
+        student.MarkAsBanned();
+        student.MarkAsUnBanned();
 
         // Act
-        var result = student.Ban();
+        var result = student.MarkAsBanned();
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -665,11 +665,11 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.Ban();
-        student.UnBan();
+        student.MarkAsBanned();
+        student.MarkAsUnBanned();
 
         // Act
-        var result = student.Pend();
+        var result = student.MarkAsPend();
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -687,27 +687,27 @@ public class StudentTests
         student.State.Should().Be(StudentState.Pending);
 
         // Act & Assert - Approve
-        var approveResult = student.Approve(DateTimeOffset.UtcNow.AddDays(1));
+        var approveResult = student.MarkAsApproved(DateTimeOffset.UtcNow.AddDays(1));
         approveResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Approved);
 
         // Act & Assert - Activate
-        var activateResult = student.Activate();
+        var activateResult = student.MarkAsActivated();
         activateResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Active);
 
         // Act & Assert - Ban
-        var banResult = student.Ban();
+        var banResult = student.MarkAsBanned();
         banResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Banned);
 
         // Act & Assert - UnBan
-        var unbanResult = student.UnBan();
+        var unbanResult = student.MarkAsUnBanned();
         unbanResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.UnBanned);
 
         // Act & Assert - Activate again
-        var reactivateResult = student.Activate();
+        var reactivateResult = student.MarkAsActivated();
         reactivateResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Active);
     }
@@ -719,17 +719,17 @@ public class StudentTests
         var student = CreateValidStudent();
 
         // Act & Assert - Reject
-        var rejectResult = student.Reject();
+        var rejectResult = student.MarkAsRejected();
         rejectResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Rejected);
 
         // Act & Assert - Pend
-        var pendResult = student.Pend();
+        var pendResult = student.MarkAsPend();
         pendResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Pending);
 
         // Act & Assert - Ban
-        var banResult = student.Ban();
+        var banResult = student.MarkAsBanned();
         banResult.IsSuccess.Should().BeTrue();
         student.State.Should().Be(StudentState.Banned);
     }
