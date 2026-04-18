@@ -1,8 +1,10 @@
 ﻿using BookOrbit.Domain.BookCopies;
+using BookOrbit.Domain.BorrowingRequests;
 using BookOrbit.Domain.LendingListings;
+using MediatR;
 
 namespace BookOrbit.Infrastructure.Data;
-public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<AppUser>(options), IAppDbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : IdentityDbContext<AppUser>(options), IAppDbContext
 {
     public DbSet<Student> Students => Set<Student>();
 
@@ -14,9 +16,40 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
     public DbSet<LendingListRecord> LendingListRecords => Set<LendingListRecord>();
 
+    public DbSet<BorrowingRequest> BorrowingRequests => Set<BorrowingRequest>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        await DispatchDomainEventsAsync(cancellationToken);
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private async Task DispatchDomainEventsAsync(CancellationToken cancellationToken)
+    {
+        var domainEntities = ChangeTracker.Entries()
+            .Where(e => e.Entity is Entity baseEntity && baseEntity.DomainEvents.Count != 0)
+            .Select(e => (Entity)e.Entity)
+            .ToList();
+
+        var domainEvents = domainEntities
+            .SelectMany(e => e.DomainEvents)
+            .ToList();
+
+        foreach (var domainEvent in domainEvents)
+        {
+            await mediator.Publish(domainEvent, cancellationToken);
+        }
+
+        foreach (var entity in domainEntities)
+        {
+            entity.ClearDomainEvents();
+        }
+    }
+
 }

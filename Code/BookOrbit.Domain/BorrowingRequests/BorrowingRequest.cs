@@ -11,6 +11,8 @@ public class BorrowingRequest : ExpirableEntity
     public Student? BorrowingStudent { get; private set; }
     public LendingListRecord? LendingRecord { get; private set; }
 
+    public const int DefaultExpirationDays = 14;
+
     private BorrowingRequest(){ }
     private BorrowingRequest(
         Guid id, 
