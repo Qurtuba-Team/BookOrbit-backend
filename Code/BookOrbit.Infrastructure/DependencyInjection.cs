@@ -1,4 +1,4 @@
-﻿
+
 
 using BookOrbit.Application.Common.Constants;
 
@@ -66,6 +66,8 @@ static public class DependencyInjection
         services.AddScoped<AppDbContextInitialiser>();
         services.AddTransient<IEmailService, EmailService>();
         services.AddScoped<IStudentQueryService, StudentQueryService>();
+        services.AddScoped<IRecommendationService, RecommendationService>();
+        services.AddScoped<IOnboardingRepository, OnboardingRepository>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)

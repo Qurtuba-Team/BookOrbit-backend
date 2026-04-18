@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Application.Common.Interfaces;
+namespace BookOrbit.Application.Common.Interfaces;
 
 public interface IAppDbContext
 {
@@ -7,6 +7,9 @@ public interface IAppDbContext
     public DbSet<BookCopy> BookCopies { get; }
     public DbSet<RefreshToken> RefreshTokens { get; }
     public DbSet<LendingListRecord> LendingListRecords { get; }
+    public DbSet<Interest> Interests { get; }
+    public DbSet<UserInterest> UserInterests { get; }
+    public DbSet<UserBookInteraction> UserBookInteractions { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 

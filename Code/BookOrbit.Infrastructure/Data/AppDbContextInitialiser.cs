@@ -1,4 +1,4 @@
-﻿using BookOrbit.Domain.BookCopies.Enums;
+using BookOrbit.Domain.BookCopies.Enums;
 using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Books.ValueObjects;
 
@@ -156,9 +156,33 @@ public class AppDbContextInitialiser(
         await SeedBooksAndCopiesAsync();
 
         #endregion
+
+        #region Interests
+
+        await SeedInterestsAsync();
+
+        #endregion
     }
 
     #region Helpers
+
+    private async Task SeedInterestsAsync()
+    {
+        if (await context.Interests.AnyAsync())
+            return;
+
+        var interests = Enum.GetValues<BookOrbit.Application.Common.Enums.InterestType>()
+            .Select(it => new BookOrbit.Domain.Common.Entities.Interest
+            {
+                Type = (int)it,
+                Name = it.ToString()
+            })
+            .ToList();
+
+        await context.Interests.AddRangeAsync(interests);
+        await context.SaveChangesAsync();
+        logger.LogInformation("Seeded {Count} interest types.", interests.Count);
+    }
 
     private async Task SeedBooksAndCopiesAsync()
     {

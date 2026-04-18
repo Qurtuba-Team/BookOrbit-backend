@@ -1,4 +1,5 @@
-﻿using BookOrbit.Domain.BookCopies;
+using BookOrbit.Domain.BookCopies;
+using BookOrbit.Domain.Common.Entities;
 using BookOrbit.Domain.LendingListings;
 
 namespace BookOrbit.Infrastructure.Data;
@@ -13,6 +14,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
     public DbSet<BookCopy> BookCopies => Set<BookCopy>();
 
     public DbSet<LendingListRecord> LendingListRecords => Set<LendingListRecord>();
+
+    public DbSet<Interest> Interests => Set<Interest>();
+
+    public DbSet<UserInterest> UserInterests => Set<UserInterest>();
+
+    public DbSet<UserBookInteraction> UserBookInteractions => Set<UserBookInteraction>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

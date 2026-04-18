@@ -1,4 +1,4 @@
-﻿global using Asp.Versioning;
+global using Asp.Versioning;
 global using BookOrbit.Api;
 global using BookOrbit.Api.Common.Constants;
 global using BookOrbit.Api.Common.Helpers;
@@ -79,3 +79,10 @@ global using BookOrbit.Api.Contracts.Requests.LendingListRecords;
 global using BookOrbit.Application.Features.LendingListings.Dtos;
 global using BookOrbit.Application.Features.LendingListings.Queries.GetLendingListRecordById;
 global using BookOrbit.Application.Features.LendingListings.Queries.GetLendingListRecords;
+global using BookOrbit.Application.Common.Enums;
+global using BookOrbit.Application.Features.Onboarding.Commands.CompleteOnboarding;
+global using BookOrbit.Application.Features.Recommendations.Commands.RecordInteraction;
+global using BookOrbit.Application.Features.Recommendations.Queries.GetRecommendations;
+global using BookOrbit.Application.Features.Recommendations.Queries.GetTrendingBooks;
+global using BookOrbit.Api.Contracts.Requests.Onboarding;
+global using BookOrbit.Api.Contracts.Requests.Recommendations;

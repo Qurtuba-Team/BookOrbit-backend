@@ -1,4 +1,4 @@
-﻿global using BookOrbit.Application.Common.Behaviours;
+global using BookOrbit.Application.Common.Behaviours;
 global using BookOrbit.Application.Common.Constants;
 global using BookOrbit.Application.Common.Errors;
 global using BookOrbit.Application.Common.Helpers;
@@ -42,3 +42,11 @@ global using BookOrbit.Domain.LendingListings.Enums;
 global using BookOrbit.Application.Features.LendingListings.Dtos;
 global using BookOrbit.Application.Features.LendingListings.Queries.GetLendingListRecords;
 global using BookOrbit.Application.Features.BookCopies;
+global using BookOrbit.Application.Common.Enums;
+global using BookOrbit.Domain.Students.Enums;
+global using BookOrbit.Domain.Common.Entities;
+global using BookOrbit.Application.Features.Onboarding;
+global using BookOrbit.Application.Features.Onboarding.Commands.CompleteOnboarding;
+global using BookOrbit.Application.Features.Recommendations.Commands.RecordInteraction;
+global using BookOrbit.Application.Features.Recommendations.Queries.GetRecommendations;
+global using BookOrbit.Application.Features.Recommendations.Queries.GetTrendingBooks;
