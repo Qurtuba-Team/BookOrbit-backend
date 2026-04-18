@@ -35,7 +35,7 @@ public class StudentOwnerShipHandler(
         }
 
         var idRouteValue = contextAccessor.HttpContext?
-            .Request.RouteValues["id"]?.ToString();
+            .Request.RouteValues["studentId"]?.ToString();
 
         if (!Guid.TryParse(idRouteValue, out var routeStudentId))
         {

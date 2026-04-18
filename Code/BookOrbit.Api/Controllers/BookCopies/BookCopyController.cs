@@ -10,7 +10,7 @@ public class BookCopyController(
     ISender sender) : ApiController
 {
 
-    [HttpPost("students/{id:guid}/books/copies")]
+    [HttpPost("students/{studentId:guid}/books/copies")]
     [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
     [ProducesResponseType(typeof(BookCopyDtoWithBookDetails), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -21,10 +21,10 @@ public class BookCopyController(
     [EndpointName("CreateBookCopy")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookCopyDtoWithBookDetails>> CreateBookCopy([FromRoute] Guid id, [FromBody] CreateBookCopyRequest request, CancellationToken ct)
+    public async Task<ActionResult<BookCopyDtoWithBookDetails>> CreateBookCopy([FromRoute] Guid studentId, [FromBody] CreateBookCopyRequest request, CancellationToken ct)
     {
         var command = new CreateBookCopyCommand(
-            id,
+            studentId,
             request.BookId,
             request.Condition);
 
@@ -33,14 +33,14 @@ public class BookCopyController(
         return result.Match(
        bookDto => CreatedAtRoute(
        routeName: "GetBookCopyById",
-       routeValues: new { version = "1.0", id = bookDto.Id },
+       routeValues: new { version = "1.0", bookCopyId = bookDto.Id },
        value: bookDto),
 
        e => Problem(e, HttpContext));
     }
 
 
-    [HttpPatch("books/copies/{id:guid}")]
+    [HttpPatch("books/copies/{bookCopyId:guid}")]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -54,11 +54,11 @@ public class BookCopyController(
     [EndpointName("UpdateBookCopy")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> UpdateBookCopy([FromRoute] Guid id, [FromBody] UpdateBookCopyRequest request, CancellationToken ct)
+    public async Task<ActionResult> UpdateBookCopy([FromRoute] Guid bookCopyId, [FromBody] UpdateBookCopyRequest request, CancellationToken ct)
     {
         var result = await sender.Send(
             new UpdateBookCopyCommand(
-                id,
+                bookCopyId,
             request.Condition),
             ct);
 
@@ -69,7 +69,7 @@ public class BookCopyController(
 
 
 
-    [HttpGet("books/copies/{id:guid}", Name = "GetBookCopyById")]
+    [HttpGet("books/copies/{bookCopyId:guid}", Name = "GetBookCopyById")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(BookCopyDtoWithBookDetails), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -83,9 +83,9 @@ public class BookCopyController(
     [MapToApiVersion("1.0")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookCopyDtoWithBookDetails>> GetBookCopyById([FromRoute] Guid id, CancellationToken ct)
+    public async Task<ActionResult<BookCopyDtoWithBookDetails>> GetBookCopyById([FromRoute] Guid bookCopyId, CancellationToken ct)
     {
-        var query = new GetBookCopyByIdQuery(id);
+        var query = new GetBookCopyByIdQuery(bookCopyId);
 
         var result = await sender.Send(query, ct);
 
@@ -95,7 +95,7 @@ public class BookCopyController(
     }
 
 
-    [HttpGet("books/{id:guid}/copies")]
+    [HttpGet("books/{bookId:guid}/copies")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(PaginatedList<BookCopyListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -107,7 +107,7 @@ public class BookCopyController(
     [EndpointName("GetBookCopiesByBookId")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookCopyListItemDto>> GetBookCopiesByBookId([FromRoute] Guid id, [FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
+    public async Task<ActionResult<BookCopyListItemDto>> GetBookCopiesByBookId([FromRoute] Guid bookId, [FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
     {
         var query = new GetBookCopiesQuery(
             request.Page,
@@ -115,7 +115,7 @@ public class BookCopyController(
             request.SearchTerm,
             request.SortColumn,
             request.SortDirection,
-            BookId: id,
+            BookId: bookId,
             OwnerId: null,
             request.Conditions,
             request.States);
@@ -127,7 +127,7 @@ public class BookCopyController(
            e => Problem(e, HttpContext));
     }
 
-    [HttpGet("students/{id:guid}/books/copies")]
+    [HttpGet("students/{studentId:guid}/books/copies")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(PaginatedList<BookCopyListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -139,7 +139,7 @@ public class BookCopyController(
     [EndpointName("GetBookCopiesByStudentId")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookCopyListItemDto>> GetBookCopiesByStudentId([FromRoute] Guid id, [FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
+    public async Task<ActionResult<BookCopyListItemDto>> GetBookCopiesByStudentId([FromRoute] Guid studentId, [FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
     {
         var query = new GetBookCopiesQuery(
             request.Page,
@@ -148,7 +148,7 @@ public class BookCopyController(
             request.SortColumn,
             request.SortDirection,
             BookId: null,
-            OwnerId: id,
+            OwnerId: studentId,
             request.Conditions,
             request.States);
 
@@ -193,7 +193,7 @@ public class BookCopyController(
     }
 
 
-    [HttpPost("students/{id:guid}/books/copies/{copyid:guid}/list")]
+    [HttpPost("students/{studentId:guid}/books/copies/{bookCopyId:guid}/list")]
     [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
     [ProducesResponseType(typeof(LendingListRecordDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -207,10 +207,10 @@ public class BookCopyController(
     [EndpointName("AddBookCopyToLendingList")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<LendingListRecordDto>> AddBookCopyToLendingList([FromRoute] Guid id, [FromRoute] Guid copyid, [FromQuery] int borrowingDurationInDays, CancellationToken ct)
+    public async Task<ActionResult<LendingListRecordDto>> AddBookCopyToLendingList([FromRoute] Guid studentId, [FromRoute] Guid bookCopyId, [FromQuery] int borrowingDurationInDays, CancellationToken ct)
     {
         var result = await sender.Send(
-    new CreateLendingListRecordCommand(copyid, id, borrowingDurationInDays
+    new CreateLendingListRecordCommand(bookCopyId, studentId, borrowingDurationInDays
         ),
     ct);
 

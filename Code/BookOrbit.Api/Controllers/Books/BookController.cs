@@ -49,14 +49,14 @@ public class BookController(
         return result.Match(
            bookDto => CreatedAtRoute(
                routeName: "GetBookById",
-               routeValues: new { version = "1.0", id = bookDto.Id },
+               routeValues: new { version = "1.0", bookId = bookDto.Id },
                value: bookDto),
 
            e => Problem(e, HttpContext));
     }
 
 
-    [HttpPatch("{id:guid}")]
+    [HttpPatch("{bookId:guid}")]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -70,11 +70,11 @@ public class BookController(
     [EndpointName("UpdateBook")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> UpdateBook([FromRoute] Guid id, [FromBody] UpdateBookRequest request, CancellationToken ct)
+    public async Task<ActionResult> UpdateBook([FromRoute] Guid bookId, [FromBody] UpdateBookRequest request, CancellationToken ct)
     {
         var result = await sender.Send(
             new UpdateBookCommand(
-                id,
+                bookId,
             request.Title),
             ct);
 
@@ -84,7 +84,7 @@ public class BookController(
     }
 
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete("{bookId:guid}")]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -98,11 +98,11 @@ public class BookController(
     [EndpointName("DeleteBookById")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> DeleteBookById([FromRoute] Guid id, CancellationToken ct)
+    public async Task<ActionResult> DeleteBookById([FromRoute] Guid bookId, CancellationToken ct)
     {
         var result = await sender.Send(
             new DeleteBookCommand(
-                id),
+                bookId),
             ct);
 
         return result.Match(
@@ -112,7 +112,7 @@ public class BookController(
 
 
 
-    [HttpGet("{id:guid}", Name = "GetBookById")]
+    [HttpGet("{bookId:guid}", Name = "GetBookById")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(BookDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -126,9 +126,9 @@ public class BookController(
     [MapToApiVersion("1.0")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookDto>> GetBookById([FromRoute] Guid id, CancellationToken ct)
+    public async Task<ActionResult<BookDto>> GetBookById([FromRoute] Guid bookId, CancellationToken ct)
     {
-        var query = new GetBookByIdQuery(id);
+        var query = new GetBookByIdQuery(bookId);
 
         var result = await sender.Send(query, ct);
 

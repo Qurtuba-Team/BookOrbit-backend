@@ -72,14 +72,14 @@ public class StudentAccountController(
         return result.Match(
            studentDto => CreatedAtRoute(
                routeName: "GetStudentById",
-               routeValues: new { version = "1.0", id = studentDto.Id },
+               routeValues: new { version = "1.0", studentId = studentDto.Id },
                value: studentDto),
 
            e => Problem(e, HttpContext));
     }
 
 
-    [HttpPatch("{id:guid}")]
+    [HttpPatch("{studentId:guid}")]
     [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -93,9 +93,9 @@ public class StudentAccountController(
     [EndpointName("UpdateStudent")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
-    public async Task<ActionResult> UpdateStudent([FromRoute] Guid id, [FromForm] UpdateStudentRequest request, CancellationToken ct)
+    public async Task<ActionResult> UpdateStudent([FromRoute] Guid studentId, [FromForm] UpdateStudentRequest request, CancellationToken ct)
     {
-        var imageFileNameResult = await sender.Send(new GetStudentPersonalPhotoFileNameByIdQuery(id),ct);
+        var imageFileNameResult = await sender.Send(new GetStudentPersonalPhotoFileNameByIdQuery(studentId),ct);
 
         if(imageFileNameResult.IsFailure)
             return Problem(imageFileNameResult.Errors, HttpContext);
@@ -116,7 +116,7 @@ public class StudentAccountController(
 
         var result = await sender.Send(
             new UpdateStudentCommand(
-                id,
+                studentId,
             request.Name,
             imageFileName),
             ct);

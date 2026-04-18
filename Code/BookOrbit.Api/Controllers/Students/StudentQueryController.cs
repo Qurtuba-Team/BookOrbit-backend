@@ -40,7 +40,7 @@ public class StudentQueryController(
 
 
 
-    [HttpGet("{id:guid}", Name = "GetStudentById")]
+    [HttpGet("{studentId:guid}", Name = "GetStudentById")]
     [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
     [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -54,9 +54,9 @@ public class StudentQueryController(
     [MapToApiVersion("1.0")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<StudentDto>> GetStudentById([FromRoute] Guid id, CancellationToken ct)
+    public async Task<ActionResult<StudentDto>> GetStudentById([FromRoute] Guid studentId, CancellationToken ct)
     {
-        var query = new GetStudentByIdQuery(id);
+        var query = new GetStudentByIdQuery(studentId);
 
         var result = await sender.Send(query, ct);
 

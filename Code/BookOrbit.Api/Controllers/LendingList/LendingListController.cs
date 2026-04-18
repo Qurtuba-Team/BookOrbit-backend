@@ -7,7 +7,7 @@
 public class LendingListController(
     ISender sender) : ApiController
 {
-    [HttpGet("{id:guid}")]
+    [HttpGet("{lendingListRecordId:guid}")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(LendingListRecordDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -21,9 +21,9 @@ public class LendingListController(
     [MapToApiVersion("1.0")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<LendingListRecordDto>> GetLendingListRecordById([FromRoute]Guid id,CancellationToken ct)
+    public async Task<ActionResult<LendingListRecordDto>> GetLendingListRecordById([FromRoute] Guid lendingListRecordId, CancellationToken ct)
     {
-        var query = new GetLendingListRecordByIdQuery(id);
+        var query = new GetLendingListRecordByIdQuery(lendingListRecordId);
 
         var result = await sender.Send(query, ct);
 

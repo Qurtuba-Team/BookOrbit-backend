@@ -27,7 +27,7 @@ public class RegisteredUserOwnershipHandler(
         }
 
         var usertIdRouteValue = contextAccessor.HttpContext?
-            .Request.RouteValues["id"]?.ToString();
+            .Request.RouteValues["userId"]?.ToString();
 
         var isOwner = userId == usertIdRouteValue;
 

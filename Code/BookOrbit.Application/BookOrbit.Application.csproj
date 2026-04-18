@@ -20,6 +20,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Features\BorrowingRequests\Commands\CreateBorrowingRequest\" />
+	  <Folder Include="Features\BorrowingRequests\Dtos\" />
+	  <Folder Include="Features\BorrowingRequests\Queries\GetBorrowingRequestById\" />
+	  <Folder Include="Features\BorrowingRequests\Queries\GetBorrowingRequests\" />
 	  <Folder Include="Features\LendingListings\StateMachien\" />
 	</ItemGroup>
 

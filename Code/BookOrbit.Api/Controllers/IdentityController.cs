@@ -78,7 +78,7 @@ public class IdentityController(ISender sender, IEmailService emailService,ICurr
 
 
 
-    [HttpPost("users/{id}/send-email-confirmation")]
+    [HttpPost("users/{userId}/send-email-confirmation")]
     [Authorize(Policy = PoliciesNames.RegisteredUserOwnershipPolicy)]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -93,15 +93,15 @@ public class IdentityController(ISender sender, IEmailService emailService,ICurr
     [EndpointDescription("Generates an email confirmation token for the specified user account and sends a confirmation message that contains the verification link.")]
     [EndpointName("SendEmailConfirmation")]
     [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
-    public async Task<ActionResult> SendEmailConfirmation([FromRoute] string Id, CancellationToken ct)
+    public async Task<ActionResult> SendEmailConfirmation([FromRoute] string userId, CancellationToken ct)
     {
-        var confirmationResult = await sender.Send(new GenerateEmailConfirmationTokenCommand(Id), ct);
+        var confirmationResult = await sender.Send(new GenerateEmailConfirmationTokenCommand(userId), ct);
 
         if (confirmationResult.IsFailure)
             return Problem(confirmationResult.Errors, HttpContext);
 
         var link = Url.RouteUrl("ConfirmEmail",
-        new { Id, token = confirmationResult.Value.encodedConfirmationToken, version = "1.0" },
+        new { Id = userId, token = confirmationResult.Value.encodedConfirmationToken, version = "1.0" },
         Request.Scheme);
 
         await emailService.SendEmailAsync(
