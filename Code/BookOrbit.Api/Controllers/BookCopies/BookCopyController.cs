@@ -1,5 +1,4 @@
 ﻿using BookOrbit.Application.Features.LendingListings.Commands.CreateLendingListRecord;
-using BookOrbit.Application.Features.LendingListings.Dtos;
 
 namespace BookOrbit.Api.Controllers.BookCopies;
 
@@ -7,11 +6,12 @@ namespace BookOrbit.Api.Controllers.BookCopies;
 [ApiVersion("1.0")]
 [Authorize]
 public class BookCopyController(
-    ISender sender) : ApiController
+    ISender sender,
+    ICurrentUser currentUser) : ApiController
 {
 
-    [HttpPost("students/{studentId:guid}/books/copies")]
-    [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
+    [HttpPost("students/me/books/copies")]
+    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
     [ProducesResponseType(typeof(BookCopyDtoWithBookDetails), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -21,10 +21,17 @@ public class BookCopyController(
     [EndpointName("CreateBookCopy")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookCopyDtoWithBookDetails>> CreateBookCopy([FromRoute] Guid studentId, [FromBody] CreateBookCopyRequest request, CancellationToken ct)
+    public async Task<ActionResult<BookCopyDtoWithBookDetails>> CreateBookCopy([FromBody] CreateBookCopyRequest request, CancellationToken ct)
     {
+        var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentFound.IsFailure)
+        {
+            return Problem(studentFound.Errors, HttpContext);
+        }
+
         var command = new CreateBookCopyCommand(
-            studentId,
+            studentFound.Value.Id,
             request.BookId,
             request.Condition);
 
@@ -193,8 +200,10 @@ public class BookCopyController(
     }
 
 
-    [HttpPost("students/{studentId:guid}/books/copies/{bookCopyId:guid}/list")]
-    [Authorize(Policy = PoliciesNames.StudentOwnershipPolicy)]
+
+
+    [HttpPost("students/me/books/copies/{bookCopyId:guid}/list")]
+    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
     [ProducesResponseType(typeof(LendingListRecordDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -207,12 +216,18 @@ public class BookCopyController(
     [EndpointName("AddBookCopyToLendingList")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<LendingListRecordDto>> AddBookCopyToLendingList([FromRoute] Guid studentId, [FromRoute] Guid bookCopyId, [FromQuery] int borrowingDurationInDays, CancellationToken ct)
+    public async Task<ActionResult<LendingListRecordDto>> AddBookCopyToLendingList([FromRoute] Guid bookCopyId, [FromQuery] int borrowingDurationInDays, CancellationToken ct)
     {
+        var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if(studentFound.IsFailure)
+        {
+            return Problem(studentFound.Errors, HttpContext);
+        }
+
         var result = await sender.Send(
-    new CreateLendingListRecordCommand(bookCopyId, studentId, borrowingDurationInDays
-        ),
-    ct);
+            new CreateLendingListRecordCommand(bookCopyId, studentFound.Value.Id, borrowingDurationInDays),
+            ct);
 
         return result.Match(
            response => Created(string.Empty, response),

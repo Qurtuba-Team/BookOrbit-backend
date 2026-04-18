@@ -418,8 +418,19 @@ FodyWeavers.xsd
 *.msp
 Code/.dotnet-cli/
 Code/containers/
-Code/BookOrbit.Api/uploads/*
-!Code\BookOrbit.Api\uploads\Students\DefaultStudentImage.png
-Code/BookOrbit.Api/Requests.http
 *.aspNetCertificateSentinel
 *.dotnetUserLevelCache
+
+# Ignore everything inside uploads
+Code/BookOrbit.Api/uploads/*
+
+# Allow uploads folder itself
+!Code/BookOrbit.Api/uploads/
+
+# Allow specific subfolders
+!Code/BookOrbit.Api/uploads/students/
+!Code/BookOrbit.Api/uploads/books/
+
+# Allow only specific files
+!Code/BookOrbit.Api/uploads/students/DefaultStudentImage.png
+!Code/BookOrbit.Api/uploads/books/DefaultBookCoverImage.png
