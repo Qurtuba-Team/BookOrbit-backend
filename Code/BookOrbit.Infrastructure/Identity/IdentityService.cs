@@ -120,59 +120,6 @@ public class IdentityService(
     public async Task<bool> UserEmailExists(string email, CancellationToken ct = default) =>
          await userManager.Users.AnyAsync(u => u.Email == email, ct);
 
-    public async Task<Result<EmailConfirmationTokenDto>> GenerateEmailConfirmationTokenAsync(string userId, CancellationToken ct = default)
-    {
-        var user = await userManager.FindByIdAsync(userId);
-
-        if (user is null)
-            return InfrastructureIdentityErrors.UserNotFoundById;
-
-        if (string.IsNullOrWhiteSpace(user.Email))
-        {
-            logger.LogError("User {userId} Has No Email Related To It",user.Id);
-            return InfrastructureIdentityErrors.UserNotFoundByEmail;
-        }
-
-        if (user.EmailConfirmed)
-            return InfrastructureIdentityErrors.EmailAlreadyConfirmed;
-
-        var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
-
-        var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
-
-        return new EmailConfirmationTokenDto(encodedToken,user.Email);
-    }
-
-    public async Task<Result<Updated>> ConfirmEmailAsync(string userId, string encodedToken, CancellationToken ct = default)
-    {
-        var user = await userManager.FindByIdAsync(userId);
-
-        if (user is null)
-            return InfrastructureIdentityErrors.UserNotFoundById;
-
-        if (user.EmailConfirmed)
-            return InfrastructureIdentityErrors.EmailAlreadyConfirmed;
-
-        string decodedToken;
-
-        try
-        {
-            decodedToken = Encoding.UTF8.GetString(
-                WebEncoders.Base64UrlDecode(encodedToken));
-        }
-        catch
-        {
-            return InfrastructureIdentityErrors.InvalidEmailConfirmationToken;
-        }
-
-        var result = await userManager.ConfirmEmailAsync(user, decodedToken);
-
-        if (!result.Succeeded)
-            return InfrastructureIdentityErrors.InvalidEmailConfirmationToken;
-
-        return Result.Updated;
-    }
-
     public async Task<Result<bool>> IsEmailConfirmedAsync(string userId, CancellationToken ct = default)
     {
         var user = await userManager.FindByIdAsync(userId);

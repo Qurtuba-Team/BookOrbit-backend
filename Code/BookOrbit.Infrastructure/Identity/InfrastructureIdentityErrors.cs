@@ -11,4 +11,5 @@ static public class InfrastructureIdentityErrors
     static public readonly Error UserCreationFaild = ApplicationCommonErrors.CustomFailure(ClassName, "UserCreationFaild", "Failed To Create User");
     static public readonly Error UserDeletionFailed = ApplicationCommonErrors.CustomFailure(ClassName, "UserDeletionFaild", "Faild to Delete User");
     static public readonly Error InvalidEmailConfirmationToken = ApplicationCommonErrors.CustomValidation(ClassName, "InvalidEmailConfirmationToken","Email confirmation token is not valid");
+    static public readonly Error UserNotAuthenticated = ApplicationCommonErrors.CustomUnauthorized(ClassName, "UserNotAuthenticated", "User is not authenticated.");
 }
