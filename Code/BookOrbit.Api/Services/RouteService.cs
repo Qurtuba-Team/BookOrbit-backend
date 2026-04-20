@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 namespace BookOrbit.Api.Services;
 public class RouteService(
     LinkGenerator linkGenerator,
-    IOptions<AppSettings> appSettings) : IRouteService
+    IOptionsSnapshot<AppSettings> appSettings) : IRouteService
 {
     private readonly AppSettings _settings = appSettings.Value;
 
