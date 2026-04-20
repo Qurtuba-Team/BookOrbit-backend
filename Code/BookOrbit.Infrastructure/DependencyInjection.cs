@@ -67,6 +67,9 @@ static public class DependencyInjection
         services.AddTransient<IEmailService, EmailService>();
         services.AddScoped<IStudentQueryService, StudentQueryService>();
         services.AddTransient<IEmailConfirmationService, EmailConfirmationService>();
+        services.AddTransient<IRouteService, RouteService>();
+        services.AddTransient<IPasswordService, PasswordService>();
+        services.AddTransient<IEmailFormatService, EmailFormatService>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)

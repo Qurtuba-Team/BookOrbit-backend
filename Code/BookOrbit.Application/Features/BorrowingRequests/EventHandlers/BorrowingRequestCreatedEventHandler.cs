@@ -4,7 +4,8 @@ namespace BookOrbit.Application.Features.BorrowingRequests.EventHandlers;
 public class BorrowingRequestCreatedEventHandler(
     IEmailService emailService,
     IAppDbContext context,
-    ILogger<BorrowingRequestCreatedEventHandler>logger) : INotificationHandler<BorrowingRequestCreatedEvent>
+    ILogger<BorrowingRequestCreatedEventHandler>logger,
+    IEmailFormatService emailFormatService) : INotificationHandler<BorrowingRequestCreatedEvent>
 {
     public async Task Handle(BorrowingRequestCreatedEvent notification, CancellationToken ct)
     {
@@ -29,12 +30,26 @@ public class BorrowingRequestCreatedEventHandler(
         }
 
         string subject = $"New borrowing request for your copy of the book: {ownerDataResult.Booktitle}";
-        string body = $"A new borrowing request has been created for your copy of the book: {ownerDataResult.Booktitle}. Please log in to your account to review the request and take appropriate action.";
-        await emailService.SendEmailAsync(
+
+        var emailFormatResult = emailFormatService.BookCopyRequestedEmailFormat(ownerDataResult.Booktitle);
+
+        if (emailFormatResult.IsFailure)
+        {
+            logger.LogWarning("Email format generation failed for email {Email}: {Errors}",
+                ownerDataResult.email,
+                emailFormatResult.Errors);
+            return;
+        }
+
+
+        var emailResult = await emailService.SendEmailAsync(
             ownerDataResult.email,
             subject,
-            body
+            emailFormatResult.Value
         );
+
+        //Dont Use Emali Result , even if the email fails to send, we dont want to fail the borrowing request creation process, we just log the error and move on
+        //Dont Log Here , Email Service should handle the logging of email sending success or failure, we just log the fact that we attempted to send an email notification for the borrowing request creation event
 
         logger.LogInformation("Email notification sent to {Email} for borrowing request with id {BorrowingRequestId} and lending record id {LendingRecordId}", ownerDataResult.email, notification.BorrowingRequestId, notification.LendingRecordId);
     }

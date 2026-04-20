@@ -11,4 +11,5 @@ static public class IdentityApplicationErrors
     static public readonly Error UserIdClaimInvalid = DomainCommonErrors.InvalidProp(ClassName, "UserIdClaim", "User Id Claim");
     static public readonly Error RefreshTokenExpired = DomainCommonErrors.CustomUnAuthorized(ClassName, "RefreshTokenExpired", "This refresh token has expired");
     static public readonly Error EmailConfirmationTokenRequired = DomainCommonErrors.RequiredProp(ClassName, "EmailConfirmationRefreshToken", "Email Confirmation Refresh Token");
+    static public readonly Error PasswordResetTokenRequired = DomainCommonErrors.RequiredProp(ClassName, "PasswordResetToken", "Password Reset Token");
 }

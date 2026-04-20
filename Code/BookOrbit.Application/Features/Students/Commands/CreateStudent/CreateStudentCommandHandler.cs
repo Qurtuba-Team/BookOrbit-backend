@@ -1,6 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-using BookOrbit.Domain.Students.DomainEvents;
+﻿using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Application.Features.Students.Commands.CreateStudent;
 

@@ -1,5 +1,6 @@
 ﻿namespace BookOrbit.Application.Common.Interfaces;
 public interface IRouteService
 {
-   Result<string> GetRouteByName(string? routeName, object? values);
+    string GetEmailConfirmationRoute(string email,string token);
+    string GetResetPasswordRoute(string email, string token);
 }

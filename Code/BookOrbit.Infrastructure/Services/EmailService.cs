@@ -1,4 +1,6 @@
-﻿namespace BookOrbit.Infrastructure.Services;
+﻿using BookOrbit.Infrastructure.Common.Errors;
+
+namespace BookOrbit.Infrastructure.Services;
 
 public class EmailService(
     IOptions<EmailSettings> settings,
@@ -6,7 +8,7 @@ public class EmailService(
 {
     private readonly EmailSettings _settings = settings.Value;
 
-    public async Task SendEmailAsync(string emailAddress, string subject, string body)
+    public async Task<Result<Success>> SendEmailAsync(string emailAddress, string subject, string body)
     {
         using var client = new SmtpClient(_settings.Host, _settings.Port)
         {
@@ -27,10 +29,12 @@ public class EmailService(
         try
         {
             await client.SendMailAsync(mailMessage);
+            return Result.Success;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Email Service Is Not Working");
+            return InfrastructureEmailErrors.EmailServiceError;
         }
     }
 }

@@ -2,7 +2,8 @@
 
 namespace BookOrbit.Infrastructure.Services;
 public class EmailConfirmationService(
-    UserManager<AppUser> userManager) : IEmailConfirmationService
+    UserManager<AppUser> userManager,
+    ILogger<EmailConfirmationService> logger) : IEmailConfirmationService
 {
     public async Task<Result<EmailConfirmationTokenDto>> GenerateEmailConfirmationTokenAsync(string email, CancellationToken ct = default)
     {
@@ -38,8 +39,9 @@ public class EmailConfirmationService(
             decodedToken = Encoding.UTF8.GetString(
                 WebEncoders.Base64UrlDecode(encodedToken));
         }
-        catch
+        catch(Exception ex)
         {
+            logger.LogError(ex, "Failed to decode the email confirmation token for email: {Email}", email);
             return InfrastructureIdentityErrors.InvalidEmailConfirmationToken;
         }
 

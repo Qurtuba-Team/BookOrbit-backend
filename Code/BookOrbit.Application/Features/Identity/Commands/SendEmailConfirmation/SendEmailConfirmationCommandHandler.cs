@@ -2,8 +2,9 @@
 public class SendEmailConfirmationCommandHandler(
     IEmailConfirmationService emailConfirmationService,
     ILogger<SendEmailConfirmationCommandHandler> logger,
+    IEmailService emailService,
     IRouteService routeService,
-    IEmailService emailService) : IRequestHandler<SendEmailConfirmationCommand, Result<Success>>
+    IEmailFormatService emailFormatService) : IRequestHandler<SendEmailConfirmationCommand, Result<Success>>
 {
     public async Task<Result<Success>> Handle(SendEmailConfirmationCommand command, CancellationToken ct)
     {
@@ -18,21 +19,27 @@ public class SendEmailConfirmationCommandHandler(
         }
 
 
-        var linkResult = routeService.GetRouteByName("ConfirmEmail",
-        new { email = command.Email, token = encodedConfirmationTokenResult.Value.EncodedConfirmationToken, version = "1.0" });
 
-        if (linkResult.IsFailure)
+        var linkResult = routeService.GetEmailConfirmationRoute(encodedConfirmationTokenResult.Value.Email, encodedConfirmationTokenResult.Value.EncodedConfirmationToken);
+
+        var emailFormatResult = emailFormatService.ConfirmEmailFormat(linkResult);
+
+        if (emailFormatResult.IsFailure)
         {
-            logger.LogError("Failed to generate email confirmation link for email {Email}: {Errors}",
+            logger.LogWarning("Email format generation failed for email {Email}: {Errors}",
                 command.Email,
-                linkResult.Errors);
-            return linkResult.Errors;
+                emailFormatResult.Errors);
+            return emailFormatResult.Errors;
         }
 
-        await emailService.SendEmailAsync(
-            encodedConfirmationTokenResult.Value.Email,
-            "Confirm your email",
-            $"Click here: <a href='{linkResult.Value}'>Confirm</a>");
+
+        var emailResult = await emailService.SendEmailAsync(
+   encodedConfirmationTokenResult.Value.Email,
+   "Confirm your email",
+   emailFormatResult.Value);
+
+        if (emailResult.IsFailure)
+            return emailResult.Errors;
 
         return Result.Success;
     }

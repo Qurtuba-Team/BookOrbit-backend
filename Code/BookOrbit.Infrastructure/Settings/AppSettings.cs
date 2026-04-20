@@ -3,5 +3,4 @@ public class AppSettings
 {
     public string CorsPolicyName { get; set; } = string.Empty;
     public string[] AllowedOrigins { get; set; } = [];
-    public string BaseUrl { get; set; } = string.Empty;
 }
