@@ -6,9 +6,212 @@
   },
   "item": [
     {
+      "id": "224f9eed-3527-4226-bdf0-9a0058a3aeb9",
+      "name": "BorrowingRequests",
+      "item": [
+        {
+          "id": "f5708702-dccc-4d8a-9206-195f40d5fe8f",
+          "name": "Get Borrowing Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&LendingListRecordId=859ecb24-56fd-47d0-95b0-43ee6d6912c5",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": ""
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "LendingListRecordId",
+                  "value": "859ecb24-56fd-47d0-95b0-43ee6d6912c5"
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "d28f3aaf-41ee-4a2a-8f46-977dcef0c243",
+          "name": "Get Borrowing Request By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "{{borrowingrequestid}}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "7c89bacc-5dc0-4782-a0fc-e92b1449b3b3",
+          "name": "Create Borrowing Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist",
+                "{{lendinglistrecordid}}",
+                "request"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('borrowingrequestid', json.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "c9a82470-7e2f-4e2c-84d9-90e23e7ea0e9",
       "name": "Identity",
       "item": [
+        {
+          "id": "2c57b098-cb33-4fa2-b9ea-ed295d605a3b",
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/users/me/change-password",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "me",
+                "change-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"OldPassword\":\"\",\"NewPassword\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "af3db29b-f31f-4a7d-9e83-9a488544de34",
+          "name": "Send Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/users/send-reset-password?email=",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "send-reset-password"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": ""
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            }
+          }
+        },
         {
           "id": "cc6260dd-4681-4708-bdec-f77674f34b4a",
           "name": "Refresh Token",
@@ -21,8 +224,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/identity/token/refresh",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/identity/token/refresh",
               "host": [
                 "{{baseurl}}"
               ],
@@ -70,8 +272,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/identity/users/{{userid}}/send-email-confirmation",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/identity/users/send-email-confirmation?email=eyadred123345a@std.mans.edu.eg",
               "host": [
                 "{{baseurl}}"
               ],
@@ -80,8 +281,13 @@
                 "v1",
                 "identity",
                 "users",
-                "{{userid}}",
                 "send-email-confirmation"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "eyadred123345a@std.mans.edu.eg"
+                }
               ]
             }
           }
@@ -98,8 +304,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/identity/token",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/identity/token",
               "host": [
                 "{{baseurl}}"
               ],
@@ -112,7 +317,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student5@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"eyadreda@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -146,8 +351,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/identity/users/me",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/identity/users/me",
               "host": [
                 "{{baseurl}}"
               ],
@@ -172,6 +376,71 @@
               }
             }
           ]
+        },
+        {
+          "id": "92635b6a-c5ef-417d-b564-371c0d709dea",
+          "name": "To be called From Specific Pages",
+          "item": [
+            {
+              "id": "9498fc55-a4bc-4fd5-b5e0-50147ce025b9",
+              "name": "Confirm Email",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/identity/confirm-email?email=&token=",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "identity",
+                    "confirm-email"
+                  ],
+                  "query": [
+                    {
+                      "key": "email",
+                      "value": ""
+                    },
+                    {
+                      "key": "token",
+                      "value": ""
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "6789a692-27a3-4af2-acb6-440040013aa1",
+              "name": "Reset Password",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/identity/reset-password",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "identity",
+                    "reset-password"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"email\":\"\",\"encodedtoken\":\"\",\"newpassword\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
         }
       ]
     },
@@ -191,8 +460,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/books",
               "host": [
                 "{{baseurl}}"
               ],
@@ -273,8 +541,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -344,8 +611,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -388,8 +654,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books?Page=1&PageSize=5",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/books?Page=1&PageSize=5",
               "host": [
                 "{{baseurl}}"
               ],
@@ -443,8 +708,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -553,8 +817,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/students/me/books/{{bookid}}/copies",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/students/me/books/{{bookid}}/copies",
               "host": [
                 "{{baseurl}}"
               ],
@@ -603,8 +866,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -644,8 +906,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}/copies?Page=1&PageSize=5&SearchTerm=&SortColumn=&SortDirection=booktitle",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/books/{{bookid}}/copies?Page=1&PageSize=5&SearchTerm=&SortColumn=&SortDirection=booktitle",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -708,8 +969,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -736,8 +996,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/books/copies?Page=1&PageSize=15",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/books/copies?Page=1&PageSize=15",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -805,8 +1064,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/books/copies?Page=1&PageSize=55",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/books/copies?Page=1&PageSize=55",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -877,8 +1135,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/me/books/copies/{{bookcopyid}}/list?borrowingDurationInDays=30",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/me/books/copies/{{bookcopyid}}/list?borrowingDurationInDays=30",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -928,8 +1185,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://{{baseurl}}/metrics",
-              "protocol": "https",
+              "raw": "{{baseurl}}/metrics",
               "host": [
                 "{{baseurl}}"
               ],
@@ -946,8 +1202,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://{{baseurl}}/openapi/v1.json",
-              "protocol": "https",
+              "raw": "{{baseurl}}/openapi/v1.json",
               "host": [
                 "{{baseurl}}"
               ],
@@ -965,8 +1220,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://{{baseurl}}/health",
-              "protocol": "https",
+              "raw": "{{baseurl}}/health",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1141,8 +1395,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/images/students/{{studentid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/images/students/{{studentid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1168,8 +1421,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/images/books/{{bookid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/images/books/{{bookid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1205,8 +1457,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1243,12 +1494,12 @@
                   {
                     "key": "Authorization",
                     "value": "Bearer {{accesstoken}}",
+                    "disabled": true,
                     "description": "NOT REQUIRED , But For Created By Column If User Is Authorized"
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1263,17 +1514,17 @@
                   "formdata": [
                     {
                       "key": "Name",
-                      "value": "Eyad Reda",
+                      "value": "Eyad Redsa",
                       "type": "text"
                     },
                     {
                       "key": "PhoneNumber",
-                      "value": "01025456587",
+                      "value": "01055446587",
                       "type": "text"
                     },
                     {
                       "key": "TelegramUserId",
-                      "value": "EyadDev12353",
+                      "value": "EyadDev122353322",
                       "type": "text"
                     },
                     {
@@ -1283,7 +1534,7 @@
                     },
                     {
                       "key": "UniversityMailAddress",
-                      "value": "eyadreda@std.mans.edu.eg",
+                      "value": "eyadred123345a@std.mans.edu.eg",
                       "type": "text"
                     },
                     {
@@ -1325,8 +1576,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/approve",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/approve",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1352,8 +1602,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/ban",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/ban",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1379,8 +1628,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/unban",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/unban",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1406,8 +1654,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/reject",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/reject",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1433,8 +1680,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/activate",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/activate",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1467,8 +1713,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students?Page=1&PageSize=20",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students?Page=1&PageSize=20",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1552,8 +1797,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1578,8 +1822,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/me",
-                  "protocol": "https",
+                  "raw": "{{baseurl}}/api/v1/students/me",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1613,6 +1856,32 @@
       "name": "Lending List",
       "item": [
         {
+          "id": "d7751572-86c5-4217-8061-b4257380a68d",
+          "name": "Copy of GetById",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist",
+                "{{lendinglistrecordid}}",
+                "request"
+              ]
+            }
+          }
+        },
+        {
           "id": "d89fea04-0b7e-4914-b1b3-d869575e19d4",
           "name": "GetAll",
           "description": "Support \\[createdat,updatedat,cost,borrowingduration,expirationdate,state\\]",
@@ -1625,8 +1894,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/lendinglist?Page=1&PageSize=3",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/lendinglist?Page=1&PageSize=3",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1680,8 +1948,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}",
-              "protocol": "https",
+              "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1690,167 +1957,6 @@
                 "v1",
                 "lendinglist",
                 "{{lendinglistrecordid}}"
-              ]
-            }
-          }
-        },
-        {
-          "id": "d7751572-86c5-4217-8061-b4257380a68d",
-          "name": "Copy of GetById",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "lendinglist",
-                "{{lendinglistrecordid}}",
-                "request"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "224f9eed-3527-4226-bdf0-9a0058a3aeb9",
-      "name": "BorrowingRequests",
-      "item": [
-        {
-          "id": "7c89bacc-5dc0-4782-a0fc-e92b1449b3b3",
-          "name": "Create Borrowing Request",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "lendinglist",
-                "{{lendinglistrecordid}}",
-                "request"
-              ]
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var json = pm.response.json();",
-                  "pm.environment.set('borrowingrequestid', json.id);"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "id": "d28f3aaf-41ee-4a2a-8f46-977dcef0c243",
-          "name": "Get Borrowing Request By ID",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "borrowingrequests",
-                "{{borrowingrequestid}}"
-              ]
-            }
-          }
-        },
-        {
-          "id": "f5708702-dccc-4d8a-9206-195f40d5fe8f",
-          "name": "Get Borrowing Requests",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&LendingListRecordId=859ecb24-56fd-47d0-95b0-43ee6d6912c5",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "borrowingrequests"
-              ],
-              "query": [
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "PageSize",
-                  "value": "10"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": ""
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "BorrowingStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
-                },
-                {
-                  "key": "LendingListRecordId",
-                  "value": "859ecb24-56fd-47d0-95b0-43ee6d6912c5"
-                },
-                {
-                  "key": "States",
-                  "value": "",
-                  "disabled": true
-                }
               ]
             }
           }
