@@ -4,6 +4,7 @@ static public class DependencyInjection
     private const string AppSettingsSectionName = "AppSettings";
     private const string CacheSettingsSectionName = "CacheSettings";
     private const string EmailSettingsSectionName = "EmailSettings";
+    private const string UrlsSectionName = "Urls";
     public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
     {
         services
@@ -30,6 +31,7 @@ static public class DependencyInjection
         services.Configure<AppSettings>(configuration.GetSection(AppSettingsSectionName));
         services.Configure<CacheSettings>(configuration.GetSection(CacheSettingsSectionName));
         services.Configure<EmailSettings>(configuration.GetSection(EmailSettingsSectionName));
+        services.Configure<Urls>(configuration.GetSection(UrlsSectionName));
         return services;
     }
     public static IServiceCollection AddControllerWithJsonConfiguration(this IServiceCollection services)

@@ -1,11 +1,15 @@
-﻿
+﻿using BookOrbit.Api.Contracts.Requests.Identity;
+using BookOrbit.Application.Features.Identity.Commands.ChangePassword;
+using BookOrbit.Application.Features.Identity.Commands.ResetPassowrd;
+using BookOrbit.Application.Features.Identity.Commands.SendEmailConfirmation;
+using BookOrbit.Application.Features.Identity.Commands.SendResetPassword;
 
 namespace BookOrbit.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/identity")]
 [ApiVersion("1.0")]
 [ApiController]
-public class IdentityController(ISender sender, IEmailService emailService,ICurrentUser currentUser) : ApiController
+public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiController
 {
     [HttpPost("token")]
     [ProducesResponseType(typeof(TokenDto), StatusCodes.Status200OK)]
@@ -78,12 +82,10 @@ public class IdentityController(ISender sender, IEmailService emailService,ICurr
 
 
 
-    [HttpPost("users/{userId}/send-email-confirmation")]
-    [Authorize(Policy = PoliciesNames.RegisteredUserOwnershipPolicy)]
+    [HttpPost("users/send-email-confirmation")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
@@ -93,27 +95,17 @@ public class IdentityController(ISender sender, IEmailService emailService,ICurr
     [EndpointDescription("Generates an email confirmation token for the specified user account and sends a confirmation message that contains the verification link.")]
     [EndpointName("SendEmailConfirmation")]
     [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
-    public async Task<ActionResult> SendEmailConfirmation([FromRoute] string userId, CancellationToken ct)
+    public async Task<ActionResult> SendEmailConfirmation([FromQuery] string email, CancellationToken ct)
     {
-        var confirmationResult = await sender.Send(new GenerateEmailConfirmationTokenCommand(userId), ct);
+        var result = await sender.Send(new SendEmailConfirmationCommand(email), ct);
 
-        if (confirmationResult.IsFailure)
-            return Problem(confirmationResult.Errors, HttpContext);
-
-        var link = Url.RouteUrl("ConfirmEmail",
-        new { Id = userId, token = confirmationResult.Value.encodedConfirmationToken, version = "1.0" },
-        Request.Scheme);
-
-        await emailService.SendEmailAsync(
-            confirmationResult.Value.email,
-            "Confirm your email",
-            $"Click here: <a href='{link}'>Confirm</a>");
-
-        return Ok("Email Sent");
+        return result.Match(
+            r => Ok("Email Sent Successfully"),
+            e => Problem(e, HttpContext));
     }
 
 
-    [HttpGet("confirm-email", Name = "ConfirmEmail")]
+    [HttpPost("confirm-email", Name = "ConfirmEmail")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -127,11 +119,11 @@ public class IdentityController(ISender sender, IEmailService emailService,ICurr
     [EndpointName("ConfirmEmail")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> ConfirmEmail(
-    [FromQuery] string Id,
+    [FromQuery] string email,
     [FromQuery] string token,
     CancellationToken ct)
     {
-        var result = await sender.Send(new ConfirmEmailCommand(Id, token), ct);
+        var result = await sender.Send(new ConfirmEmailCommand(email, token), ct);
 
         if (result.IsFailure)
             return Problem(result.Errors, HttpContext);
@@ -139,6 +131,88 @@ public class IdentityController(ISender sender, IEmailService emailService,ICurr
         return Ok("Email confirmed successfully");
     }
 
+
+    [HttpPost("users/send-reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+    [ProducesDefaultResponseType]
+    [MapToApiVersion("1.0")]
+    [EndpointSummary("Send a password reset link to a user account.")]
+    [EndpointDescription("Generates a password reset token for the specified user account and sends an email containing the reset link.")]
+    [EndpointName("SendResetPassword")]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    public async Task<ActionResult> SendResetPassword([FromQuery] string email, CancellationToken ct)
+    {
+        var result = await sender.Send(new SendResetPasswordCommand(email), ct);
+
+        return result.Match(
+            _ => Ok("Reset password email sent successfully"),
+            e => Problem(e, HttpContext));
+    }
+
+
+    [HttpPost("reset-password")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+    [ProducesDefaultResponseType]
+    [MapToApiVersion("1.0")]
+    [EndpointSummary("Reset a user's password using a reset token.")]
+    [EndpointDescription("Validates the provided reset token and updates the user's password when the token is valid.")]
+    [EndpointName("ResetPassword")]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken ct)
+    {
+        var result = await sender.Send(
+            new ResetPasswordCommand(
+                request.Email,
+                request.EncodedToken,
+                request.NewPassword),
+            ct);
+
+        return result.Match(
+            _ => Ok("Password reset successfully"),
+            e => Problem(e, HttpContext));
+    }
+
+
+    [HttpPost("users/me/change-password")]
+    [Authorize(Policy = PoliciesNames.RegisteredUserPolicy)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status429TooManyRequests)]
+    [ProducesDefaultResponseType]
+    [MapToApiVersion("1.0")]
+    [EndpointSummary("Change the authenticated user's password.")]
+    [EndpointDescription("Verifies the existing password and updates it to the new password for the specified user account.")]
+    [EndpointName("ChangePassword")]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken ct)
+    {
+        var userEmail = currentUser.Email;
+
+        var result = await sender.Send(
+            new ChangePasswordCommand(
+                userEmail!,
+                request.OldPassword,
+                request.NewPassword),
+            ct);
+
+        return result.Match(
+            _ => Ok("Password changed successfully"),
+            e => Problem(e, HttpContext));
+    }
 
 
 }

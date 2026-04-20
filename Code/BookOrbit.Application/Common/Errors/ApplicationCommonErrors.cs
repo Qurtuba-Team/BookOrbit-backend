@@ -12,5 +12,5 @@ static public class ApplicationCommonErrors
     static public Error CustomConflict(string Class, string Code, string Description) => DomainCommonErrors.CustomConflict(Class, Code, Description);
     static public Error CustomValidation(string Class, string Code, string Description) => DomainCommonErrors.CustomValidation(Class, Code, Description);
     static public Error CustomFailure (string Class, string Code, string Description) => DomainCommonErrors.CustomFailure(Class, Code, Description);
-
+    static public Error CustomUnauthorized(string Class, string Code, string Description) => DomainCommonErrors.CustomUnAuthorized(Class, Code, Description);
 }

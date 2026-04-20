@@ -7,7 +7,11 @@ public record BookCopyDtoWithBookDetails
     public BookCopyCondition Condition { get; set; }
     public BookCopyState State { get; set; }
     public string OwnerName { get; set; } = string.Empty;
-    public BookDto Book { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string ISBN { get; set; } = string.Empty;
+    public string Publisher { get; set; } = string.Empty;
+    public BookCategory Category { get; set; }
+    public string Author { get; set; } = string.Empty;
     public bool IsListed { get; set; }
 
 #pragma warning disable CS8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -15,15 +19,18 @@ public record BookCopyDtoWithBookDetails
     [JsonConstructor]
     private BookCopyDtoWithBookDetails() { }
 
-    private BookCopyDtoWithBookDetails(
-        Guid id,
-        Guid bookId,
-        Guid ownerId,
-        BookCopyCondition condition,
-        BookCopyState state,
-        string ownerName,
-        BookDto book,
-        bool isListed)
+    public BookCopyDtoWithBookDetails(Guid id,
+                                      Guid bookId,
+                                      Guid ownerId,
+                                      BookCopyCondition condition,
+                                      BookCopyState state,
+                                      string ownerName,
+                                      string title,
+                                      string iSBN,
+                                      string publisher,
+                                      BookCategory category,
+                                      string author,
+                                      bool isListed)
     {
         Id = id;
         BookId = bookId;
@@ -31,7 +38,11 @@ public record BookCopyDtoWithBookDetails
         Condition = condition;
         State = state;
         OwnerName = ownerName;
-        Book = book;
+        Title = title;
+        ISBN = iSBN;
+        Publisher = publisher;
+        Category = category;
+        Author = author;
         IsListed = isListed;
     }
 
@@ -48,6 +59,10 @@ public record BookCopyDtoWithBookDetails
             bookCopy.Condition,
             bookCopy.State,
             ownerName,
-            book,
+            book.Title,
+            book.ISBN,
+            book.Publisher,
+            book.Category,
+            book.Author,
             isListed);
 }

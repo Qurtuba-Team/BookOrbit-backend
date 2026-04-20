@@ -3,9 +3,10 @@ public class ConfirmEmailCommandValidator : AbstractValidator<ConfirmEmailComman
 {
     public ConfirmEmailCommandValidator()
     {
-        RuleFor(x => x.UserId)
+        RuleFor(x => x.Email)
             .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage(IdentityApplicationErrors.IdRequired.Description);
+            .NotEmpty().WithMessage(IdentityApplicationErrors.EmailRequired.Description)
+            .EmailAddress().WithMessage(IdentityApplicationErrors.InvalidEmail.Description);
 
         RuleFor(x => x.EncodedToken)
             .Cascade(CascadeMode.Stop)

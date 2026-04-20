@@ -1,4 +1,4 @@
 ﻿namespace BookOrbit.Application.Features.Identity.Dtos;
 public record EmailConfirmationTokenDto(
-    string encodedConfirmationToken,
-    string email);
+    string EncodedConfirmationToken,
+    string Email);

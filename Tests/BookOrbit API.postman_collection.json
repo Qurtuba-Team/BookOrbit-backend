@@ -10,54 +10,6 @@
       "name": "Identity",
       "item": [
         {
-          "id": "6feb1e1d-ce6f-4d64-97a3-0004a733e164",
-          "name": "Login (Generate Token)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/identity/token",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "token"
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
-              "options": {
-                "raw": {
-                  "language": "text"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var json = pm.response.json();",
-                  "pm.environment.set('accesstoken', json.accessToken);",
-                  "pm.environment.set('refreshtoken', json.refreshToken);"
-                ]
-              }
-            }
-          ]
-        },
-        {
           "id": "cc6260dd-4681-4708-bdec-f77674f34b4a",
           "name": "Refresh Token",
           "request": {
@@ -107,6 +59,82 @@
           ]
         },
         {
+          "id": "a6d50eb3-bfca-450c-8b52-63ba4a58669b",
+          "name": "Send Confirm Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/identity/users/{{userid}}/send-email-confirmation",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "{{userid}}",
+                "send-email-confirmation"
+              ]
+            }
+          }
+        },
+        {
+          "id": "6feb1e1d-ce6f-4d64-97a3-0004a733e164",
+          "name": "Login (Generate Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/identity/token",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "token"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"student5@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('accesstoken', json.accessToken);",
+                  "pm.environment.set('refreshtoken', json.refreshToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "id": "3a08ca52-344e-401d-911c-5f361a4c3d4d",
           "name": "Get Current User",
           "request": {
@@ -144,725 +172,6 @@
               }
             }
           ]
-        },
-        {
-          "id": "a6d50eb3-bfca-450c-8b52-63ba4a58669b",
-          "name": "Send Confirm Email",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/identity/users/{{userid}}/send-email-confirmation",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "users",
-                "{{userid}}",
-                "send-email-confirmation"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "2f75e982-5af3-4715-9407-2d95cf1ca823",
-      "name": "Students",
-      "item": [
-        {
-          "id": "9d5f52a3-bc2a-4c1d-af6a-50c6be3a33ae",
-          "name": "Management",
-          "item": [
-            {
-              "id": "d86d8474-fd1d-4eae-8c9a-59bb8d3e913f",
-              "name": "Approve Student",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/approve",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}",
-                    "approve"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "2e4c5200-f256-4227-9c17-c86812edbb3b",
-              "name": "Activate Student",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/activate",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}",
-                    "activate"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "a33db63e-6bdd-4dca-ac4d-fc1b0e80647a",
-              "name": "Ban Student",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/ban",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}",
-                    "ban"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "847ed3b6-ccac-41ba-a4c1-850a17fc9a2f",
-              "name": "Reject Student",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/reject",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}",
-                    "reject"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "981c3317-0a74-4b6d-ac0d-c4be9e052ee9",
-              "name": "Un Ban Student",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/unban",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}",
-                    "unban"
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "68d40149-6f93-438a-8ab4-8dd6402755f3",
-          "name": "Queries",
-          "item": [
-            {
-              "id": "fb2eb4a9-b9ef-483e-8169-238ad3dd60d8",
-              "name": "Get Students",
-              "description": "allow sorting by \\[joindate,state,name,updatedat,createdat\\] asc / desc",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students?Page=1&PageSize=5",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students"
-                  ],
-                  "query": [
-                    {
-                      "key": "Page",
-                      "value": "1"
-                    },
-                    {
-                      "key": "PageSize",
-                      "value": "5"
-                    },
-                    {
-                      "key": "SearchTerm",
-                      "value": "Ahmed",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortColumn",
-                      "value": "name",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortDirection",
-                      "value": "asc",
-                      "disabled": true
-                    },
-                    {
-                      "key": "EmailConfirmed",
-                      "value": "true",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "Approved",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "Pending",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "Banned",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "Active",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "UnBanned",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "Rejected",
-                      "disabled": true
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "adcb692f-93c7-4d7f-9e76-26b0ba420b45",
-              "name": "GetStudentById",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "1f630229-0426-4848-a8f8-dd061355bb45",
-              "name": "Gent Current Student",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/me",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "me"
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "var json = pm.response.json();",
-                      "pm.environment.set('studentid', json.id);"
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "c7952d71-cc9f-4270-8238-09aa4c1224ab",
-          "name": "Register",
-          "item": [
-            {
-              "id": "592a8f62-21bc-4c4d-aa68-8192bd06815d",
-              "name": "CreateStudent",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accessToken}}",
-                    "description": "NOT REQUIRED , But For Created By Column If User Is Authorized"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students"
-                  ]
-                },
-                "body": {
-                  "mode": "formdata",
-                  "formdata": [
-                    {
-                      "key": "Name",
-                      "value": "Eyad Reda",
-                      "type": "text"
-                    },
-                    {
-                      "key": "PhoneNumber",
-                      "value": "01025456586",
-                      "type": "text"
-                    },
-                    {
-                      "key": "TelegramUserId",
-                      "value": "EyadDev1235",
-                      "type": "text"
-                    },
-                    {
-                      "key": "PersonalPhoto",
-                      "value": "",
-                      "type": "text"
-                    },
-                    {
-                      "key": "UniversityMailAddress",
-                      "value": "Examp6le3@std.mans.edu.eg",
-                      "type": "text"
-                    },
-                    {
-                      "key": "Password",
-                      "value": "sa123456",
-                      "type": "text"
-                    }
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "var json = pm.response.json();",
-                      "pm.environment.set('studentid', json.id);"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "id": "b393b0d8-e902-480d-ab6d-e45b8f8b74aa",
-              "name": "Update Student",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}"
-                  ]
-                },
-                "body": {
-                  "mode": "formdata",
-                  "formdata": [
-                    {
-                      "key": "Name",
-                      "value": "Ahmed Mohamed",
-                      "type": "text"
-                    },
-                    {
-                      "key": "PersonalPhoto",
-                      "value": "",
-                      "type": "text"
-                    }
-                  ]
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "47f5318c-e55d-4264-9e80-73b313902fb2",
-      "name": "Images",
-      "item": [
-        {
-          "id": "ffaeb482-aa08-4e7c-bde3-a9943b4636f8",
-          "name": "GetStudentImage",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/images/students/{{studentid}}",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "images",
-                "students",
-                "{{studentid}}"
-              ]
-            }
-          }
-        },
-        {
-          "id": "bbf5d9d0-e55e-4826-9372-9595ee0a25bb",
-          "name": "GetBookCoverImage",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/images/books/{{bookid}}",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "images",
-                "books",
-                "{{bookid}}"
-              ]
-            }
-          }
-        }
-      ]
-    },
-    {
-      "id": "78a68774-604b-4060-8caa-81297b2a74f3",
-      "name": "API",
-      "item": [
-        {
-          "id": "6dc894c7-80dd-4e10-ae84-c711f2bcf7bd",
-          "name": "Important URLs",
-          "item": [
-            {
-              "id": "582c1485-4cfd-4d75-92d3-3c7a485a3bfc",
-              "name": "Seq",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:8081",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "path": [],
-                  "port": "8081"
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
-                      "})",
-                      "",
-                      "pm.test('Body is not empty', function () {",
-                      "    pm.expect(pm.response.text()).to.not.equal('');",
-                      "})"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "id": "881ebca7-0364-4791-95a3-c63b61a1e9ca",
-              "name": "Prometheus",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:9090",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "path": [],
-                  "port": "9090"
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
-                      "})",
-                      "",
-                      "pm.test('Prometheus metrics endpoint returns text', function () {",
-                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
-                      "    pm.expect(ct).to.match(/text\\//);",
-                      "})",
-                      "",
-                      "pm.test('Body is not empty', function () {",
-                      "    pm.expect(pm.response.text()).to.not.equal('');",
-                      "})"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "id": "ab9906ac-cd73-49bd-8fdf-638999dea03b",
-              "name": "Grafana",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:3000",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "path": [],
-                  "port": "3000"
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
-                      "})",
-                      "",
-                      "pm.test('Body is not empty', function () {",
-                      "    pm.expect(pm.response.text()).to.not.equal('');",
-                      "})"
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "id": "975bc6c4-15da-47a3-bfd3-1f7b5eb5094e",
-              "name": "Jaeger",
-              "request": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "http://localhost:16686",
-                  "protocol": "http",
-                  "host": [
-                    "localhost"
-                  ],
-                  "path": [],
-                  "port": "16686"
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
-                      "})",
-                      "",
-                      "pm.test('Body is not empty', function () {",
-                      "    pm.expect(pm.response.text()).to.not.equal('');",
-                      "})"
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "id": "131017aa-7372-40c4-a33b-02cf92d3fc5d",
-          "name": "Health",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://{{baseurl}}/health",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "health"
-              ]
-            }
-          }
-        },
-        {
-          "id": "fa29a1aa-6fae-4075-8422-9bdc630f32ac",
-          "name": "Metrics",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://{{baseurl}}/metrics",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "metrics"
-              ]
-            }
-          }
-        },
-        {
-          "id": "76305467-b978-4e2c-bed3-8a197793c8fc",
-          "name": "Open Api",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://{{baseurl}}/openapi/v1.json",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "openapi",
-                "v1.json"
-              ]
-            }
-          }
         }
       ]
     },
@@ -960,7 +269,7 @@
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
+                "value": "Bearer {{accesstoken}}"
               }
             ],
             "url": {
@@ -1018,6 +327,105 @@
                   "key": "Categories",
                   "value": "Horror",
                   "type": "text"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "93ca6b08-84e7-4338-8f57-c66b514599cc",
+          "name": "DeleteBook",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{bookid}}"
+              ],
+              "query": [
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Categories",
+                  "value": "fiction",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "266b85c1-f331-47fb-9db4-dad719d20e00",
+          "name": "Get Books",
+          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/books?Page=1&PageSize=5",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "5"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "العادات",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Categories",
+                  "value": "fiction",
+                  "disabled": true
                 }
               ]
             }
@@ -1126,104 +534,6 @@
               }
             }
           ]
-        },
-        {
-          "id": "266b85c1-f331-47fb-9db4-dad719d20e00",
-          "name": "Get Books",
-          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/books?Page=1&PageSize=5&SearchTerm=العادات",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books"
-              ],
-              "query": [
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "PageSize",
-                  "value": "5"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "العادات"
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "Categories",
-                  "value": "fiction",
-                  "disabled": true
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "93ca6b08-84e7-4338-8f57-c66b514599cc",
-          "name": "DeleteBook",
-          "request": {
-            "method": "DELETE",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}",
-              "protocol": "https",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "{{bookid}}"
-              ],
-              "query": [
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "Categories",
-                  "value": "fiction",
-                  "disabled": true
-                }
-              ]
-            }
-          }
         }
       ]
     },
@@ -1232,9 +542,160 @@
       "name": "Book Copies",
       "item": [
         {
+          "id": "ebcfc62c-43b7-4d44-9cc0-8ef874b4fbe8",
+          "name": "Create Book Copy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/students/me/books/{{bookid}}/copies",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "students",
+                "me",
+                "books",
+                "{{bookid}}",
+                "copies"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"condition\":\"New\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('bookcopyid', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "05996647-9e14-4070-a7be-872b19d8c20a",
+          "name": "Update Book Copy",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "copies",
+                "{{bookcopyid}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"condition\":\"Acceptable\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
           "id": "db60e9cd-f399-4fbf-bdac-dc7943876d65",
           "name": "Queries",
           "item": [
+            {
+              "id": "c1af58d5-85d6-4088-a84c-405a503414f3",
+              "name": "Get Copies By Book Id",
+              "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}/copies?Page=1&PageSize=5&SearchTerm=&SortColumn=&SortDirection=booktitle",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "{{bookid}}",
+                    "copies"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "5"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "booktitle"
+                    },
+                    {
+                      "key": "States",
+                      "value": "available",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable",
+                      "disabled": true
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new",
+                      "disabled": true
+                    }
+                  ]
+                }
+              }
+            },
             {
               "id": "81568adc-ec72-4b36-9480-fdd7f3823627",
               "name": "Get Book Copy By Id",
@@ -1258,73 +719,6 @@
                     "books",
                     "copies",
                     "{{bookcopyid}}"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "c1af58d5-85d6-4088-a84c-405a503414f3",
-              "name": "Get Copies By Book Id",
-              "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "https://{{baseurl}}/api/v1/books/{{bookid}}/copies?Page=1&PageSize=5&SortDirection=booktitle",
-                  "protocol": "https",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "{{bookid}}",
-                    "copies"
-                  ],
-                  "query": [
-                    {
-                      "key": "Page",
-                      "value": "1"
-                    },
-                    {
-                      "key": "PageSize",
-                      "value": "5"
-                    },
-                    {
-                      "key": "SearchTerm",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortColumn",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortDirection",
-                      "value": "booktitle"
-                    },
-                    {
-                      "key": "States",
-                      "value": "available",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "acceptable",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "new",
-                      "disabled": true
-                    }
                   ]
                 }
               }
@@ -1483,7 +877,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://{{baseurl}}/api/v1/students/me/books/copies/{{bookcopyid}}/list?borrowingDurationInDays=10",
+                  "raw": "https://{{baseurl}}/api/v1/students/me/books/copies/{{bookcopyid}}/list?borrowingDurationInDays=30",
                   "protocol": "https",
                   "host": [
                     "{{baseurl}}"
@@ -1501,7 +895,7 @@
                   "query": [
                     {
                       "key": "borrowingDurationInDays",
-                      "value": "10"
+                      "value": "30"
                     }
                   ]
                 }
@@ -1520,61 +914,226 @@
               ]
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": "78a68774-604b-4060-8caa-81297b2a74f3",
+      "name": "API",
+      "item": [
         {
-          "id": "ebcfc62c-43b7-4d44-9cc0-8ef874b4fbe8",
-          "name": "Create Book Copy",
+          "id": "fa29a1aa-6fae-4075-8422-9bdc630f32ac",
+          "name": "Metrics",
           "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
+            "method": "GET",
+            "header": [],
             "url": {
-              "raw": "https://{{baseurl}}rl}}/api/v1/students/me/books/copies",
+              "raw": "https://{{baseurl}}/metrics",
               "protocol": "https",
               "host": [
-                "{{baseurl}}rl}}"
+                "{{baseurl}}"
               ],
               "path": [
-                "api",
-                "v1",
-                "students",
-                "me",
-                "books",
-                "copies"
+                "metrics"
               ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\"bookId\":\"362ac07e-e3a1-42f3-bccd-78cfa3e73486\",\"condition\":\"Poor\"}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
             }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var json = pm.response.json();",
-                  "pm.environment.set('bookcopyid', json.id);"
-                ]
-              }
-            }
-          ]
+          }
         },
         {
-          "id": "05996647-9e14-4070-a7be-872b19d8c20a",
-          "name": "Update Book Copy",
+          "id": "76305467-b978-4e2c-bed3-8a197793c8fc",
+          "name": "Open Api",
           "request": {
-            "method": "PATCH",
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://{{baseurl}}/openapi/v1.json",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "openapi",
+                "v1.json"
+              ]
+            }
+          }
+        },
+        {
+          "id": "131017aa-7372-40c4-a33b-02cf92d3fc5d",
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://{{baseurl}}/health",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          }
+        },
+        {
+          "id": "6dc894c7-80dd-4e10-ae84-c711f2bcf7bd",
+          "name": "Important URLs",
+          "item": [
+            {
+              "id": "ab9906ac-cd73-49bd-8fdf-638999dea03b",
+              "name": "Grafana",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:3000",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [],
+                  "port": "3000"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "975bc6c4-15da-47a3-bfd3-1f7b5eb5094e",
+              "name": "Jaeger",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:16686",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [],
+                  "port": "16686"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "881ebca7-0364-4791-95a3-c63b61a1e9ca",
+              "name": "Prometheus",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:9090",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [],
+                  "port": "9090"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Prometheus metrics endpoint returns text', function () {",
+                      "    const ct = (pm.response.headers.get('Content-Type') || '').toLowerCase();",
+                      "    pm.expect(ct).to.match(/text\\//);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "id": "582c1485-4cfd-4d75-92d3-3c7a485a3bfc",
+              "name": "Seq",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8081",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "path": [],
+                  "port": "8081"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status code is 200', function () {",
+                      "    pm.response.to.have.status(200);",
+                      "})",
+                      "",
+                      "pm.test('Body is not empty', function () {",
+                      "    pm.expect(pm.response.text()).to.not.equal('');",
+                      "})"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "47f5318c-e55d-4264-9e80-73b313902fb2",
+      "name": "Images",
+      "item": [
+        {
+          "id": "ffaeb482-aa08-4e7c-bde3-a9943b4636f8",
+          "name": "GetStudentImage",
+          "request": {
+            "method": "GET",
             "header": [
               {
                 "key": "Authorization",
@@ -1582,7 +1141,7 @@
               }
             ],
             "url": {
-              "raw": "https://{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
+              "raw": "https://{{baseurl}}/api/v1/images/students/{{studentid}}",
               "protocol": "https",
               "host": [
                 "{{baseurl}}"
@@ -1590,21 +1149,462 @@
               "path": [
                 "api",
                 "v1",
-                "books",
-                "copies",
-                "{{bookcopyid}}"
+                "images",
+                "students",
+                "{{studentid}}"
               ]
+            }
+          }
+        },
+        {
+          "id": "bbf5d9d0-e55e-4826-9372-9595ee0a25bb",
+          "name": "GetBookCoverImage",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/images/books/{{bookid}}",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "images",
+                "books",
+                "{{bookid}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "2f75e982-5af3-4715-9407-2d95cf1ca823",
+      "name": "Students",
+      "item": [
+        {
+          "id": "c7952d71-cc9f-4270-8238-09aa4c1224ab",
+          "name": "Register",
+          "item": [
+            {
+              "id": "b393b0d8-e902-480d-ab6d-e45b8f8b74aa",
+              "name": "Update Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}"
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "Name",
+                      "value": "Ahmed Mohamed",
+                      "type": "text"
+                    },
+                    {
+                      "key": "PersonalPhoto",
+                      "value": "",
+                      "type": "text"
+                    }
+                  ]
+                }
+              }
             },
-            "body": {
-              "mode": "raw",
-              "raw": "{\"condition\":\"Acceptable\"}",
-              "options": {
-                "raw": {
-                  "language": "json"
+            {
+              "id": "592a8f62-21bc-4c4d-aa68-8192bd06815d",
+              "name": "CreateStudent",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "description": "NOT REQUIRED , But For Created By Column If User Is Authorized"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students"
+                  ]
+                },
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "Name",
+                      "value": "Eyad Reda",
+                      "type": "text"
+                    },
+                    {
+                      "key": "PhoneNumber",
+                      "value": "01025456587",
+                      "type": "text"
+                    },
+                    {
+                      "key": "TelegramUserId",
+                      "value": "EyadDev12353",
+                      "type": "text"
+                    },
+                    {
+                      "key": "PersonalPhoto",
+                      "value": "",
+                      "type": "text"
+                    },
+                    {
+                      "key": "UniversityMailAddress",
+                      "value": "eyadreda@std.mans.edu.eg",
+                      "type": "text"
+                    },
+                    {
+                      "key": "Password",
+                      "value": "sa123456",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "pm.environment.set('studentid', json.id);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "9d5f52a3-bc2a-4c1d-af6a-50c6be3a33ae",
+          "name": "Management",
+          "item": [
+            {
+              "id": "d86d8474-fd1d-4eae-8c9a-59bb8d3e913f",
+              "name": "Approve Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/approve",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "approve"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "a33db63e-6bdd-4dca-ac4d-fc1b0e80647a",
+              "name": "Ban Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/ban",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "ban"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "981c3317-0a74-4b6d-ac0d-c4be9e052ee9",
+              "name": "Un Ban Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/unban",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "unban"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "847ed3b6-ccac-41ba-a4c1-850a17fc9a2f",
+              "name": "Reject Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/reject",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "reject"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "2e4c5200-f256-4227-9c17-c86812edbb3b",
+              "name": "Activate Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}/activate",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "activate"
+                  ]
                 }
               }
             }
-          }
+          ]
+        },
+        {
+          "id": "68d40149-6f93-438a-8ab4-8dd6402755f3",
+          "name": "Queries",
+          "item": [
+            {
+              "id": "fb2eb4a9-b9ef-483e-8169-238ad3dd60d8",
+              "name": "Get Students",
+              "description": "allow sorting by \\[joindate,state,name,updatedat,createdat\\] asc / desc",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students?Page=1&PageSize=20",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "20"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": "Ahmed",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": "name",
+                      "disabled": true
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "asc",
+                      "disabled": true
+                    },
+                    {
+                      "key": "EmailConfirmed",
+                      "value": "true",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Approved",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Pending",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Banned",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Active",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "UnBanned",
+                      "disabled": true
+                    },
+                    {
+                      "key": "States",
+                      "value": "Rejected",
+                      "disabled": true
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "id": "adcb692f-93c7-4d7f-9e76-26b0ba420b45",
+              "name": "GetStudentById",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/{{studentid}}",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "1f630229-0426-4848-a8f8-dd061355bb45",
+              "name": "Gent Current Student",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "https://{{baseurl}}/api/v1/students/me",
+                  "protocol": "https",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "me"
+                  ]
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "pm.environment.set('studentid', json.id);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     },
@@ -1690,6 +1690,167 @@
                 "v1",
                 "lendinglist",
                 "{{lendinglistrecordid}}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "d7751572-86c5-4217-8061-b4257380a68d",
+          "name": "Copy of GetById",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist",
+                "{{lendinglistrecordid}}",
+                "request"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "224f9eed-3527-4226-bdf0-9a0058a3aeb9",
+      "name": "BorrowingRequests",
+      "item": [
+        {
+          "id": "7c89bacc-5dc0-4782-a0fc-e92b1449b3b3",
+          "name": "Create Borrowing Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist",
+                "{{lendinglistrecordid}}",
+                "request"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('borrowingrequestid', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "d28f3aaf-41ee-4a2a-8f46-977dcef0c243",
+          "name": "Get Borrowing Request By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "{{borrowingrequestid}}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "f5708702-dccc-4d8a-9206-195f40d5fe8f",
+          "name": "Get Borrowing Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "https://{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&LendingListRecordId=859ecb24-56fd-47d0-95b0-43ee6d6912c5",
+              "protocol": "https",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": ""
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "LendingListRecordId",
+                  "value": "859ecb24-56fd-47d0-95b0-43ee6d6912c5"
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
               ]
             }
           }

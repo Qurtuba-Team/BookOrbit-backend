@@ -10,7 +10,7 @@ public class BookCopyController(
     ICurrentUser currentUser) : ApiController
 {
 
-    [HttpPost("students/me/books/copies")]
+    [HttpPost("students/me/books/{bookId:guid}/copies")]
     [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
     [ProducesResponseType(typeof(BookCopyDtoWithBookDetails), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -21,7 +21,7 @@ public class BookCopyController(
     [EndpointName("CreateBookCopy")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BookCopyDtoWithBookDetails>> CreateBookCopy([FromBody] CreateBookCopyRequest request, CancellationToken ct)
+    public async Task<ActionResult<BookCopyDtoWithBookDetails>> CreateBookCopy([FromRoute] Guid bookId, [FromBody] CreateBookCopyRequest request, CancellationToken ct)
     {
         var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
 
@@ -32,7 +32,7 @@ public class BookCopyController(
 
         var command = new CreateBookCopyCommand(
             studentFound.Value.Id,
-            request.BookId,
+            bookId,
             request.Condition);
 
         var result = await sender.Send(command, ct);
@@ -168,13 +168,13 @@ public class BookCopyController(
 
 
     [HttpGet("books/copies")]
-    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(PaginatedList<BookCopyListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
     [EndpointSummary("Retrieve a paginated list of book copies.")]
-    [EndpointDescription("Returns a paginated collection of all book copies and supports filtering, searching, and sorting so administrators can manage inventory efficiently.")]
+    [EndpointDescription("Returns a paginated collection of all book copies and supports filtering, searching, and sorting so students can review available copies efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBookCopies")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]

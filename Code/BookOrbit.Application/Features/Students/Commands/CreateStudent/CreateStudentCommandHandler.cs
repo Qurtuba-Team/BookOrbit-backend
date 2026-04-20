@@ -1,5 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
+﻿using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Application.Features.Students.Commands.CreateStudent;
 
@@ -74,6 +73,8 @@ public class CreateStudentCommandHandler(
             await RollbackCreatedUserAsync(userCreationResult.Value, ct);
             return createdStudentResult.Errors;
         }
+
+        createdStudentResult.Value.AddDomainEvent(new StudentCreatedEvent(createdStudentResult.Value.Id, createdStudentResult.Value.UniversityMail));
 
         try
         {

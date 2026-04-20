@@ -5,8 +5,6 @@ public record StudentDto
 
     public Guid Id { get; set; } = Guid.Empty;
     public string Name { get; set; } = string.Empty;
-    public string? PhoneNumber { get; set; } = null;
-    public string? TelegramUserId { get; set; } = null;
     public string UniversityMailAddress { get; set; } = string.Empty;
     public int Points { get; set; }
     public StudentState State { get; set; }
@@ -19,8 +17,6 @@ public record StudentDto
     private StudentDto(
     Guid id,
     string name,
-    string? phoneNumber,
-    string? telegramUserId,
     string universityMailAddress,
     int points,
     StudentState state,
@@ -28,8 +24,6 @@ public record StudentDto
     {
         Id = id;
         Name = name;
-        PhoneNumber = phoneNumber;
-        TelegramUserId = telegramUserId;
         UniversityMailAddress = universityMailAddress;
         Points = points;
         State = state;
@@ -41,8 +35,6 @@ public record StudentDto
         new(
             entity.Id,
             entity.Name.Value,
-            entity.PhoneNumber?.Value,
-            entity.TelegramUserId?.Value,
             entity.UniversityMail.Value,
             entity.Points,
             entity.State,

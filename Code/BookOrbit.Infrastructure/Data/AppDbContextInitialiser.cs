@@ -1,6 +1,12 @@
 ﻿using BookOrbit.Domain.BookCopies.Enums;
 using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Books.ValueObjects;
+using BookOrbit.Domain.BorrowingRequests;
+using BookOrbit.Domain.BorrowingRequests.Enums;
+using BookOrbit.Domain.LendingListings;
+using BookOrbit.Domain.LendingListings.Enums;
+using BookOrbit.Domain.PointTransactions.ValueObjects;
+using BookOrbit.Domain.Students.Enums;
 
 namespace BookOrbit.Infrastructure.Data;
 
@@ -156,6 +162,12 @@ public class AppDbContextInitialiser(
         await SeedBooksAndCopiesAsync();
 
         #endregion
+
+        #region LendingListRecordsAndBorrowingRequests
+
+        await SeedLendingRecordsAndBorrowingRequestsAsync();
+
+        #endregion
     }
 
     #region Helpers
@@ -214,6 +226,194 @@ public class AppDbContextInitialiser(
                 await CreateBookCopyIfNotExistsAsync(ownerId, createdBook.Id, condition);
             }
         }
+    }
+
+    private async Task SeedLendingRecordsAndBorrowingRequestsAsync()
+    {
+        await SeedLendingListRecordsAsync();
+        await SeedBorrowingRequestsAsync();
+    }
+
+    private async Task SeedLendingListRecordsAsync()
+    {
+        if (await context.LendingListRecords.AnyAsync())
+            return;
+
+        var activeOwnerIds = await context.Students
+            .Where(s => s.State == StudentState.Active)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        if (activeOwnerIds.Count == 0)
+            return;
+
+        var requiredRecordsCount = 7;
+
+        var bookCopies = await context.BookCopies
+            .Where(bc => activeOwnerIds.Contains(bc.OwnerId) && bc.State == BookCopyState.Available)
+            .OrderBy(bc => bc.CreatedAtUtc)
+            .Take(requiredRecordsCount)
+            .ToListAsync();
+
+        if (bookCopies.Count < requiredRecordsCount)
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        var desiredStates = new List<LendingListRecordState>
+        {
+            LendingListRecordState.Available,
+            LendingListRecordState.Reserved,
+            LendingListRecordState.Borrowed,
+            LendingListRecordState.Expired,
+            LendingListRecordState.Closed,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available
+        };
+
+        for (var i = 0; i < desiredStates.Count; i++)
+        {
+            var bookCopy = bookCopies[i];
+            var recordResult = LendingListRecord.Create(
+                Guid.NewGuid(),
+                bookCopy.Id,
+                borrowingDurationInDays: 14,
+                cost: new Point(LendingListRecord.DefaultCostInPoints),
+                expirationDateUtc: now.AddDays(LendingListRecord.DefaultExpirationDurationInDays),
+                currentTime: now);
+
+            if (recordResult.IsFailure)
+            {
+                logger.LogError(
+                    "Failed to create lending list record for book copy {BookCopyId}: {Errors}",
+                    bookCopy.Id,
+                    recordResult.Errors);
+                continue;
+            }
+
+            var record = recordResult.Value;
+            var desiredState = desiredStates[i];
+
+            switch (desiredState)
+            {
+                case LendingListRecordState.Reserved:
+                    if (bookCopy.MarkAsReserved().IsFailure || record.MarkAsReserved().IsFailure)
+                    {
+                        logger.LogError("Failed to reserve lending list record for book copy {BookCopyId}", bookCopy.Id);
+                        continue;
+                    }
+                    break;
+                case LendingListRecordState.Borrowed:
+                    if (bookCopy.MarkAsReserved().IsFailure
+                        || bookCopy.MarkAsBorrowed().IsFailure
+                        || record.MarkAsReserved().IsFailure
+                        || record.MarkAsBorrowed().IsFailure)
+                    {
+                        logger.LogError("Failed to borrow lending list record for book copy {BookCopyId}", bookCopy.Id);
+                        continue;
+                    }
+                    break;
+                case LendingListRecordState.Expired:
+                    if (record.MarkAsExpired().IsFailure)
+                    {
+                        logger.LogError("Failed to expire lending list record for book copy {BookCopyId}", bookCopy.Id);
+                        continue;
+                    }
+                    record.ExpirationDateUtc = now.AddDays(-1);
+                    break;
+                case LendingListRecordState.Closed:
+                    if (record.MarkAsClosed().IsFailure)
+                    {
+                        logger.LogError("Failed to close lending list record for book copy {BookCopyId}", bookCopy.Id);
+                        continue;
+                    }
+                    break;
+            }
+
+            context.LendingListRecords.Add(record);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task SeedBorrowingRequestsAsync()
+    {
+        if (await context.BorrowingRequests.AnyAsync())
+            return;
+
+        var activeStudentIds = await context.Students
+            .Where(s => s.State == StudentState.Active)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        if (activeStudentIds.Count < 2)
+            return;
+
+        var lendingRecords = await context.LendingListRecords
+            .Include(lr => lr.BookCopy)
+            .Where(lr => lr.BookCopy != null)
+            .ToListAsync();
+
+        var availableRecords = lendingRecords
+            .Where(lr => lr.State == LendingListRecordState.Available)
+            .ToList();
+
+        var reservedRecord = lendingRecords
+            .FirstOrDefault(lr => lr.State == LendingListRecordState.Reserved);
+
+        var expiredRecord = lendingRecords
+            .FirstOrDefault(lr => lr.State == LendingListRecordState.Expired);
+
+        if (availableRecords.Count < 3 || reservedRecord is null || expiredRecord is null)
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        var requestSeeds = new List<(LendingListRecord Record, BorrowingRequestState State)>
+        {
+            (availableRecords[0], BorrowingRequestState.Pending),
+            (reservedRecord, BorrowingRequestState.Approved),
+            (availableRecords[1], BorrowingRequestState.Rejected),
+            (availableRecords[2], BorrowingRequestState.Cancelled),
+            (expiredRecord, BorrowingRequestState.Expired)
+        };
+
+        foreach (var seed in requestSeeds)
+        {
+            var ownerId = seed.Record.BookCopy!.OwnerId;
+            var borrowerId = activeStudentIds.FirstOrDefault(id => id != ownerId);
+
+            if (borrowerId == Guid.Empty)
+                continue;
+
+            var borrowingRequestResult = BorrowingRequest.Create(
+                Guid.NewGuid(),
+                borrowingStudentId: borrowerId,
+                lendingRecordId: seed.Record.Id,
+                expirationDateUtc: now.AddDays(BorrowingRequest.DefaultExpirationDays),
+                currentTime: now);
+
+            if (borrowingRequestResult.IsFailure)
+            {
+                logger.LogError(
+                    "Failed to create borrowing request for lending record {LendingRecordId}: {Errors}",
+                    seed.Record.Id,
+                    borrowingRequestResult.Errors);
+                continue;
+            }
+
+            context.BorrowingRequests.Add(borrowingRequestResult.Value);
+            context.Entry(borrowingRequestResult.Value)
+                .Property(nameof(BorrowingRequest.State))
+                .CurrentValue = seed.State;
+
+            if (seed.State == BorrowingRequestState.Expired)
+            {
+                borrowingRequestResult.Value.ExpirationDateUtc = now.AddDays(-1);
+            }
+        }
+
+        await context.SaveChangesAsync();
     }
 
     private static BookCopyCondition GetRandomBookCopyCondition(Random rng)
@@ -387,12 +587,22 @@ public class AppDbContextInitialiser(
             return;
         }
 
-        Random rand = new Random();
 
-        if (rand.NextDouble() < 0.5)
+        if (index < 3)
         {
-            //Activate the student
-            studentResult.Value.MarkAsActivated();
+            var approveResult = studentResult.Value.MarkAsApproved(DateTimeOffset.UtcNow);
+            if (approveResult.IsFailure)
+            {
+                logger.LogError("Failed to approve student {Email}", user.Email);
+                return;
+            }
+
+            var activateResult = studentResult.Value.MarkAsActivated();
+            if (activateResult.IsFailure)
+            {
+                logger.LogError("Failed to activate student {Email}", user.Email);
+                return;
+            }
         }
 
         context.Students.Add(studentResult.Value);

@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<ItemGroup>
+	  <Compile Remove="Features\LendingListings\StateMachien\**" />
+	  <EmbeddedResource Remove="Features\LendingListings\StateMachien\**" />
+	  <None Remove="Features\LendingListings\StateMachien\**" />
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="FluentValidation" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
 		<PackageReference Include="MediatR" />
@@ -17,14 +22,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\BookOrbit.Domain\BookOrbit.Domain.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Features\BorrowingRequests\Commands\CreateBorrowingRequest\" />
-	  <Folder Include="Features\BorrowingRequests\Dtos\" />
-	  <Folder Include="Features\BorrowingRequests\Queries\GetBorrowingRequestById\" />
-	  <Folder Include="Features\BorrowingRequests\Queries\GetBorrowingRequests\" />
-	  <Folder Include="Features\LendingListings\StateMachien\" />
 	</ItemGroup>
 
 </Project>

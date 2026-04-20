@@ -1,6 +1,6 @@
 ﻿namespace BookOrbit.Application.Common.Interfaces;
 public interface IEmailService
 {
-    Task SendEmailAsync(string emailAddress,
+    Task<Result<Success>> SendEmailAsync(string emailAddress,
         string subject, string body);
 }

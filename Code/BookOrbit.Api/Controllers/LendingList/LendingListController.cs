@@ -5,7 +5,8 @@
 [Authorize]
 
 public class LendingListController(
-    ISender sender) : ApiController
+    ISender sender,
+    ICurrentUser currentUser) : ApiController
 {
     [HttpGet("{lendingListRecordId:guid}")]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
@@ -60,6 +61,43 @@ public class LendingListController(
 
         return result.Match(
            Ok,
+           e => Problem(e, HttpContext));
+    }
+
+    [HttpPost("{lendingListRecordId:guid}/request")]
+    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [ProducesResponseType(typeof(BorrowingRequestDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Create a borrowing request for a lending list record.")]
+    [EndpointDescription("Creates a borrowing request for the specified lending list record so the borrowing workflow can proceed when the record is available.")]
+    [EndpointName("CreateBorrowingRequest")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<BorrowingRequestDto>> CreateBorrowingRequest([FromRoute] Guid lendingListRecordId, CancellationToken ct)
+    {
+        var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentFound.IsFailure)
+        {
+            return Problem(studentFound.Errors, HttpContext);
+        }
+
+        var command = new CreateBorrowingRequestCommand(
+            studentFound.Value.Id,
+            lendingListRecordId);
+
+        var result = await sender.Send(command, ct);
+
+        return result.Match(
+           borrowingRequest => CreatedAtRoute(
+               routeName: "GetBorrowingRequestById",
+               routeValues: new { version = "1.0", borrowingRequestId = borrowingRequest.Id },
+               value: borrowingRequest),
            e => Problem(e, HttpContext));
     }
 
