@@ -1,7 +1,9 @@
 ﻿
 namespace BookOrbit.Application.Features.Books.Queries.GetBooks;
 public class GetBookQueryHandler(
-    IAppDbContext context) : IRequestHandler<GetBooksQuery, Result<PaginatedList<BookListItemDto>>>
+    IAppDbContext context,
+    IRouteService routeService) : IRequestHandler<GetBooksQuery, Result<PaginatedList<BookListItemDto>>>
+    
 {
     public async Task<Result<PaginatedList<BookListItemDto>>> Handle(GetBooksQuery query, CancellationToken ct)
     {
@@ -24,13 +26,16 @@ public class GetBookQueryHandler(
         Author = b.Author.Value,
         AvailableCopiesCount = context.BookCopies
             .Where(c => c.BookId == b.Id && c.State == BookCopyState.Available)
-            .Count()
+            .Count(),
+        BookCoverImageFileName = b.CoverImageFileName
     });
 
         int count = await bookQueryWithCount.CountAsync(ct);
 
         var page = Math.Max(1, query.Page);
         var pageSize = Math.Max(1, query.PageSize);
+
+        string baseUrl = routeService.GetBookCoverImageRoute();
 
         var items = await bookQueryWithCount
             .ApplyPagination(page, pageSize)
@@ -41,7 +46,8 @@ public class GetBookQueryHandler(
                 s.Publisher,
                 s.Category,
                 s.Author,
-                s.AvailableCopiesCount))
+                s.AvailableCopiesCount,
+                baseUrl + "/" + s.BookCoverImageFileName))
             .ToListAsync(ct);
 
         return new PaginatedList<BookListItemDto>

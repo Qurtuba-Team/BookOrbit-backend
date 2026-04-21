@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Application.Common.Interfaces.ImageServices;
+
 namespace BookOrbit.Api.Controllers.Books;
 
 [Route("api/v{version:apiVersion}/books")]
@@ -7,7 +9,7 @@ namespace BookOrbit.Api.Controllers.Books;
 
 public class BookController(
     ISender sender,
-    ImageHelper imageHelper) : ApiController
+    IBookImageService bookImageService) : ApiController
 {
     [HttpPost]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
@@ -22,8 +24,12 @@ public class BookController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookDto>> CreateBook([FromForm] CreateBookRequest request, CancellationToken ct)
     {
-        //Upload Image, Get Image Name 
-        var ImageUploadResult = await imageHelper.UploadImage(request.CoverImage, ImageHelper.BookCoverImagesUploadFolderPath);
+        using var stream = request.CoverImage.OpenReadStream();
+
+        //Upload Image, Get New Image Name 
+        var ImageUploadResult = await bookImageService.UploadImage(
+            stream,
+             request.CoverImage.FileName);
 
         if (ImageUploadResult.IsFailure)
             return Problem(ImageUploadResult.Errors, HttpContext);
@@ -44,7 +50,7 @@ public class BookController(
 
         var result = await sender.Send(command, ct);
         if (result.IsFailure)
-             imageHelper.DeleteImage(ImageUploadResult.Value, ImageHelper.BookCoverImagesUploadFolderPath);
+            bookImageService.DeleteImage(ImageUploadResult.Value);
 
         return result.Match(
            bookDto => CreatedAtRoute(

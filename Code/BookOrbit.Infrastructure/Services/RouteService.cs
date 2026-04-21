@@ -1,10 +1,27 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
+﻿using BookOrbit.Infrastructure.Services.ImageServices;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace BookOrbit.Infrastructure.Services;
 public class RouteService(
     IOptionsSnapshot<Urls> settings) : IRouteService
+    
 {
     public readonly Urls _settings = settings.Value;
+
+    public string GetBookCoverImageRoute()
+    {
+        string baseUrl = _settings.BaseUrl;
+        string routeRelativeUrl = "uploads/books"; //Could be better , but for now it's fine since we are only using it for book cover images and we know the route is "uploads/books"
+        var baseUri = new Uri(baseUrl); 
+        var fullUri = new Uri(baseUri, routeRelativeUrl); 
+        return fullUri.ToString(); 
+    }
+
+    public string GetBookCoverImageRoute(string fileName)
+    {
+        string baseUrl = GetBookCoverImageRoute();
+                return $"{baseUrl}/{fileName}";
+    }
 
     public string GetEmailConfirmationRoute(string email, string token)
     {

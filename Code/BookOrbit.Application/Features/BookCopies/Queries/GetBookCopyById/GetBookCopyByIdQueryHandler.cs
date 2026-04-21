@@ -1,7 +1,10 @@
-﻿namespace BookOrbit.Application.Features.BookCopies.Queries.GetBookCopyById;
+﻿using BookOrbit.Domain.Books;
+
+namespace BookOrbit.Application.Features.BookCopies.Queries.GetBookCopyById;
 public class GetBookCopyByIdQueryHandler(
     ILogger<GetBookCopyByIdQueryHandler> logger,
-    IAppDbContext context) : IRequestHandler<GetBookCopyByIdQuery, Result<BookCopyDtoWithBookDetails>>
+    IAppDbContext context,
+    IRouteService routeService) : IRequestHandler<GetBookCopyByIdQuery, Result<BookCopyDtoWithBookDetails>>
 {
     public async Task<Result<BookCopyDtoWithBookDetails>> Handle(GetBookCopyByIdQuery query, CancellationToken ct)
     {
@@ -27,10 +30,12 @@ l.BookCopyId == query.BookCopyId&&
         ||
         l.State == LendingListRecordState.Borrowed), ct);
 
+        string bookCoverImageUrl = routeService.GetBookCoverImageRoute(bookCopy.Book!.CoverImageFileName);
+
         return BookCopyDtoWithBookDetails.FromEntity(
             bookCopy,
             bookCopy.Owner!.Name.Value,
-            BookDto.FromEntity(bookCopy.Book!),
+            BookDto.FromEntity(bookCopy.Book!, bookCoverImageUrl),
             isListed);
     }
 }

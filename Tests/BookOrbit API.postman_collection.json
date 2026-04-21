@@ -317,7 +317,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"eyadreda@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -480,7 +480,7 @@
                 },
                 {
                   "key": "ISBN",
-                  "value": "9789770953571",
+                  "value": "9789770913571",
                   "type": "text"
                 },
                 {
@@ -1473,7 +1473,7 @@
                   "formdata": [
                     {
                       "key": "Name",
-                      "value": "Ahmed Mohamed",
+                      "value": "Ah",
                       "type": "text"
                     },
                     {
@@ -1524,7 +1524,7 @@
                     },
                     {
                       "key": "TelegramUserId",
-                      "value": "EyadDev122353322",
+                      "value": "EyadDe2v122353322",
                       "type": "text"
                     },
                     {
@@ -1534,7 +1534,7 @@
                     },
                     {
                       "key": "UniversityMailAddress",
-                      "value": "eyadred123345a@std.mans.edu.eg",
+                      "value": "eyadre2d123345a@std.mans.edu.eg",
                       "type": "text"
                     },
                     {

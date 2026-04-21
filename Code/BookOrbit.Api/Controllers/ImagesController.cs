@@ -1,5 +1,7 @@
 ﻿
 
+using BookOrbit.Application.Common.Interfaces.ImageServices;
+
 namespace BookOrbit.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/images")]
@@ -13,8 +15,9 @@ namespace BookOrbit.Api.Controllers;
 [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
 
 public class ImagesController
-    (ImageHelper imageHelper,
-    ISender sender): ApiController
+    (ISender sender,
+    IStudentImageService studentImageService,
+    IBookImageService bookImageService): ApiController
 {
 
     [HttpGet("students/{studentId:guid}")]
@@ -44,14 +47,10 @@ public class ImagesController
 
         var extension = Path.GetExtension(fileNameResult.Value).ToLower();
 
-        if (!ImageHelper.IsValidImageExtension(extension))
-            return BadRequest("UnSupported Image Extension");
-
-        var image = await imageHelper.GetImage(fileNameResult.Value,ImageType.StudentPersonalPhoto);
+        var image = await studentImageService.GetImage(fileNameResult.Value);
 
         if (image == null)
-            return NotFound();
-
+            return NotFound("Image Not Found");
 
         return File(image, ImageHelper.GetContentType(extension));
     }
@@ -84,10 +83,7 @@ public class ImagesController
 
         var extension = Path.GetExtension(fileNameResult.Value).ToLower();
 
-        if (!ImageHelper.IsValidImageExtension(extension))
-            return BadRequest("UnSupported Image Extension");
-
-        var image = await imageHelper.GetImage(fileNameResult.Value, ImageType.BookCoverPhoto);
+        var image = await bookImageService.GetImage(fileNameResult.Value);
 
         if (image == null)
             return NotFound();

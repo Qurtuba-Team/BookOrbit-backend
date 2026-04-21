@@ -11,6 +11,9 @@
 
     ports:
       - "7240:80"
+    volumes:
+      - uploads_data:/app/uploads
+      - wwwroot_data:/app/wwwroot
 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
@@ -128,3 +131,5 @@ networks:
 volumes:
   grafana-data:
   sqlserver-data:
+  uploads_data:
+  wwwroot_data:

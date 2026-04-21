@@ -1,8 +1,12 @@
-﻿namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
+﻿using BookOrbit.Application.Common.Interfaces;
+using BookOrbit.Domain.Books;
+
+namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
 public class CreateBookCommandHandler(
     ILogger<CreateBookCommandHandler> logger,
     IAppDbContext context,
-    HybridCache cache) : IRequestHandler<CreateBookCommand, Result<BookDto>>
+    HybridCache cache,
+    IRouteService routeService) : IRequestHandler<CreateBookCommand, Result<BookDto>>
 {
     public async Task<Result<BookDto>> Handle(CreateBookCommand command, CancellationToken ct)
     {
@@ -65,6 +69,8 @@ public class CreateBookCommandHandler(
 
         logger.LogInformation("Book created successfully with ID: {BookId}", createdBookResult.Value.Id);
 
-        return BookDto.FromEntity(createdBookResult.Value);
+        string bookCoverImageUrl = routeService.GetBookCoverImageRoute(createdBookResult.Value.CoverImageFileName);
+
+        return BookDto.FromEntity(createdBookResult.Value, bookCoverImageUrl);
     }
 }

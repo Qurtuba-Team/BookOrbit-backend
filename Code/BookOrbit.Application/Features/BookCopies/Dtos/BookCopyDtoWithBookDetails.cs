@@ -13,6 +13,7 @@ public record BookCopyDtoWithBookDetails
     public BookCategory Category { get; set; }
     public string Author { get; set; } = string.Empty;
     public bool IsListed { get; set; }
+    public string BookCoverImageUrl { get; set; } = string.Empty;
 
 #pragma warning disable CS8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -30,7 +31,8 @@ public record BookCopyDtoWithBookDetails
                                       string publisher,
                                       BookCategory category,
                                       string author,
-                                      bool isListed)
+                                      bool isListed,
+                                      string bookCoverImageUrl)
     {
         Id = id;
         BookId = bookId;
@@ -44,6 +46,7 @@ public record BookCopyDtoWithBookDetails
         Category = category;
         Author = author;
         IsListed = isListed;
+        BookCoverImageUrl = bookCoverImageUrl;
     }
 
     static public BookCopyDtoWithBookDetails FromEntity(
@@ -64,5 +67,6 @@ public record BookCopyDtoWithBookDetails
             book.Publisher,
             book.Category,
             book.Author,
-            isListed);
+            isListed,
+            book.BookCoverImageUrl);
 }
