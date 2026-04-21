@@ -1,4 +1,6 @@
-﻿namespace BookOrbit.Api.Controllers.Students;
+﻿using BookOrbit.Application.Common.Interfaces.ImageServices;
+
+namespace BookOrbit.Api.Controllers.Students;
 
 [Route("api/v{version:apiVersion}/students")]
 [ApiVersion("1.0")]
@@ -6,7 +8,7 @@
 public class StudentAccountController(
     ISender sender,
     ICurrentUser currentUser,
-    ImageHelper imageHelper) : ApiController
+    IStudentImageService studentImageService) : ApiController
 {
     [HttpGet("me")]
     [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
@@ -49,8 +51,12 @@ public class StudentAccountController(
     [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
     public async Task<ActionResult<StudentDto>> CreateStudent([FromForm] CreateStudentRequest request, CancellationToken ct)
     {
+        using var stream = request.PersonalPhoto.OpenReadStream();
+
         //Upload Image, Get Image Name 
-        var ImageUploadResult = await imageHelper.UploadImage(request.PersonalPhoto, ImageHelper.StudentImagesUploadFolderPath);
+        var ImageUploadResult = await studentImageService.UploadImage(
+            stream,
+            request.PersonalPhoto.FileName);
 
         if (ImageUploadResult.IsFailure)
             return Problem(ImageUploadResult.Errors, HttpContext);
@@ -66,7 +72,7 @@ public class StudentAccountController(
         var result = await sender.Send(command, ct);
 
         if (result.IsFailure)
-             imageHelper.DeleteImage(ImageUploadResult.Value, ImageHelper.StudentImagesUploadFolderPath);
+             studentImageService.DeleteImage(ImageUploadResult.Value);
 
 
         return result.Match(
@@ -104,8 +110,12 @@ public class StudentAccountController(
 
         if(request.PersonalPhoto is not null)
         {
+            using var stream = request.PersonalPhoto.OpenReadStream();
+
             //Upload Image, Get Image Name
-            var ImageUploadResult = await imageHelper.UploadImage(request.PersonalPhoto, ImageHelper.StudentImagesUploadFolderPath);
+            var ImageUploadResult = await studentImageService.UploadImage(
+                stream,
+                request.PersonalPhoto.FileName);
 
             if (ImageUploadResult.IsFailure)
                 return Problem(ImageUploadResult.Errors, HttpContext);
@@ -125,7 +135,7 @@ public class StudentAccountController(
         {
             if(request.PersonalPhoto is not null)
                 //Delete Old Image
-                 imageHelper.DeleteImage(imageFileNameResult.Value, ImageHelper.StudentImagesUploadFolderPath);
+                 studentImageService.DeleteImage(imageFileNameResult.Value);
 
             return NoContent();
         }
@@ -133,7 +143,7 @@ public class StudentAccountController(
         {
             if (request.PersonalPhoto is not null)
                 //Delete New Image
-                 imageHelper.DeleteImage(imageFileName, ImageHelper.StudentImagesUploadFolderPath);
+                 studentImageService.DeleteImage(imageFileName);
 
             return Problem(result.Errors, HttpContext);
         }

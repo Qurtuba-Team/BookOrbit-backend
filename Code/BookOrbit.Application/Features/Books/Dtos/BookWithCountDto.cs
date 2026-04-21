@@ -8,6 +8,7 @@ public record BookWithCountDto
     public BookCategory Category { get; set; }
     public string Author { get; set; } = string.Empty;
     public int AvailableCopiesCount { get; set; }
+    public string BookCoverImageFileName { get; set; } = string.Empty;
 
     public BookWithCountDto(
         Guid id, 
@@ -16,7 +17,8 @@ public record BookWithCountDto
         string publisher, 
         BookCategory category,
         string author,
-        int availableCopiesCount)
+        int availableCopiesCount,
+        string bookCoverImageFileName)
     {
         Id = id;
         Title = title;
@@ -25,6 +27,7 @@ public record BookWithCountDto
         Category = category;
         Author = author;
         AvailableCopiesCount = availableCopiesCount;
+        BookCoverImageFileName = bookCoverImageFileName;
     }
     public BookWithCountDto()
     {

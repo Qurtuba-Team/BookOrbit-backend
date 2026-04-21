@@ -1,36 +1,24 @@
 #!/bin/sh
 set -e
 
-CERT_DIR="/https"
-CERT_KEY_PATH="$CERT_DIR/aspnetapp.key"
-CERT_CRT_PATH="$CERT_DIR/aspnetapp.crt"
-CERT_PFX_PATH="$CERT_DIR/aspnetapp.pfx"
-CERT_PASSWORD="${ASPNETCORE_Kestrel__Certificates__Default__Password:-BookOrbitDevCert123!}"
+echo "Starting container..."
 
-if [ ! -f "$CERT_PFX_PATH" ]; then
-    mkdir -p "$CERT_DIR"
+# =========================
+# Initialize wwwroot
+# =========================
+if [ ! -f "/app/wwwroot/.initialized" ]; then
+    echo "Initializing wwwroot..."
 
-    openssl req \
-        -x509 \
-        -nodes \
-        -newkey rsa:2048 \
-        -keyout "$CERT_KEY_PATH" \
-        -out "$CERT_CRT_PATH" \
-        -days 365 \
-        -subj "/CN=localhost" \
-        -addext "subjectAltName=DNS:localhost,DNS:bookorbit-api,IP:127.0.0.1" \
-        -addext "basicConstraints=critical,CA:FALSE" \
-        -addext "keyUsage=critical,digitalSignature,keyEncipherment" \
-        -addext "extendedKeyUsage=serverAuth"
+    cp -r /app/wwwroot_backup/* /app/wwwroot/
 
-    openssl pkcs12 \
-        -export \
-        -out "$CERT_PFX_PATH" \
-        -inkey "$CERT_KEY_PATH" \
-        -in "$CERT_CRT_PATH" \
-        -passout "pass:$CERT_PASSWORD"
+    touch /app/wwwroot/.initialized
 
-    rm -f "$CERT_KEY_PATH" "$CERT_CRT_PATH"
+    echo "wwwroot initialized."
+else
+    echo "wwwroot already initialized."
 fi
 
+# =========================
+# Run App
+# =========================
 exec dotnet BookOrbit.Api.dll

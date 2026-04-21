@@ -7,6 +7,7 @@ public record BookDto
     public string Publisher { get; set; } = string.Empty;
     public BookCategory Category { get; set; }
     public string Author { get; set; } = string.Empty;
+    public string BookCoverImageUrl { get; set; } = string.Empty;
 
     [JsonConstructor]
     private BookDto() { }
@@ -17,7 +18,8 @@ public record BookDto
         string isbn,
         string publisher,
         BookCategory category,
-        string author)
+        string author,
+        string bookCoverImageUrl)
     {
         Id = id;
         Title = title;
@@ -25,9 +27,10 @@ public record BookDto
         Publisher = publisher;
         Category = category;
         Author = author;
+        BookCoverImageUrl = bookCoverImageUrl;
     }
 
-    static public BookDto FromEntity(Book book)
+    static public BookDto FromEntity(Book book,string bookCoverImageUrl)
     =>
         new(
             book.Id,
@@ -35,7 +38,8 @@ public record BookDto
             book.ISBN.Value,
             book.Publisher.Value,
             book.Category,
-            book.Author.Value);
+            book.Author.Value,
+            bookCoverImageUrl);
 
 
 }

@@ -2,7 +2,9 @@
 public class CreateBookCopyCommandHandler(
     ILogger<CreateBookCopyCommandHandler> logger,
     IAppDbContext context,
-    HybridCache cache) : IRequestHandler<CreateBookCopyCommand, Result<BookCopyDtoWithBookDetails>>
+    HybridCache cache,
+    IRouteService routeService) : IRequestHandler<CreateBookCopyCommand, Result<BookCopyDtoWithBookDetails>>
+
 {
     public async Task<Result<BookCopyDtoWithBookDetails>> Handle(CreateBookCopyCommand command, CancellationToken ct)
     {
@@ -58,10 +60,12 @@ public class CreateBookCopyCommandHandler(
                 ||
                 l.State == LendingListRecordState.Borrowed), ct);
 
+        string bookCoverImageUrl = routeService.GetBookCoverImageRoute(book.CoverImageFileName);
+
         return BookCopyDtoWithBookDetails.FromEntity(
             createdBookCopyResult.Value,
             student.Name.Value,
-            BookDto.FromEntity(book),
+            BookDto.FromEntity(book, bookCoverImageUrl),
             isListed);
     }
 }

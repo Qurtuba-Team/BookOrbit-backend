@@ -1,6 +1,8 @@
 ﻿
 
 using BookOrbit.Application.Common.Constants;
+using BookOrbit.Application.Common.Interfaces.ImageServices;
+using BookOrbit.Infrastructure.Services.ImageServices;
 
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
@@ -70,6 +72,8 @@ static public class DependencyInjection
         services.AddTransient<IRouteService, RouteService>();
         services.AddTransient<IPasswordService, PasswordService>();
         services.AddTransient<IEmailFormatService, EmailFormatService>();
+        services.AddTransient<IBookImageService, BookImageService>();
+        services.AddTransient<IStudentImageService, StudentImageService>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)

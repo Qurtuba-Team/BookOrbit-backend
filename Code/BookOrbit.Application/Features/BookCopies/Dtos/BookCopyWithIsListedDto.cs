@@ -9,6 +9,7 @@ public class BookCopyWithIsListedDto
     public string OwnerName { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public bool IsListed { get; set; }
+    public string BookCoverImageFileName { get; set; } = string.Empty;
 
     public BookCopyWithIsListedDto(
     Guid id,
@@ -18,7 +19,8 @@ public class BookCopyWithIsListedDto
     BookCopyState state,
     string ownerName,
     string title,
-    bool isListed)
+    bool isListed,
+    string bookCoverImageFileName)
     {
         Id = id;
         BookId = bookId;
@@ -28,6 +30,7 @@ public class BookCopyWithIsListedDto
         OwnerName = ownerName;
         Title = title;
         IsListed = isListed;
+        BookCoverImageFileName = bookCoverImageFileName;
     }
 
     public BookCopyWithIsListedDto()

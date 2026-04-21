@@ -10,6 +10,7 @@ static public class DependencyInjection
         services
             .AddSettings(configuration)
             .AddControllerWithJsonConfiguration()
+            .AddServices()
             .AddIdentityInfrastructure()
             .AddCustomProblemDetails()
             .AddAuthentication(configuration)
@@ -50,6 +51,13 @@ static public class DependencyInjection
 
         return services;
     }
+
+    public static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IApiDataService, ApiDataService>();
+        return services;
+    }
+
     public static IServiceCollection AddIdentityInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<ICurrentUser, CurrentUser>();
@@ -264,6 +272,8 @@ static public class DependencyInjection
         app.UseHttpsRedirection();
 
         app.UseCors(appSettings.CorsPolicyName);
+
+        app.UseStaticFiles();
 
         app.UseRateLimiter();
 
