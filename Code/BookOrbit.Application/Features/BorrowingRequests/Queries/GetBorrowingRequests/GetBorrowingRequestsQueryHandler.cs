@@ -39,6 +39,9 @@ public class GetBorrowingRequestsQueryHandler(
         if (searchQuery.LendingRecordId is not null)
             query = query.Where(br => br.LendingRecordId == searchQuery.LendingRecordId);
 
+        if (searchQuery.LendingStudentId is not null)
+            query = query.Where(br => br.LendingRecord!.BookCopy!.OwnerId == searchQuery.LendingStudentId);
+
         if (searchQuery.States is not null && searchQuery.States.Count != 0)
             query = query.Where(br => searchQuery.States.Contains(br.State));
 

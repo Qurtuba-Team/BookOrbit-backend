@@ -6,5 +6,9 @@ public class CancelBorrowingRequestCommandValidator : AbstractValidator<CancelBo
         RuleFor(x => x.BorrowingRequestId)
             .Cascade(CascadeMode.Stop)
             .BorrowingRequestIdRules();
+
+        RuleFor(x => x.StudentId)
+            .Cascade(CascadeMode.Stop)
+            .StudentIdRules();
     }
 }

@@ -3,6 +3,8 @@ using BookOrbit.Application.Common.Interfaces.ImageServices;
 
 namespace BookOrbit.Api.Controllers.Books;
 
+using BookOrbit.Application.Features.Books.Commands.StateMachien.MakeBookAvilable;
+
 [Route("api/v{version:apiVersion}/books")]
 [ApiVersion("1.0")]
 [Authorize]
@@ -12,7 +14,7 @@ public class BookController(
     IBookImageService bookImageService) : ApiController
 {
     [HttpPost]
-    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(BookDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -90,6 +92,30 @@ public class BookController(
     }
 
 
+    [HttpPatch("{bookId:guid}/available")]
+    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Mark a book as available.")]
+    [EndpointDescription("Marks the specified book as available when it is in a valid state for availability.")]
+    [EndpointName("MakeBookAvailable")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult> MakeBookAvailable([FromRoute] Guid bookId, CancellationToken ct)
+    {
+        var result = await sender.Send(new MakeBookAvilableCommand(bookId), ct);
+
+        return result.Match(
+           _ => NoContent(),
+           e => Problem(e, HttpContext));
+    }
+
+
     [HttpDelete("{bookId:guid}")]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -152,7 +178,7 @@ public class BookController(
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
     [EndpointSummary("Retrieve a paginated list of books.")]
-    [EndpointDescription("Returns a paginated collection of books and supports searching, category filtering, and sorting by [createdat,updatedat,title,publisher,author] so clients can browse the catalog efficiently.")]
+    [EndpointDescription("Returns a paginated collection of books and supports searching, category filtering, status filtering, and sorting by [createdat,updatedat,title,publisher,author] so clients can browse the catalog efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBooks")]
     [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
@@ -165,7 +191,8 @@ public class BookController(
             request.SearchTerm,
             request.SortColumn,
             request.SortDirection,
-            request.Categories);
+            request.Categories,
+            request.Statuses);
 
         var result = await sender.Send(query, ct);
 
@@ -173,8 +200,4 @@ public class BookController(
            Ok,
            e => Problem(e, HttpContext));
     }
-
-
-
-
 }

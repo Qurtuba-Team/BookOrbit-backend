@@ -12,7 +12,8 @@ public class BorrowingRequestCachingConstants
         $":sort={query.SortColumn}:{query.SortDirection ?? "-"}" +
         $":states=[{string.Join(',', query.States ?? [])}]" +
         $":borrowerid={query.BorrowingStudentId?.ToString() ?? "-"}" +
-        $":lendingrecordid={query.LendingRecordId?.ToString() ?? "-"}";
+        $":lendingstudentid={query.LendingStudentId?.ToString() ?? "-"}" +
+        $":lendingrecordid={query.LendingRecordId?.ToString() ?? "-"}" ;
 
     public const int ExpirationInMinutes = 10;
 }

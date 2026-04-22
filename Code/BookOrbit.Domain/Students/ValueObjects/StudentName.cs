@@ -4,7 +4,7 @@ public record StudentName(string Value) : ValueObject<string>(Value)
 {
     //Arabic , english , spaces
     private static readonly Regex NameRegex =
-   new(@"^[A-Za-z ]+$", RegexOptions.Compiled);
+   new(@"^[A-Za-z\u0600-\u06FF ]+$", RegexOptions.Compiled);
 
     public const int MinLength = 3;
     public const int MaxLength = 50;

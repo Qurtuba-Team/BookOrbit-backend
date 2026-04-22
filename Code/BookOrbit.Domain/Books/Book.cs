@@ -7,6 +7,7 @@ public class Book : AuditableEntity
     public BookCategory Category { get; }
     public BookAuthor Author { get; }
     public string CoverImageFileName { get; }
+    public BookStatus Status { get; private set; }
 
 #pragma warning disable CS8618
     private Book() { }
@@ -26,6 +27,7 @@ public class Book : AuditableEntity
         Category = category;
         Author = author;
         CoverImageFileName = coverImageFileName;
+        Status = BookStatus.Pending;
     }
 
     public static Result<Book> Create(
@@ -46,10 +48,10 @@ public class Book : AuditableEntity
         if (isbn is null)
             return BookErrors.ISBNRequired;
 
-        if(publisher is null)
+        if (publisher is null)
             return BookErrors.PublisherRequired;
 
-        if(author is null)
+        if (author is null)
             return BookErrors.AuthorRequired;
 
 
@@ -69,7 +71,7 @@ public class Book : AuditableEntity
     }
 
 
-    public  Result<Updated> Update(
+    public Result<Updated> Update(
         BookTitle title)
     {
         if (title is null)
@@ -79,5 +81,12 @@ public class Book : AuditableEntity
 
         return Result.Updated;
     }
-}
 
+    public Result<Updated> MarkAsAvailable()
+    {
+        if (Status == BookStatus.Available)
+            return BookErrors.BookAlreadyAvailable;
+        Status = BookStatus.Available;
+        return Result.Updated;
+    }
+}

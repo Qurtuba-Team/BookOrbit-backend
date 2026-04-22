@@ -7,10 +7,15 @@ public class RejectBorrowingRequestCommandHandler(
 {
     public async Task<Result<Updated>> Handle(RejectBorrowingRequestCommand command, CancellationToken ct)
     {
-        var borrowingRequest = await context.BorrowingRequests
-            .FirstOrDefaultAsync(br => br.Id == command.BorrowingRequestId, ct);
+        var borrowingRequestData = await context.BorrowingRequests
+             .Select(br => new
+             {
+                 BorrowingRequest = br,
+                 OwnerId = br.LendingRecord!.BookCopy!.OwnerId //Better than doing a naviagation property in the domain model, as it doesn't require loading the related entities into memory
+             })
+             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
-        if (borrowingRequest is null)
+        if (borrowingRequestData is null)
         {
             logger.LogWarning(
                 "Borrowing request {BorrowingRequestId} not found for rejection.",
@@ -19,7 +24,19 @@ public class RejectBorrowingRequestCommandHandler(
             return BorrowingRequestApplicationErrors.NotFoundById;
         }
 
-        var rejectResult = borrowingRequest.MarkAsRejected();
+        var ownerId = borrowingRequestData.OwnerId;
+
+        if (ownerId != command.StudentId)
+        {
+            logger.LogWarning(
+                "Student {StudentId} is not the owner of borrowing request {BorrowingRequestId}.",
+                command.StudentId,
+                borrowingRequestData.BorrowingRequest.Id);
+
+            return BorrowingRequestApplicationErrors.StudentNotLendingRecordOwner;
+        }
+
+        var rejectResult = borrowingRequestData.BorrowingRequest.MarkAsRejected();
 
         if (rejectResult.IsFailure)
             return rejectResult.Errors;
@@ -29,7 +46,7 @@ public class RejectBorrowingRequestCommandHandler(
 
         logger.LogInformation(
             "Borrowing request {BorrowingRequestId} has been rejected.",
-            borrowingRequest.Id);
+            borrowingRequestData.BorrowingRequest.Id);
 
         return Result.Updated;
     }
