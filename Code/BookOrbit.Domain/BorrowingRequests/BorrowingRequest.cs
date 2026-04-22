@@ -5,7 +5,7 @@ public class BorrowingRequest : ExpirableEntity
 {
     public Guid BorrowingStudentId { get; }
     public Guid LendingRecordId { get; }
-    public BorrowingRequestState State { get; }
+    public BorrowingRequestState State { get; private set; }
 
 
     public Student? BorrowingStudent { get; private set; }
@@ -54,4 +54,38 @@ public class BorrowingRequest : ExpirableEntity
 
         return borrowingRequest;
     }
+
+    private bool CanTransitionToState(BorrowingRequestState newState)
+    {
+        return State switch
+        {
+            BorrowingRequestState.Pending => newState is BorrowingRequestState.Accepted or BorrowingRequestState.Rejected or BorrowingRequestState.Cancelled or BorrowingRequestState.Expired,
+            BorrowingRequestState.Accepted => newState is BorrowingRequestState.Cancelled or BorrowingRequestState.Expired,
+            BorrowingRequestState.Rejected => false,
+            BorrowingRequestState.Cancelled => false,
+            BorrowingRequestState.Expired => false,
+            _ => false
+        };
+    }
+
+    private Result<Updated> UpdateState(BorrowingRequestState newState)
+    {
+        if (!CanTransitionToState(newState))
+            return BorrowingRequestErrors.InvalidStateTransition(State, newState);
+
+        State = newState;
+        return Result.Updated;
+    }
+
+    public Result<Updated> MarkAsApproved() =>
+        UpdateState(BorrowingRequestState.Accepted);
+
+    public Result<Updated> MarkAsRejected() =>
+        UpdateState(BorrowingRequestState.Rejected);
+
+    public Result<Updated> MarkAsCancelled() =>
+        UpdateState(BorrowingRequestState.Cancelled);
+
+    public Result<Updated> MarkAsExpired() =>
+        UpdateState(BorrowingRequestState.Expired);
 }

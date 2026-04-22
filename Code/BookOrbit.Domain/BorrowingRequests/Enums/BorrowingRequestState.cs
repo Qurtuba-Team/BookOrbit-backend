@@ -3,7 +3,7 @@
 public enum BorrowingRequestState
 {
     Pending,
-    Approved,
+    Accepted,
     Rejected,
     Cancelled,
     Expired

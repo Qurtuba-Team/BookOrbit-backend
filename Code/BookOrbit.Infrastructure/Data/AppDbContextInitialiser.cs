@@ -372,7 +372,7 @@ public class AppDbContextInitialiser(
         var requestSeeds = new List<(LendingListRecord Record, BorrowingRequestState State)>
         {
             (availableRecords[0], BorrowingRequestState.Pending),
-            (reservedRecord, BorrowingRequestState.Approved),
+            (reservedRecord, BorrowingRequestState.Accepted),
             (availableRecords[1], BorrowingRequestState.Rejected),
             (availableRecords[2], BorrowingRequestState.Cancelled),
             (expiredRecord, BorrowingRequestState.Expired)
