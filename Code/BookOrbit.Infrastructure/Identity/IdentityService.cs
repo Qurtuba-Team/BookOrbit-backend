@@ -14,19 +14,18 @@ public class IdentityService(
         if (user is null)
             return InfrastructureIdentityErrors.InvalidLoginAttempt;
 
-        //User now can Authenticate without confirmation to 
-        //access his user Id , 
-        // But cant integrate with other end points
-        //(Active User Policy in infrastructure)
+        //User Cannot Access His Email Without Confirming , 
+        //He Can Access Confirmation Endpoint To Resend Confirmation Email But He Cannot Access Any Other Endpoint Before Confirming His Email
 
-        //if (!user.EmailConfirmed)
-        //    return InfrastructureIdentityErrors.EmailNotConfirmed;
+        if (!user.EmailConfirmed)
+            return InfrastructureIdentityErrors.EmailNotConfirmed;
 
         if (!await userManager.CheckPasswordAsync(user, password))
             return InfrastructureIdentityErrors.InvalidLoginAttempt;
 
 
         return new AppUserDto(
+            user.UserName ?? "Unknown",
             user.Id,
             user.Email!,
             await userManager.GetRolesAsync(user),
@@ -34,11 +33,11 @@ public class IdentityService(
             user.EmailConfirmed);
     }
 
-    public async Task<Result<string>> CreateStudent(string email, string password, CancellationToken ct = default)
+    public async Task<Result<string>> CreateStudent(string Name,string email, string password, CancellationToken ct = default)
     {
         var user = new AppUser
         {
-            UserName = email,
+            UserName = Name,
             Email = email,
             EmailConfirmed = false,
         };
@@ -103,6 +102,7 @@ public class IdentityService(
             return InfrastructureIdentityErrors.UserNotFoundById;
 
         return new AppUserDto(
+            user.UserName??"Unknown",
             user.Id,
             user.Email!,
             await userManager.GetRolesAsync(user),

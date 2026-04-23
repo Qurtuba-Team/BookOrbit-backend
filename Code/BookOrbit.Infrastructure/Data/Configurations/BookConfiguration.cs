@@ -1,4 +1,5 @@
 ﻿
+using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Books.ValueObjects;
 
 namespace BookOrbit.Infrastructure.Data.Configurations;
@@ -18,6 +19,11 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.Property(b => b.Category)
             .HasConversion<int>()
             .IsRequired();
+
+        builder.Property(b => b.Status)
+        .HasConversion<string>()
+        .IsRequired()
+        .HasDefaultValue(BookStatus.Pending);
 
         builder.Property(b => b.CoverImageFileName)
             .HasMaxLength(255)

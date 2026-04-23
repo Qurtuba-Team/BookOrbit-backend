@@ -11,7 +11,8 @@ public class BookCachingConstants
         $"students:p={query.Page}:ps={query.PageSize}" +
         $":st={query.SearchTerm ?? "-"}" +
         $":sort={query.SortColumn}:{query.SortDirection ?? "-"}" +
-        $":states=[{string.Join(',', query.Categories ?? [])}]";
+        $":categories=[{string.Join(',', query.Categories ?? [])}]" +
+        $":statuses=[{string.Join(',', query.Statuses ?? [])}]";
 
     public const int ExpirationInMinutes = 10;
 

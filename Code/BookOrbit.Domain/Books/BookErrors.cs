@@ -13,6 +13,8 @@ static public class BookErrors
     static public readonly Error InvalidAuthor = DomainCommonErrors.InvalidProp(ClassName, "Author", "Author", $"It must be between {BookAuthor.MinLength} and {BookAuthor.MaxLength} [Arabic/Englilsh] characters");
     static public readonly Error InvalidCategory = DomainCommonErrors.InvalidProp(ClassName, "BookCategory", "Book Category", $"Invalid category value");
     static public readonly Error CategoryRequired = DomainCommonErrors.RequiredProp(ClassName, "BookCategory", "Book Category");
+    static public readonly Error BookAlreadyAvailable = DomainCommonErrors.InvalidStateTransition(ClassName,"Available", "Available");
+
     #region ISBN
     static public readonly Error ISBNRequired = DomainCommonErrors.RequiredProp(ClassName,"ISBN","ISBN");
     static public readonly Error InvalidISBN = DomainCommonErrors.InvalidProp(ClassName, "ISBN", "ISBN", "It must be a valid ISBN-10 or ISBN-13 format");

@@ -17,6 +17,12 @@ public class CreateBookCopyCommandHandler(
             return BookApplicationErrors.NotFoundById;
         }
 
+        if (book.Status is not BookStatus.Available)
+        {
+            logger.LogWarning("Book is not available. BookId: {BookId}", command.BookId);
+            return BookApplicationErrors.BookIsNotAvailable;
+        }
+
         var student = await context.Students.FirstOrDefaultAsync(s => s.Id == command.OwnerId, ct);
 
         if (student is null)
@@ -32,6 +38,7 @@ public class CreateBookCopyCommandHandler(
 
             return StudentApplicationErrors.StateIsNotActive;
         }
+
 
         var createdBookCopyResult = BookCopy.Create(
             id: Guid.NewGuid(),

@@ -95,31 +95,31 @@ public class AppDbContextInitialiser(
             new()
             {
                 Email = "student1@std.mans.edu.eg",
-                UserName = "student1@std.mans.edu.eg",
+                UserName = "first student",
                 EmailConfirmed = true
             },
             new()
             {
                 Email = "student2@std.mans.edu.eg",
-                UserName = "student2@std.mans.edu.eg",
+                UserName = "الطالب الثاني",
                 EmailConfirmed = true
             },
             new()
             {
                 Email = "student3@std.mans.edu.eg",
-                UserName = "student3@std.mans.edu.eg",
+                UserName = "الطالب الثالث",
                 EmailConfirmed = true
             },
             new()
             {
                 Email = "student4@std.mans.edu.eg",
-                UserName = "student4@std.mans.edu.eg",
+                UserName = "الطالب الرابع",
                 EmailConfirmed = true
             },
             new()
             {
                 Email = "student5@std.mans.edu.eg",
-                UserName = "student5@std.mans.edu.eg",
+                UserName = "الطالب الخامس",
                 EmailConfirmed = true
             }
         };
@@ -147,7 +147,7 @@ public class AppDbContextInitialiser(
         var admin = new AppUser
         {
             Email = "admin@bookorbit.com",
-            UserName = "admin@bookorbit.com",
+            UserName = "the admin",
             EmailConfirmed = true
         };
 
@@ -372,7 +372,7 @@ public class AppDbContextInitialiser(
         var requestSeeds = new List<(LendingListRecord Record, BorrowingRequestState State)>
         {
             (availableRecords[0], BorrowingRequestState.Pending),
-            (reservedRecord, BorrowingRequestState.Approved),
+            (reservedRecord, BorrowingRequestState.Accepted),
             (availableRecords[1], BorrowingRequestState.Rejected),
             (availableRecords[2], BorrowingRequestState.Cancelled),
             (expiredRecord, BorrowingRequestState.Expired)
@@ -539,7 +539,7 @@ public class AppDbContextInitialiser(
         if (await context.Students.AnyAsync(s => s.UserId == user.Id))
             return;
 
-        var nameResult = StudentName.Create($"Student {index.ToWords(new CultureInfo("en"))} Name");
+        var nameResult = StudentName.Create(user.UserName!);
         var emailResult = UniversityMail.Create(user.Email!);
         string personalPhoto =$"{Guid.NewGuid()}.png";
         var telegramUserIdResult = TelegramUserId.Create($"student{index}");

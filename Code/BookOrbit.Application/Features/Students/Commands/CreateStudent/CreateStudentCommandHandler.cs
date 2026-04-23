@@ -50,7 +50,7 @@ public class CreateStudentCommandHandler(
 
         //Create User
 
-        var userCreationResult = await identityService.CreateStudent(emailResult.Value.Value,command.Password,ct);
+        var userCreationResult = await identityService.CreateStudent(nameCreationResult.Value.Value,emailResult.Value.Value,command.Password,ct);
 
         if(userCreationResult.IsFailure)
             return userCreationResult.Errors;

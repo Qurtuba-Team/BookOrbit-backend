@@ -9,6 +9,8 @@ public record BookListItemDto
     public string Author { get; set; } = string.Empty;
     public int AvailableCopiesCount { get; set; }
     public string BookCoverImageUrl { get; set; } = string.Empty;
+    public BookStatus Status { get; set; }
+
 
     [JsonConstructor]
     private BookListItemDto() { }
@@ -21,7 +23,8 @@ public record BookListItemDto
         BookCategory category,
         string author,
         int availableCopiesCount,
-        string bookCoverImageUrl)
+        string bookCoverImageUrl,
+        BookStatus bookStatus)
     {
         Id = id;
         Title = title;
@@ -31,5 +34,6 @@ public record BookListItemDto
         Author = author;
         AvailableCopiesCount = availableCopiesCount;
         BookCoverImageUrl = bookCoverImageUrl;
+        Status = bookStatus;
     }
 }

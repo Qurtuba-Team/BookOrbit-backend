@@ -6,7 +6,8 @@ public record GetBooksQuery
     string? SearchTerm,
     string? SortColumn = "createdAt",
     string? SortDirection = "desc",
-    List<BookCategory>? Categories = null)
+    List<BookCategory>? Categories = null,
+    List<BookStatus>? Statuses = null)
     : ICachedQuery<Result<PaginatedList<BookListItemDto>>>
 {
     public string CacheKey => BookCachingConstants.BookListKey(this);

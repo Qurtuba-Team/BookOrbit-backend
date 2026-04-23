@@ -27,7 +27,8 @@ public class GetBookQueryHandler(
         AvailableCopiesCount = context.BookCopies
             .Where(c => c.BookId == b.Id && c.State == BookCopyState.Available)
             .Count(),
-        BookCoverImageFileName = b.CoverImageFileName
+        BookCoverImageFileName = b.CoverImageFileName,
+        Status = b.Status
     });
 
         int count = await bookQueryWithCount.CountAsync(ct);
@@ -47,7 +48,8 @@ public class GetBookQueryHandler(
                 s.Category,
                 s.Author,
                 s.AvailableCopiesCount,
-                baseUrl + "/" + s.BookCoverImageFileName))
+                baseUrl + "/" + s.BookCoverImageFileName,
+                s.Status))
             .ToListAsync(ct);
 
         return new PaginatedList<BookListItemDto>
@@ -94,6 +96,13 @@ public class GetBookQueryHandler(
 
             query = query.Where(b => (b.Category & category) == category);
         }
+
+        if(searchQuery.Statuses is not null &&
+            searchQuery.Statuses.Count != 0)
+        {
+           query = query.Where(b => searchQuery.Statuses.Contains(b.Status));
+        }
+
         return query;
     }
 

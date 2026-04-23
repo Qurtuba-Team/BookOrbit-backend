@@ -204,14 +204,14 @@ public class StudentNameTests
     [InlineData("محمد علي")]
     [InlineData("فاطمة")]
     [InlineData("عمر")]
-    public void Create_WithArabicName_ReturnsInvalidNameError(string arabicName)
+    public void Create_WithArabicName_ReturnsSuccess(string arabicName)
     {
         // Act
         var result = StudentName.Create(arabicName);
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Errors.Should().Contain(StudentErrors.InvalidName);
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Value.Should().Be(StudentName.Normalize(arabicName));
     }
 
     [Theory]

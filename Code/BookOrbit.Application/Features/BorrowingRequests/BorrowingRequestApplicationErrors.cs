@@ -22,4 +22,14 @@ static public class BorrowingRequestApplicationErrors
         ClassName,
         "StudentCannotBorrowOwnedCopies",
         "A student cannot request to borrow their own book copies.");
+
+    public static readonly Error StudentNotLendingRecordOwner = ApplicationCommonErrors.CustomUnauthorized(
+        ClassName,
+        "StudentNotLendingRecordOwner",
+        "Student is not the owner of the lending record.");
+
+    public static readonly Error StudentNotBorrower = ApplicationCommonErrors.CustomUnauthorized(
+        ClassName,
+        "StudentNotBorrower",
+        "Student is not the borrower for this request.");
 }

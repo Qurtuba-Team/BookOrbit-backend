@@ -21,7 +21,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&LendingListRecordId=859ecb24-56fd-47d0-95b0-43ee6d6912c5",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&LendingStudentId=0ec38ca2-8c42-4be4-816c-a93615cdcf01",
               "host": [
                 "{{baseurl}}"
               ],
@@ -60,12 +60,17 @@
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "859ecb24-56fd-47d0-95b0-43ee6d6912c5"
+                  "value": "859ecb24-56fd-47d0-95b0-43ee6d6912c5",
+                  "disabled": true
                 },
                 {
                   "key": "States",
                   "value": "",
                   "disabled": true
+                },
+                {
+                  "key": "LendingStudentId",
+                  "value": "0ec38ca2-8c42-4be4-816c-a93615cdcf01"
                 }
               ]
             }
@@ -130,6 +135,90 @@
                   "var json = pm.response.json();",
                   "pm.environment.set('borrowingrequestid', json.id);"
                 ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "3e384eec-01f7-4aee-98b1-4a4cec3e1b0b",
+          "name": "State Machien",
+          "item": [
+            {
+              "id": "710a1336-237a-4c1c-8f5c-d2312a9fbaac",
+              "name": "accept",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/accept",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "borrowingrequests",
+                    "{{borrowingrequestid}}",
+                    "accept"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "eebfda26-bbb2-4e34-9ad0-ece2ffa84ed8",
+              "name": "reject",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/reject",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "borrowingrequests",
+                    "{{borrowingrequestid}}",
+                    "reject"
+                  ]
+                }
+              }
+            },
+            {
+              "id": "09a6b5da-e8c3-4315-a03f-3341d27d968f",
+              "name": "cancel",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/cancel",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "borrowingrequests",
+                    "{{borrowingrequestid}}",
+                    "cancel"
+                  ]
+                }
               }
             }
           ]
@@ -317,7 +406,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
+              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -480,7 +569,7 @@
                 },
                 {
                   "key": "ISBN",
-                  "value": "9789770913571",
+                  "value": "9789770914571",
                   "type": "text"
                 },
                 {
@@ -691,6 +780,21 @@
                   "key": "Categories",
                   "value": "fiction",
                   "disabled": true
+                },
+                {
+                  "key": "Categories",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Statuses",
+                  "value": "available",
+                  "disabled": true
+                },
+                {
+                  "key": "Statuses",
+                  "value": "pending",
+                  "disabled": true
                 }
               ]
             }
@@ -798,6 +902,32 @@
               }
             }
           ]
+        },
+        {
+          "id": "58af7838-d07e-4742-99e9-66ba00a4a935",
+          "name": "Make Available",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}/available",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{bookid}}",
+                "available"
+              ]
+            }
+          }
         }
       ]
     },
@@ -1514,17 +1644,17 @@
                   "formdata": [
                     {
                       "key": "Name",
-                      "value": "Eyad Redsa",
+                      "value": "إياد رضا",
                       "type": "text"
                     },
                     {
                       "key": "PhoneNumber",
-                      "value": "01055446587",
+                      "value": "01015146587",
                       "type": "text"
                     },
                     {
                       "key": "TelegramUserId",
-                      "value": "EyadDe2v122353322",
+                      "value": "EyaddDe2v1122353322",
                       "type": "text"
                     },
                     {
@@ -1534,7 +1664,7 @@
                     },
                     {
                       "key": "UniversityMailAddress",
-                      "value": "eyadre2d123345a@std.mans.edu.eg",
+                      "value": "eyaddre2d12d3345a@std.mans.edu.eg",
                       "type": "text"
                     },
                     {
@@ -1713,7 +1843,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseurl}}/api/v1/students?Page=1&PageSize=20",
+                  "raw": "{{baseurl}}/api/v1/students?Page=5&PageSize=20",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1725,7 +1855,7 @@
                   "query": [
                     {
                       "key": "Page",
-                      "value": "1"
+                      "value": "5"
                     },
                     {
                       "key": "PageSize",

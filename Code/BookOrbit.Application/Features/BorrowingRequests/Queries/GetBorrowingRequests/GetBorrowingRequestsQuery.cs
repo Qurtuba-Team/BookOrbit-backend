@@ -7,6 +7,7 @@ public record GetBorrowingRequestsQuery(
     string? SortDirection = "desc",
     Guid? BorrowingStudentId = null,
     Guid? LendingRecordId = null,
+    Guid? LendingStudentId = null,
     List<BorrowingRequestState>? States = null)
     : ICachedQuery<Result<PaginatedList<BorrowingRequestListItemDto>>>
 {

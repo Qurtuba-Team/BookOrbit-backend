@@ -50,8 +50,16 @@ static public class DependencyInjection
             options.Password.RequireUppercase = false;
             options.Password.RequireLowercase = false;
             options.Password.RequiredUniqueChars = 4;
+
+
             options.SignIn.RequireConfirmedAccount = true;
             options.User.RequireUniqueEmail = true;
+
+            options.User.AllowedUserNameCharacters =
+                "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                " " +
+                "ءآأؤإئابةتثجحخدذرزسشصضطظعغفقكلمنهوىي";
+
         })
         .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<AppDbContext>()
