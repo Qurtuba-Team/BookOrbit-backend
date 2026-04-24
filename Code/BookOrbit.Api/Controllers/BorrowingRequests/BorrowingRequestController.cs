@@ -27,7 +27,14 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingRequestDto>> GetBorrowingRequestById([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-        var query = new GetBorrowingRequestByIdQuery(borrowingRequestId);
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+        var query = new GetBorrowingRequestByIdQuery(borrowingRequestId, studentResult.Value.Id);
 
         var result = await sender.Send(query, ct);
 
@@ -37,7 +44,7 @@ public class BorrowingRequestController(
     }
 
     [HttpGet]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(typeof(PaginatedList<BorrowingRequestListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
@@ -57,6 +64,85 @@ public class BorrowingRequestController(
             request.SortColumn,
             request.SortDirection,
             request.BorrowingStudentId,
+            request.LendingListRecordId,
+            request.LendingStudentId,
+            request.States);
+
+        var result = await sender.Send(query, ct);
+
+        return result.Match(
+           Ok,
+           e => Problem(e, HttpContext));
+    }
+
+    [HttpGet("me/in")]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [ProducesResponseType(typeof(PaginatedList<BorrowingRequestListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Retrieve a paginated list of incoming borrowing requests.")]
+    [EndpointDescription("Returns a paginated collection of incoming borrowing requests for the current student and supports searching, filtering, and sorting by [createdat,updatedat,expirationdate,state,borrowername,booktitle].")]
+    [MapToApiVersion("1.0")]
+    [EndpointName("GetIncomingBorrowingRequests")]
+    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<PaginatedList<BorrowingRequestListItemDto>>> GetIncomingBorrowingRequests([FromQuery] BorrowingRequestPagedFilterRequest request, CancellationToken ct)
+    {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+
+        var query = new GetBorrowingRequestsQuery(
+            request.Page,
+            request.PageSize,
+            request.SearchTerm,
+            request.SortColumn,
+            request.SortDirection,
+            request.BorrowingStudentId,
+            request.LendingListRecordId,
+            studentResult.Value.Id,
+            request.States);
+
+        var result = await sender.Send(query, ct);
+
+        return result.Match(
+           Ok,
+           e => Problem(e, HttpContext));
+    }
+
+    [HttpGet("me/out")]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [ProducesResponseType(typeof(PaginatedList<BorrowingRequestListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Retrieve a paginated list of outgoing borrowing requests.")]
+    [EndpointDescription("Returns a paginated collection of outgoing borrowing requests for the current student and supports searching, filtering, and sorting by [createdat,updatedat,expirationdate,state,borrowername,booktitle].")]
+    [MapToApiVersion("1.0")]
+    [EndpointName("GetOutgoingBorrowingRequests")]
+    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<PaginatedList<BorrowingRequestListItemDto>>> GetOutgoingBorrowingRequests([FromQuery] BorrowingRequestPagedFilterRequest request, CancellationToken ct)
+    {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+        var query = new GetBorrowingRequestsQuery(
+            request.Page,
+            request.PageSize,
+            request.SearchTerm,
+            request.SortColumn,
+            request.SortDirection,
+            studentResult.Value.Id,
             request.LendingListRecordId,
             request.LendingStudentId,
             request.States);

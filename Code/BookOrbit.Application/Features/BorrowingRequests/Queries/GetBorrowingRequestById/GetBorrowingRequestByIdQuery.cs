@@ -1,6 +1,7 @@
 namespace BookOrbit.Application.Features.BorrowingRequests.Queries.GetBorrowingRequestById;
 public record GetBorrowingRequestByIdQuery(
-    Guid BorrowingRequestId) : ICachedQuery<Result<BorrowingRequestDto>>
+    Guid BorrowingRequestId,
+    Guid StudentId) : ICachedQuery<Result<BorrowingRequestDto>>
 {
     public string CacheKey => BorrowingRequestCachingConstants.BorrowingRequestKey(BorrowingRequestId);
 

@@ -93,5 +93,4 @@ public class StudentQueryController(
            e => Problem(e, HttpContext));
     }
 
-
 }

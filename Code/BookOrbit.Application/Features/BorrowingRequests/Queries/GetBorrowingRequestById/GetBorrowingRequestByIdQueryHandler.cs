@@ -7,7 +7,12 @@ public class GetBorrowingRequestByIdQueryHandler(
     {
         var borrowingRequest = await context.BorrowingRequests
             .AsNoTracking()
-            .FirstOrDefaultAsync(br => br.Id == query.BorrowingRequestId, ct);
+            .FirstOrDefaultAsync(br => 
+            (br.Id == query.BorrowingRequestId)
+            && (
+            (br.BorrowingStudentId == query.StudentId)
+            ||
+            (br.LendingRecord!.BookCopy!.OwnerId == query.StudentId)), ct);
 
         if (borrowingRequest is null)
         {
