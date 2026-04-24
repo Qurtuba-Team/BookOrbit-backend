@@ -8,9 +8,9 @@ public class CreateStudentCommandHandler(
     HybridCache cache,
     IMaskingService maskingService,
     IIdentityService identityService)
-    : IRequestHandler<CreateStudentCommand, Result<StudentDto>>
+    : IRequestHandler<CreateStudentCommand, Result<StudentDtoWithContactInfo>>
 {
-    public async Task<Result<StudentDto>> Handle(CreateStudentCommand command, CancellationToken ct)
+    public async Task<Result<StudentDtoWithContactInfo>> Handle(CreateStudentCommand command, CancellationToken ct)
     {
         var emailResult = await EnsureEmailIsValidAndUnique(command.UniversityMailAddress, ct);
         if (emailResult.IsFailure)
@@ -91,7 +91,7 @@ public class CreateStudentCommandHandler(
 
         logger.LogInformation("Student created successfully with ID: {StudentId}", createdStudentResult.Value.Id);
 
-        return StudentDto.FromEntity(createdStudentResult.Value);
+        return StudentDtoWithContactInfo.FromEntity(createdStudentResult.Value);
     }
 
     private async Task RollbackCreatedUserAsync(string UserId,CancellationToken ct)

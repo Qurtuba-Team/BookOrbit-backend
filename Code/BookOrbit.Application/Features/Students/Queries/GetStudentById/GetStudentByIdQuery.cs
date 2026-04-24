@@ -1,6 +1,6 @@
 ﻿namespace BookOrbit.Application.Features.Students.Queries.GetStudentById;
 
-public record GetStudentByIdQuery(Guid StudentId) : ICachedQuery<Result<StudentDto>>
+public record GetStudentByIdQuery(Guid StudentId) : ICachedQuery<Result<StudentDtoWithContactInfo>>
 {
     public string CacheKey => StudentCachingConstants.StudentKey(StudentId);
 

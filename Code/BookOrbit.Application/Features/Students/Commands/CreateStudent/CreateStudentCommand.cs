@@ -7,4 +7,4 @@ public record CreateStudentCommand(
         string Password,
         string? PhoneNumber = null,
         string? TelegramUserId = null)
-    :IRequest<Result<StudentDto>>;
+    :IRequest<Result<StudentDtoWithContactInfo>>;

@@ -5,6 +5,7 @@ static public class StudentCachingConstants
 {
     public const string StudentTag = "student";
     public static string StudentKey(Guid id) => $"student:{id}";
+    public static string StudentProfileKey(Guid id) => $"student:profile:{id}";
 
     public static string StudentListKey(GetStudentsQuery query)
         =>
