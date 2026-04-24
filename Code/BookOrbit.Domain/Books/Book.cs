@@ -82,11 +82,29 @@ public class Book : AuditableEntity
         return Result.Updated;
     }
 
-    public Result<Updated> MarkAsAvailable()
+    private bool CanTransitionToStatus(BookStatus newStatus)
     {
-        if (Status == BookStatus.Available)
-            return BookErrors.BookAlreadyAvailable;
-        Status = BookStatus.Available;
+        return Status switch
+        {
+            BookStatus.Pending => newStatus is BookStatus.Available or BookStatus.Rejected,
+            BookStatus.Available => false,
+            BookStatus.Rejected => false,
+            _ => false
+        };
+    }
+
+    private Result<Updated> UpdateStatus(BookStatus newStatus)
+    {
+        if (!CanTransitionToStatus(newStatus))
+            return BookErrors.InvalidStatusTransition(Status, newStatus);
+
+        Status = newStatus;
         return Result.Updated;
     }
+
+    public Result<Updated> MarkAsAvailable()
+        => UpdateStatus(BookStatus.Available);
+
+    public Result<Updated> MarkAsRejected()
+        => UpdateStatus(BookStatus.Rejected);
 }

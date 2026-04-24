@@ -19,5 +19,15 @@ static public class BookErrors
     static public readonly Error ISBNRequired = DomainCommonErrors.RequiredProp(ClassName,"ISBN","ISBN");
     static public readonly Error InvalidISBN = DomainCommonErrors.InvalidProp(ClassName, "ISBN", "ISBN", "It must be a valid ISBN-10 or ISBN-13 format");
     #endregion
+
+    #region Logic
+    public static Error InvalidStatusTransition(BookStatus currentStatus, BookStatus newStatus)
+    {
+        if (currentStatus == newStatus)
+            return DomainCommonErrors.InvalidStateTransitionSameState(ClassName, currentStatus.ToString());
+
+        return DomainCommonErrors.InvalidStateTransition(ClassName, currentStatus.ToString(), newStatus.ToString());
+    }
+    #endregion
 }
 

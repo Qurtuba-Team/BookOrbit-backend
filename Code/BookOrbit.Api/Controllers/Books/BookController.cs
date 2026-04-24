@@ -4,6 +4,7 @@ using BookOrbit.Application.Common.Interfaces.ImageServices;
 namespace BookOrbit.Api.Controllers.Books;
 
 using BookOrbit.Application.Features.Books.Commands.StateMachien.MakeBookAvilable;
+using BookOrbit.Application.Features.Books.Commands.StateMachien.RejectBook;
 
 [Route("api/v{version:apiVersion}/books")]
 [ApiVersion("1.0")]
@@ -109,6 +110,30 @@ public class BookController(
     public async Task<ActionResult> MakeBookAvailable([FromRoute] Guid bookId, CancellationToken ct)
     {
         var result = await sender.Send(new MakeBookAvilableCommand(bookId), ct);
+
+        return result.Match(
+           _ => NoContent(),
+           e => Problem(e, HttpContext));
+    }
+
+
+    [HttpPatch("{bookId:guid}/reject")]
+    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Reject a book.")]
+    [EndpointDescription("Rejects the specified book when it is in a valid state for rejection.")]
+    [EndpointName("RejectBook")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult> RejectBook([FromRoute] Guid bookId, CancellationToken ct)
+    {
+        var result = await sender.Send(new RejectBookCommand(bookId), ct);
 
         return result.Match(
            _ => NoContent(),

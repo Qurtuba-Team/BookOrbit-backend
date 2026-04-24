@@ -2,5 +2,6 @@
 public enum BookStatus
 {
     Pending,
-    Available
+    Available,
+    Rejected
 }

@@ -144,8 +144,8 @@
           "name": "State Machien",
           "item": [
             {
-              "id": "710a1336-237a-4c1c-8f5c-d2312a9fbaac",
-              "name": "accept",
+              "id": "09a6b5da-e8c3-4315-a03f-3341d27d968f",
+              "name": "cancel",
               "request": {
                 "method": "PATCH",
                 "header": [
@@ -155,7 +155,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/accept",
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/cancel",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -164,7 +164,7 @@
                     "v1",
                     "borrowingrequests",
                     "{{borrowingrequestid}}",
-                    "accept"
+                    "cancel"
                   ]
                 }
               }
@@ -196,8 +196,8 @@
               }
             },
             {
-              "id": "09a6b5da-e8c3-4315-a03f-3341d27d968f",
-              "name": "cancel",
+              "id": "710a1336-237a-4c1c-8f5c-d2312a9fbaac",
+              "name": "accept",
               "request": {
                 "method": "PATCH",
                 "header": [
@@ -207,7 +207,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/cancel",
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/accept",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -216,7 +216,7 @@
                     "v1",
                     "borrowingrequests",
                     "{{borrowingrequestid}}",
-                    "cancel"
+                    "accept"
                   ]
                 }
               }
@@ -537,6 +537,32 @@
       "id": "ba93a48a-b396-4453-9070-d42cee908578",
       "name": "Books",
       "item": [
+        {
+          "id": "58af7838-d07e-4742-99e9-66ba00a4a935",
+          "name": "Make Available",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}/available",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{bookid}}",
+                "available"
+              ]
+            }
+          }
+        },
         {
           "id": "ce734fb4-4161-4460-b3a4-a23259a11ca3",
           "name": "Create Book",
@@ -904,8 +930,8 @@
           ]
         },
         {
-          "id": "58af7838-d07e-4742-99e9-66ba00a4a935",
-          "name": "Make Available",
+          "id": "c0292d67-699c-4707-b138-c86afeb41b84",
+          "name": "Reject",
           "request": {
             "method": "PATCH",
             "header": [
@@ -915,7 +941,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/books/{{bookid}}/available",
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}/reject",
               "host": [
                 "{{baseurl}}"
               ],
@@ -924,7 +950,7 @@
                 "v1",
                 "books",
                 "{{bookid}}",
-                "available"
+                "reject"
               ]
             }
           }
