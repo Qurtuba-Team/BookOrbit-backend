@@ -5,7 +5,7 @@
 namespace BookOrbit.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedBookStateWithConfigurations : Migration
+    public partial class AddedBookStatus : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -13,23 +13,27 @@ namespace BookOrbit.Infrastructure.Data.Migrations
             migrationBuilder.AlterColumn<string>(
                 name: "Status",
                 table: "Books",
-                type: "nvarchar(max)",
+                type: "nvarchar(20)",
+                maxLength: 20,
                 nullable: false,
                 defaultValue: "Pending",
-                oldClrType: typeof(int),
-                oldType: "int");
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldDefaultValue: "Pending");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.AlterColumn<string>(
                 name: "Status",
                 table: "Books",
-                type: "int",
+                type: "nvarchar(max)",
                 nullable: false,
+                defaultValue: "Pending",
                 oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
+                oldType: "nvarchar(20)",
+                oldMaxLength: 20,
                 oldDefaultValue: "Pending");
         }
     }

@@ -23,7 +23,8 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
         builder.Property(b => b.Status)
         .HasConversion<string>()
         .IsRequired()
-        .HasDefaultValue(BookStatus.Pending);
+        .HasDefaultValue(BookStatus.Pending)
+        .HasMaxLength(20);
 
         builder.Property(b => b.CoverImageFileName)
             .HasMaxLength(255)
