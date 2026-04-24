@@ -33,7 +33,9 @@ public class CreateBookCommandHandler(
             return authorCreationResult.Errors;
 
 
-        var isIsbnExists = await context.Books.AnyAsync(b => b.ISBN.Value == isbnCreationResult.Value.Value,ct);
+        var isIsbnExists = await context.Books.AnyAsync(
+            b => (b.ISBN.Value == isbnCreationResult.Value.Value)
+                && (b.Status == BookStatus.Available || b.Status == BookStatus.Pending),ct);
 
         if(isIsbnExists)
         {
