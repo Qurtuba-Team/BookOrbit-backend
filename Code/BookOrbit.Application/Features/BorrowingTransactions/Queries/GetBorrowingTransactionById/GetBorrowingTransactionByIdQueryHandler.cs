@@ -10,7 +10,16 @@ public class GetBorrowingTransactionByIdQueryHandler(
     {
         var transaction = await context.BorrowingTransactions
             .AsNoTracking()
-            .FirstOrDefaultAsync(bt => bt.Id == query.BorrowingTransactionId, ct);
+            .FirstOrDefaultAsync(
+            (bt => 
+            (bt.Id == query.BorrowingTransactionId) 
+            && (
+            (bt.BorrowerStudentId== query.StudentId)
+            ||
+            (bt.LenderStudentId == query.StudentId))
+            )
+            , ct);
+
 
         if (transaction is null)
         {

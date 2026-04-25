@@ -32,14 +32,21 @@ public class CreateBorrowingTransactionCommandHandler(
             {
                 lr.BookCopyId,
                 lr.BorrowingDurationInDays,
-                OwnerId = lr.BookCopy!.OwnerId
+                lr.BookCopy!.OwnerId
             })
             .FirstOrDefaultAsync(ct);
+
 
         if (lendingRecord is null)
         {
             logger.LogWarning("Lending list record {LendingRecordId} not found.", borrowingRequest.LendingRecordId);
             return LendingListApplicationErrors.NotFoundById;
+        }
+
+        if (lendingRecord.OwnerId != command.StudentId)
+        {
+            logger.LogWarning("Student {StudentId} is not the owner of the lending record {LendingRecordId}.", command.StudentId, borrowingRequest.LendingRecordId);
+            return BorrowingRequestApplicationErrors.NotOwnerOfLendingRecord;
         }
 
         var now = timeProvider.GetUtcNow();

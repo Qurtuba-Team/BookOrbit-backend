@@ -37,4 +37,9 @@ static public class BorrowingRequestApplicationErrors
         ClassName,
         "BorrowingRequestNotAccepted",
         "The borrowing request is not in accepted state.");
+
+   public static readonly Error NotOwnerOfLendingRecord = ApplicationCommonErrors.CustomUnauthorized(
+        ClassName,
+        "NotOwnerOfLendingRecord",
+        "The student is not the owner of the lending record associated with this borrowing request.");
 }

@@ -1,6 +1,8 @@
 using BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.AcceptBorrowingRequest;
 using BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.CancelBorrowingRequest;
 using BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.RejectBorrowingRequest;
+using BookOrbit.Application.Features.BorrowingTransactions.Commands.CreateBorrowingTransaction;
+using BookOrbit.Application.Features.BorrowingTransactions.Dtos;
 
 namespace BookOrbit.Api.Controllers.BorrowingRequests;
 
@@ -244,6 +246,35 @@ public class BorrowingRequestController(
 
         return result.Match(
             _ => NoContent(),
+            e => Problem(e, HttpContext));
+    }
+
+    [HttpPost("{borrowingRequestId:guid}/deliver")]
+    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Mark a borrowing request as delivered.")]
+    [EndpointDescription("Creates a borrowing transaction for the specified borrowing request when it is in a valid state for delivery.")]
+    [EndpointName("CreateBorrowingTransaction")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<BorrowingTransactionDto>> CreateBorrowingTransaction([FromRoute] Guid borrowingRequestId, CancellationToken ct)
+    {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+        var result = await sender.Send(new CreateBorrowingTransactionCommand(borrowingRequestId, studentResult.Value.Id), ct);
+
+        return result.Match(
+            Ok,
             e => Problem(e, HttpContext));
     }
 }

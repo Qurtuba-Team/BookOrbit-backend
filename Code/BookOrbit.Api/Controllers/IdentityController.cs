@@ -22,7 +22,7 @@ public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiCo
     [EndpointDescription("Authenticates the user with the provided credentials and returns a token pair that can be used to access protected endpoints and renew the session.")]
     [EndpointName("GenerateToken")]
     [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult<TokenDto>> GenerateToken([FromBody] GenerateTokenQuery request, CancellationToken ct)
     {
         var result = await sender.Send(request, ct);
@@ -42,7 +42,7 @@ public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiCo
     [EndpointDescription("Validates the submitted refresh token together with the expired access token context and returns a new access token and refresh token pair.")]
     [EndpointName("RefreshToken")]
     [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult<TokenDto>> RefreshToken([FromBody] RefreshTokenQuery request, CancellationToken ct)
     {
         var result = await sender.Send(request, ct);
@@ -94,7 +94,7 @@ public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiCo
     [EndpointSummary("Send an email confirmation link to a user account.")]
     [EndpointDescription("Generates an email confirmation token for the specified user account and sends a confirmation message that contains the verification link.")]
     [EndpointName("SendEmailConfirmation")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.OnceAMinuteRateLimitingPolicyName)]
     public async Task<ActionResult> SendEmailConfirmation([FromQuery] string email, CancellationToken ct)
     {
         var result = await sender.Send(new SendEmailConfirmationCommand(email), ct);
@@ -144,7 +144,7 @@ public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiCo
     [EndpointSummary("Send a password reset link to a user account.")]
     [EndpointDescription("Generates a password reset token for the specified user account and sends an email containing the reset link.")]
     [EndpointName("SendResetPassword")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.OnceAMinuteRateLimitingPolicyName)]
     public async Task<ActionResult> SendResetPassword([FromQuery] string email, CancellationToken ct)
     {
         var result = await sender.Send(new SendResetPasswordCommand(email), ct);
@@ -167,7 +167,7 @@ public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiCo
     [EndpointSummary("Reset a user's password using a reset token.")]
     [EndpointDescription("Validates the provided reset token and updates the user's password when the token is valid.")]
     [EndpointName("ResetPassword")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken ct)
     {
         var result = await sender.Send(
@@ -197,7 +197,7 @@ public class IdentityController(ISender sender,ICurrentUser currentUser) : ApiCo
     [EndpointSummary("Change the authenticated user's password.")]
     [EndpointDescription("Verifies the existing password and updates it to the new password for the specified user account.")]
     [EndpointName("ChangePassword")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordRequest request, CancellationToken ct)
     {
         var userEmail = currentUser.Email;

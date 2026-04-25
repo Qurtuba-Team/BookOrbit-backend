@@ -48,7 +48,7 @@ public class StudentAccountController(
     [EndpointDescription("Registers a new student, stores the submitted profile information, and creates the linked user account required for authentication and future access to the platform.")]
     [EndpointName("CreateStudentAccount")]
     [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult<StudentDtoWithContactInfo>> CreateStudent([FromForm] CreateStudentRequest request, CancellationToken ct)
     {
         using var stream = request.PersonalPhoto.OpenReadStream();
@@ -98,7 +98,7 @@ public class StudentAccountController(
     [EndpointDescription("Updates the editable profile information for the specified student, including the uploaded personal photo when a new file is provided in the request.")]
     [EndpointName("UpdateStudent")]
     [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult> UpdateStudent([FromRoute] Guid studentId, [FromForm] UpdateStudentRequest request, CancellationToken ct)
     {
         var imageFileNameResult = await sender.Send(new GetStudentPersonalPhotoFileNameByIdQuery(studentId),ct);
