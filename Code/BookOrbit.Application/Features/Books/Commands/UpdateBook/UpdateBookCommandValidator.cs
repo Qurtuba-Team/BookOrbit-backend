@@ -10,5 +10,9 @@ public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
         RuleFor(x=>x.Title)
             .Cascade(CascadeMode.Stop)
             .BookTitleRules();
+
+
+        RuleFor(x => x.BookCoverImageFileName)
+            .BookCoverImageFileNameRules();
     }
 }

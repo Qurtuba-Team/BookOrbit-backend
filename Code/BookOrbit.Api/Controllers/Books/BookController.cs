@@ -5,6 +5,7 @@ namespace BookOrbit.Api.Controllers.Books;
 
 using BookOrbit.Application.Features.Books.Commands.StateMachien.MakeBookAvilable;
 using BookOrbit.Application.Features.Books.Commands.StateMachien.RejectBook;
+using BookOrbit.Infrastructure.Services.ImageServices;
 
 [Route("api/v{version:apiVersion}/books")]
 [ApiVersion("1.0")]
@@ -79,17 +80,52 @@ public class BookController(
     [EndpointName("UpdateBook")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> UpdateBook([FromRoute] Guid bookId, [FromBody] UpdateBookRequest request, CancellationToken ct)
+    public async Task<ActionResult> UpdateBook([FromRoute] Guid bookId, [FromForm] UpdateBookRequest request, CancellationToken ct)
     {
+        var bookImageName = await sender.Send(new GetBookCoverPhotoFileNameByIdQuery(bookId), ct);
+
+        if (bookImageName.IsFailure)
+            return Problem(bookImageName.Errors, HttpContext);
+
+        var imageFileName = bookImageName.Value;
+
+        if (request.CoverImage is not null)
+        {
+            using var stream = request.CoverImage.OpenReadStream();
+
+            //Upload Image, Get New Image Name 
+            var ImageUploadResult = await bookImageService.UploadImage(
+                stream,
+                 request.CoverImage.FileName);
+
+            if (ImageUploadResult.IsFailure)
+                return Problem(ImageUploadResult.Errors, HttpContext);
+
+            imageFileName = ImageUploadResult.Value;
+        }
+
         var result = await sender.Send(
             new UpdateBookCommand(
                 bookId,
-            request.Title),
+            request.Title,
+            imageFileName),
             ct);
 
-        return result.Match(
-           response => NoContent(),
-           e => Problem(e, HttpContext));
+        if (result.IsSuccess)
+        {
+            if (request.CoverImage is not null)
+                //Delete Old Image
+                bookImageService.DeleteImage(bookImageName.Value);
+            return NoContent();
+        }
+        else
+        {
+            if (request.CoverImage is not null)
+                //Delete New Image
+                bookImageService.DeleteImage(imageFileName);
+
+            return Problem(result.Errors, HttpContext);
+        }
     }
 
 
