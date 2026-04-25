@@ -36,6 +36,19 @@ public class AcceptBorrowingRequestCommandHandler(
             return BorrowingRequestApplicationErrors.StudentNotLendingRecordOwner;
         }
 
+        var isAlreadyHasAceptedRequest = await context.BorrowingRequests
+            .AnyAsync(br =>
+                br.LendingRecordId == borrowingRequestData.BorrowingRequest.LendingRecordId &&
+                br.State == BorrowingRequestState.Accepted, ct);
+
+        if(isAlreadyHasAceptedRequest) //Cannot Accept a borrowing request if there is already an accepted request for the same lending record, as the lending record is not available anymore
+        {
+            logger.LogWarning(
+                "Lending record {LendingRecordId} already has an accepted borrowing request.",
+                borrowingRequestData.BorrowingRequest.LendingRecordId);
+            return BorrowingRequestApplicationErrors.LendingRecordNotAvailable;
+        }
+
         var acceptResult = borrowingRequestData.BorrowingRequest.MarkAsApproved();
 
         if (acceptResult.IsFailure)

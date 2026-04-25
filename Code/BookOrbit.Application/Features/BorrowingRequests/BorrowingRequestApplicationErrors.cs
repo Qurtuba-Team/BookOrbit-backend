@@ -32,4 +32,9 @@ static public class BorrowingRequestApplicationErrors
         ClassName,
         "StudentNotBorrower",
         "Student is not the borrower for this request.");
+
+    public static readonly Error BorrowingRequestNotAccepted = ApplicationCommonErrors.CustomConflict(
+        ClassName,
+        "BorrowingRequestNotAccepted",
+        "The borrowing request is not in accepted state.");
 }

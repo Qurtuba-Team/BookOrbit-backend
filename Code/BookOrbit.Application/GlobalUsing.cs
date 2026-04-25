@@ -45,5 +45,8 @@ global using BookOrbit.Application.Features.BookCopies;
 global using BookOrbit.Application.Features.LendingListings;
 global using BookOrbit.Application.Features.BorrowingRequests.Dtos;
 global using BookOrbit.Application.Features.BorrowingRequests.Queries.GetBorrowingRequests;
+global using BookOrbit.Application.Features.BorrowingRequests;
 global using BookOrbit.Domain.BorrowingRequests;
 global using BookOrbit.Domain.BorrowingRequests.Enums;
+global using BookOrbit.Domain.BorrowingTransactions;
+global using BookOrbit.Domain.BorrowingTransactions.Enums;

@@ -1,5 +1,6 @@
 ﻿using BookOrbit.Domain.BookCopies;
 using BookOrbit.Domain.BorrowingRequests;
+using BookOrbit.Domain.BorrowingTransactions;
 using BookOrbit.Domain.LendingListings;
 using MediatR;
 
@@ -17,6 +18,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator medi
     public DbSet<LendingListRecord> LendingListRecords => Set<LendingListRecord>();
 
     public DbSet<BorrowingRequest> BorrowingRequests => Set<BorrowingRequest>();
+
+    public DbSet<BorrowingTransaction> BorrowingTransactions => Set<BorrowingTransaction>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
