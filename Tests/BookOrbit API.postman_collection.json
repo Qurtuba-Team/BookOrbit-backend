@@ -6,6 +6,208 @@
   },
   "item": [
     {
+      "id": "ecb97129-d1b1-4772-966d-383a33bbde1a",
+      "name": "BorrowingTransaction",
+      "item": [
+        {
+          "id": "91ba64d9-1941-41b9-bb53-c288d350cd08",
+          "name": "Create Borrowing Transaction",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/deliver",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "{{borrowingrequestid}}",
+                "deliver"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('borrowingtransactionid', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "id": "ad900ea1-446a-4c60-8d76-af242959f0ec",
+          "name": "Get Borrowing Transaction By Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "{{borrowingtransactionid}}"
+              ]
+            }
+          }
+        },
+        {
+          "id": "2232b8b0-f311-49d5-aefb-4661c0c3dd3e",
+          "name": "Get BorrowingTransactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "10",
+                  "disabled": true
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowerStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "LenderStudentId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "e18ab40c-9d77-424d-be28-846e8f62c3b3",
+          "name": "Mark As Returned",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/return",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "{{borrowingtransactionid}}",
+                "return"
+              ]
+            }
+          }
+        },
+        {
+          "id": "58e87d36-5cd2-469d-bf5a-d1724fc15c99",
+          "name": "Mark As Lost",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/lost",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "{{borrowingtransactionid}}",
+                "lost"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
       "id": "224f9eed-3527-4226-bdf0-9a0058a3aeb9",
       "name": "BorrowingRequests",
       "item": [
@@ -58,7 +260,7 @@
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "value": "8665b7e9-30a0-440d-b203-b39e664ee0e8",
                   "disabled": true
                 },
                 {
@@ -87,7 +289,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests/me/in?Page=1&PageSize=10",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/me/in?Page=1&PageSize=10&States=accepted",
               "host": [
                 "{{baseurl}}"
               ],
@@ -134,8 +336,7 @@
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": "accepted"
                 }
               ]
             }
@@ -153,7 +354,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&SortColumn=&SortDirection=&BorrowingStudentId=b9b386a7-e238-44bc-aee9-693e5a833e1a&LendingListRecordId=e301a512-7c1b-41f6-8b36-28e4a7573da7&States=&LendingStudentId=ef052e79-4038-49e6-a004-33670b6de87a",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1",
               "host": [
                 "{{baseurl}}"
               ],
@@ -169,35 +370,43 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "10"
+                  "value": "10",
+                  "disabled": true
                 },
                 {
                   "key": "SearchTerm",
-                  "value": ""
+                  "value": "",
+                  "disabled": true
                 },
                 {
                   "key": "SortColumn",
-                  "value": ""
+                  "value": "",
+                  "disabled": true
                 },
                 {
                   "key": "SortDirection",
-                  "value": ""
+                  "value": "",
+                  "disabled": true
                 },
                 {
                   "key": "BorrowingStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
                 },
                 {
                   "key": "States",
-                  "value": ""
+                  "value": "",
+                  "disabled": true
                 },
                 {
                   "key": "LendingStudentId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
                 }
               ]
             }
@@ -533,7 +742,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student2@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -743,7 +952,7 @@
               "formdata": [
                 {
                   "key": "Title",
-                  "value": "atomic habbits",
+                  "value": "القس المجنون",
                   "type": "text"
                 },
                 {
@@ -922,7 +1131,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/books?Page=1&PageSize=5",
+              "raw": "{{baseurl}}/api/v1/books?Page=1&PageSize=15&Statuses=available",
               "host": [
                 "{{baseurl}}"
               ],
@@ -938,7 +1147,7 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "5"
+                  "value": "15"
                 },
                 {
                   "key": "SearchTerm",
@@ -967,8 +1176,7 @@
                 },
                 {
                   "key": "Statuses",
-                  "value": "available",
-                  "disabled": true
+                  "value": "available"
                 },
                 {
                   "key": "Statuses",
@@ -2192,7 +2400,7 @@
         },
         {
           "id": "d7751572-86c5-4217-8061-b4257380a68d",
-          "name": "Copy of GetById",
+          "name": "Request Book Copy",
           "request": {
             "method": "POST",
             "header": [
@@ -2229,7 +2437,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/lendinglist?Page=1&PageSize=3",
+              "raw": "{{baseurl}}/api/v1/lendinglist?States=borrowed&Page=1&PageSize=3",
               "host": [
                 "{{baseurl}}"
               ],
@@ -2256,8 +2464,7 @@
                 },
                 {
                   "key": "States",
-                  "value": "available",
-                  "disabled": true
+                  "value": "borrowed"
                 },
                 {
                   "key": "Page",
