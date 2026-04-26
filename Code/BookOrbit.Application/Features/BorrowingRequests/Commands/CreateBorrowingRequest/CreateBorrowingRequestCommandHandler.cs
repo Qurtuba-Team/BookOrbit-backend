@@ -53,7 +53,9 @@ public class CreateBorrowingRequestCommandHandler(
                 .AsNoTracking()
                 .FirstOrDefaultAsync(br =>
                     br.BorrowingStudentId == command.BorrowingStudentId &&
-                    br.LendingRecordId == command.LendingRecordId, ct);
+                    (br.LendingRecordId == command.LendingRecordId 
+                    && br.LendingRecord!.State == LendingListRecordState.Available)
+                    , ct);
 
         if (existingRequest is not null)
         {
