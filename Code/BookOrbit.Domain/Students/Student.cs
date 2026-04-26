@@ -10,7 +10,7 @@ public class Student : AuditableEntity
     public TelegramUserId? TelegramUserId { get; }
     public UniversityMail UniversityMail { get; }
     public string PersonalPhotoFileName { get; private set; }
-    public int Points { get; private set; }
+    public Point Points { get; private set; }
     public DateTimeOffset? JoinDateUtc { get; private set; } = null;
     public StudentState State { get; private set; }
 
@@ -39,7 +39,7 @@ public class Student : AuditableEntity
         PhoneNumber = phoneNumber;
         TelegramUserId = telegramUserId;
         State = StudentState.Pending;
-        Points = 1;
+        Points = new Point(1);
     }
 
 
@@ -137,6 +137,18 @@ public class Student : AuditableEntity
 
         JoinDateUtc = joinDateUtc;
         return result;
+    }
+
+    public Result<Updated> DeductPoints(Point pointsToDeduct)
+    {
+        Points -= pointsToDeduct;
+        return Result.Updated;
+    }
+
+    public Result<Updated> AddPoints(Point pointsToAdd)
+    {
+        Points += pointsToAdd;
+        return Result.Updated;
     }
 
     public Result<Updated> MarkAsActivated() =>

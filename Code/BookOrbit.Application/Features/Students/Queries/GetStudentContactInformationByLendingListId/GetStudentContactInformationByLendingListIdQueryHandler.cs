@@ -11,25 +11,19 @@ public class GetStudentContactInformationByLendingListIdQueryHandler
             .AsNoTracking()
             .Select(s => new
             {
-                s.LendingRecord!.Id,
+                LendingRecordId = s.LendingRecord!.Id,
                 s.BorrowingStudentId,
                 s.LendingRecord!.State,
                 s.LendingRecord!.BookCopy!.OwnerId,
                 s.LendingRecord!.BookCopy!.Owner!.PhoneNumber,
                 s.LendingRecord!.BookCopy!.Owner!.TelegramUserId
             })
-            .FirstOrDefaultAsync(s => s.Id == query.LendingListId, ct);
+            .FirstOrDefaultAsync(s => s.LendingRecordId == query.LendingListId, ct);
 
         if (studentData is null)
         {
             logger.LogWarning("Lending List Record {LendingListId} not found .", query.LendingListId);
 
-            return LendingListApplicationErrors.NotFoundById;
-        }
-
-        if (studentData.BorrowingStudentId != query.StudentId)
-        {
-            logger.LogWarning("Student {StudentId} is not the owner of Lending List Record {LendingListId}.", query.StudentId, query.LendingListId);
             return LendingListApplicationErrors.NotFoundById;
         }
 

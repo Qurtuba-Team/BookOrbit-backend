@@ -42,4 +42,9 @@ static public class BorrowingRequestApplicationErrors
         ClassName,
         "NotOwnerOfLendingRecord",
         "The student is not the owner of the lending record associated with this borrowing request.");
+
+    public static readonly Error NotEnoughPoints = ApplicationCommonErrors.CustomConflict(
+        ClassName,
+        "NotEnoughPoints",
+        "The student does not have enough points to request this lending record.");
 }

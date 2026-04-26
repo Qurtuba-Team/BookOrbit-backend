@@ -105,7 +105,7 @@ public class LendingListController(
     }
 
     [HttpGet("{lendingListRecordId:guid}/contact-info")]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.StudentOwnerOfLendingListRecordPolicy)]
     [ProducesResponseType(typeof(StudentContactInformationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]

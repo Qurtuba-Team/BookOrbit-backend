@@ -48,4 +48,7 @@ static public class PoliciesNames
 
     //Student who is related to the borrowing transaction record (borrowing student or lending student)
     public const string BorrowingTransactionRelatedStudentPolicy = "BorrowingTransactionRelatedStudentAccess";
+
+    //Student who is accepted for the lending list record
+    public const string StudentAcceptedForLendingListRecordPolicy = "StudentAcceptedForLendingListRecordAccess";
 }

@@ -8,11 +8,13 @@ public class RejectBorrowingRequestCommandHandler(
     public async Task<Result<Updated>> Handle(RejectBorrowingRequestCommand command, CancellationToken ct)
     {
         var borrowingRequestData = await context.BorrowingRequests
-             .Select(br => new
-             {
-                 BorrowingRequest = br,
-             })
-             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
+            .Select(br => new
+            {
+                BorrowingRequest = br,
+                BorrowingStudent = br.BorrowingStudent,
+                Cost = br.LendingRecord!.Cost
+            })
+            .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
         if (borrowingRequestData is null)
         {
@@ -27,6 +29,18 @@ public class RejectBorrowingRequestCommandHandler(
 
         if (rejectResult.IsFailure)
             return rejectResult.Errors;
+
+        //retrive the points to the student that has been deducted when the borrowing request was created
+        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(borrowingRequestData.Cost);
+
+        if (addingPointResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to add points for student {StudentId}. Errors: {Errors}",
+                borrowingRequestData.BorrowingStudent.Id,
+                addingPointResult.Errors);
+            return addingPointResult.Errors;
+        }
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

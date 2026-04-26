@@ -31,6 +31,12 @@ public record Point(int Value) : ValueObject<int>(Value)
 
         return validationResult.Errors;
     }
+
+    static public bool operator >(Point left, Point right) => left.Value > right.Value;
+    static public bool operator <(Point left, Point right) => left.Value < right.Value; 
+    static public Point operator +(Point left, Point right) => new Point(left.Value + right.Value);
+    static public Point operator -(Point left, Point right) => new Point(left.Value - right.Value);
+
 }
 
 static public class PointErrors

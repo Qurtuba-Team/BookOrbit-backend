@@ -104,6 +104,7 @@ static public class DependencyInjection
         services.AddScoped<IAuthorizationHandler, StudentOwnerOfLendingListRecordHandler>();
         services.AddScoped<IAuthorizationHandler, BorrowingTransactionBorrowingStudentHandler>();
         services.AddScoped<IAuthorizationHandler, BorrowingTransactionLendingStudentHandler>();
+        services.AddScoped<IAuthorizationHandler, StudentAcceptedForLendingListRecordHandler>();
 
         services.AddAuthorizationBuilder()
 
@@ -195,6 +196,12 @@ static public class DependencyInjection
                 policy.Requirements.Add(new ActiveStudentRequirement());
                 policy.Requirements.Add(new BorrowingTransactionBorrowingStudentRequirement());
                 policy.Requirements.Add(new BorrowingTransactionLendingStudentRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.StudentAcceptedForLendingListRecordPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new StudentAcceptedForLendingListRecordRequirement());
             })
             ;
 
