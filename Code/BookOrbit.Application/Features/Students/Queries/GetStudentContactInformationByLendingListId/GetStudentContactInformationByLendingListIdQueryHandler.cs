@@ -27,18 +27,17 @@ public class GetStudentContactInformationByLendingListIdQueryHandler
             return LendingListApplicationErrors.NotFoundById;
         }
 
-        if(studentData.State is not LendingListRecordState.Reserved)
-        {
-            logger.LogWarning("Lending List Record {LendingListId} is not in Reserved state.", query.LendingListId);
-            return LendingListApplicationErrors.StateIsNotReserved;
-        }
-
         if (studentData.BorrowingStudentId != query.StudentId)
         {
             logger.LogWarning("Student {StudentId} is not the owner of Lending List Record {LendingListId}.", query.StudentId, query.LendingListId);
             return LendingListApplicationErrors.NotFoundById;
         }
 
+        if (studentData.State is not LendingListRecordState.Reserved)
+        {
+            logger.LogWarning("Lending List Record {LendingListId} is not in Reserved state.", query.LendingListId);
+            return LendingListApplicationErrors.StateIsNotReserved;
+        }
         return new StudentContactInformationDto(
             studentData.OwnerId,
             studentData.PhoneNumber?.Value,

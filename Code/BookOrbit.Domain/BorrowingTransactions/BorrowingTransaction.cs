@@ -12,10 +12,10 @@ public class BorrowingTransaction : AuditableEntity
     public DateTimeOffset? ActualReturnDate { get; private set; }
 
 
-    public BorrowingRequest BorrowingRequest { get; private set; }
-    public Student LenderStudent { get; private set; }
-    public Student BorrowerStudent { get; private set; }
-    public BookCopy BookCopy { get; private set; }
+    public BorrowingRequest? BorrowingRequest { get; private set; }
+    public Student? LenderStudent { get; private set; }
+    public Student? BorrowerStudent { get; private set; }
+    public BookCopy? BookCopy { get; private set; }
 
 #pragma warning disable CS8618
     private BorrowingTransaction() { }

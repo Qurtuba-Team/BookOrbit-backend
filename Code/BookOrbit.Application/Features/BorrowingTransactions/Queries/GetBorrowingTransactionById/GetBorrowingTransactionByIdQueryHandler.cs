@@ -12,12 +12,7 @@ public class GetBorrowingTransactionByIdQueryHandler(
             .AsNoTracking()
             .FirstOrDefaultAsync(
             (bt => 
-            (bt.Id == query.BorrowingTransactionId) 
-            && (
-            (bt.BorrowerStudentId== query.StudentId)
-            ||
-            (bt.LenderStudentId == query.StudentId))
-            )
+            (bt.Id == query.BorrowingTransactionId))
             , ct);
 
 

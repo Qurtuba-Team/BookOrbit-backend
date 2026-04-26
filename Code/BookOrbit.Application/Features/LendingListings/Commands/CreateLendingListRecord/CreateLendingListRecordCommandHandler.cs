@@ -14,18 +14,19 @@ public class CreateLendingListRecordCommandHandler(
         var bookCopy = await context.BookCopies
             .AsNoTracking()
     .Where(bc => bc.Id == command.BookCopyId)
-    .Select(bc => new {
+    .Select(bc => new
+    {
         bc.OwnerId,
         bc.State
     })
     .FirstOrDefaultAsync(ct);
 
-        if (bookCopy is null || bookCopy.OwnerId != command.OwnerId)
+
+        if (bookCopy is null)
         {
             logger.LogWarning(
-    "Book copy {BookCopyId} not found or does not belong to owner {OwnerId}",
-    command.BookCopyId,
-    command.OwnerId);
+    "Book copy {BookCopyId} not found ",
+    command.BookCopyId);
 
             return BookCopyApplicationErrors.NotFoundById;
         }
@@ -41,9 +42,9 @@ public class CreateLendingListRecordCommandHandler(
 
         var isListed = await context.LendingListRecords.AnyAsync(llr =>
        llr.BookCopyId == command.BookCopyId
-       && llr.State == LendingListRecordState.Available,ct);
+       && llr.State == LendingListRecordState.Available, ct);
 
-        if(isListed)
+        if (isListed)
         {
             logger.LogWarning(
                 "Book copy with id {BookCopyId} is already listed for lending.",
@@ -62,7 +63,7 @@ public class CreateLendingListRecordCommandHandler(
             now.AddDays(LendingListRecord.DefaultExpirationDurationInDays),
             now);
 
-        if(createdLendingListRecord.IsFailure)
+        if (createdLendingListRecord.IsFailure)
         {
             logger.LogWarning(
                 "Failed to create lending list record for book copy with id {BookCopyId}. Errors: {Errors}",

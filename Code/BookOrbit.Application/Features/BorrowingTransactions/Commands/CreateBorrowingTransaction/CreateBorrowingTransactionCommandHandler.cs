@@ -43,12 +43,6 @@ public class CreateBorrowingTransactionCommandHandler(
             return LendingListApplicationErrors.NotFoundById;
         }
 
-        if (lendingRecord.OwnerId != command.StudentId)
-        {
-            logger.LogWarning("Student {StudentId} is not the owner of the lending record {LendingRecordId}.", command.StudentId, borrowingRequest.LendingRecordId);
-            return BorrowingRequestApplicationErrors.NotOwnerOfLendingRecord;
-        }
-
         var now = timeProvider.GetUtcNow();
         var expectedReturnDate = now.AddDays(lendingRecord.BorrowingDurationInDays);
 

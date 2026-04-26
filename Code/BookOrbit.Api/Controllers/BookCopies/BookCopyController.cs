@@ -1,4 +1,6 @@
-﻿using BookOrbit.Application.Features.LendingListings.Commands.CreateLendingListRecord;
+﻿using BookOrbit.Application.Features.BookCopies.Commands.StateMachien.MakeAvilableBookCopy;
+using BookOrbit.Application.Features.BookCopies.Commands.StateMachien.MakeUnAvilableBookCopy;
+using BookOrbit.Application.Features.LendingListings.Commands.CreateLendingListRecord;
 
 namespace BookOrbit.Api.Controllers.BookCopies;
 
@@ -9,6 +11,9 @@ public class BookCopyController(
     ISender sender,
     ICurrentUser currentUser) : ApiController
 {
+
+    
+    
 
     [HttpPost("students/me/books/{bookId:guid}/copies")]
     [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
@@ -71,6 +76,54 @@ public class BookCopyController(
 
         return result.Match(
            response => NoContent(),
+           e => Problem(e, HttpContext));
+    }
+
+
+    [HttpPatch("books/copies/{bookCopyId:guid}/available")]
+    [Authorize(Policy = PoliciesNames.StudentOwnerOfBookCopyPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Mark a book copy as available.")]
+    [EndpointDescription("Marks the specified book copy as available when it is in a valid state for availability.")]
+    [EndpointName("MakeBookCopyAvailable")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult> MakeBookCopyAvailable([FromRoute] Guid bookCopyId, CancellationToken ct)
+    {
+        var result = await sender.Send(new MakeAvilableBookCopyCommand(bookCopyId), ct);
+
+        return result.Match(
+           _ => NoContent(),
+           e => Problem(e, HttpContext));
+    }
+
+
+    [HttpPatch("books/copies/{bookCopyId:guid}/unavailable")]
+    [Authorize(Policy = PoliciesNames.StudentOwnerOfBookCopyPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Mark a book copy as unavailable.")]
+    [EndpointDescription("Marks the specified book copy as unavailable when it is in a valid state for unavailability.")]
+    [EndpointName("MakeBookCopyUnAvailable")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult> MakeBookCopyUnAvailable([FromRoute] Guid bookCopyId, CancellationToken ct)
+    {
+        var result = await sender.Send(new MakeUnAvilableBookCopyCommand(bookCopyId), ct);
+
+        return result.Match(
+           _ => NoContent(),
            e => Problem(e, HttpContext));
     }
 
@@ -203,7 +256,7 @@ public class BookCopyController(
 
 
     [HttpPost("students/me/books/copies/{bookCopyId:guid}/list")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.StudentOwnerOfBookCopyPolicy)]
     [ProducesResponseType(typeof(LendingListRecordDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -218,15 +271,8 @@ public class BookCopyController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<LendingListRecordDto>> AddBookCopyToLendingList([FromRoute] Guid bookCopyId, [FromQuery] int borrowingDurationInDays, CancellationToken ct)
     {
-        var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if(studentFound.IsFailure)
-        {
-            return Problem(studentFound.Errors, HttpContext);
-        }
-
         var result = await sender.Send(
-            new CreateLendingListRecordCommand(bookCopyId, studentFound.Value.Id, borrowingDurationInDays),
+            new CreateLendingListRecordCommand(bookCopyId, borrowingDurationInDays),
             ct);
 
         return result.Match(

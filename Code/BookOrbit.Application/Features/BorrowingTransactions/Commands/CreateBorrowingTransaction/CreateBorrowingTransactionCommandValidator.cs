@@ -8,9 +8,5 @@ public class CreateBorrowingTransactionCommandValidator : AbstractValidator<Crea
         RuleFor(x => x.BorrowingRequestId)
             .Cascade(CascadeMode.Stop)
             .BorrowingRequestIdRules();
-
-        RuleFor(x=>x.StudentId)
-            .Cascade(CascadeMode.Stop)
-            .StudentIdRules();
     }
 }

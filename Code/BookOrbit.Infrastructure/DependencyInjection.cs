@@ -2,12 +2,16 @@
 
 using BookOrbit.Application.Common.Constants;
 using BookOrbit.Application.Common.Interfaces.ImageServices;
+using BookOrbit.Infrastructure.Identity.Policies.BookCopies;
+using BookOrbit.Infrastructure.Identity.Policies.BorrowingRequests;
+using BookOrbit.Infrastructure.Identity.Policies.BorrowingTransaction;
+using BookOrbit.Infrastructure.Identity.Policies.LendingListRecords;
 using BookOrbit.Infrastructure.Services.ImageServices;
 
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
-    static public IServiceCollection AddInfrastructure(this IServiceCollection services,IConfiguration configuration)
+    static public IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         return services
             .AddDbContext(configuration)
@@ -15,7 +19,7 @@ static public class DependencyInjection
             .AddInfrastructureServices()
             .AddPolicies();
     }
-    static private IServiceCollection AddDbContext(this IServiceCollection services,IConfiguration configuration)
+    static private IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         ArgumentNullException.ThrowIfNull(connectionString);
@@ -82,57 +86,115 @@ static public class DependencyInjection
         services.AddTransient<IEmailFormatService, EmailFormatService>();
         services.AddTransient<IBookImageService, BookImageService>();
         services.AddTransient<IStudentImageService, StudentImageService>();
+
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)
     {
-        services.AddScoped<IAuthorizationHandler,ActiveUserHandler>();
-        services.AddScoped<IAuthorizationHandler,AdminOnlyHandler>();
-        services.AddScoped<IAuthorizationHandler,StudentOwnerShipHandler>();
-        services.AddScoped<IAuthorizationHandler,RegisteredUserHandler>();
-        services.AddScoped<IAuthorizationHandler,RegisteredUserOwnershipHandler>();
-        services.AddScoped<IAuthorizationHandler,StudentOnlyHandler>();
+        services.AddScoped<IAuthorizationHandler, ActiveUserHandler>();
+        services.AddScoped<IAuthorizationHandler, AdminOnlyHandler>();
+        services.AddScoped<IAuthorizationHandler, StudentOwnerShipHandler>();
+        services.AddScoped<IAuthorizationHandler, RegisteredUserHandler>();
+        services.AddScoped<IAuthorizationHandler, RegisteredUserOwnershipHandler>();
+        services.AddScoped<IAuthorizationHandler, StudentOnlyHandler>();
         services.AddScoped<IAuthorizationHandler, ActiveStudentHandler>();
+        services.AddScoped<IAuthorizationHandler, BorrowingRequestBorrowingStudentHandler>();
+        services.AddScoped<IAuthorizationHandler, BorrowingRequestLendingStudentHandler>();
+        services.AddScoped<IAuthorizationHandler, StudentOwnerOfBookCopyHandler>();
+        services.AddScoped<IAuthorizationHandler, StudentOwnerOfLendingListRecordHandler>();
+        services.AddScoped<IAuthorizationHandler, BorrowingTransactionBorrowingStudentHandler>();
+        services.AddScoped<IAuthorizationHandler, BorrowingTransactionLendingStudentHandler>();
 
         services.AddAuthorizationBuilder()
 
             .AddPolicy(PoliciesNames.ActiveUserPolicy, policy =>
             policy.Requirements.Add(new ActiveUserRequirement()))
 
-            .AddPolicy(PoliciesNames.AdminOnlyPolicy, policy => {
-            policy.Requirements.Add(new ActiveUserRequirement());
-            policy.Requirements.Add(new AdminOnlyRequirement());
+            .AddPolicy(PoliciesNames.AdminOnlyPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveUserRequirement());
+                policy.Requirements.Add(new AdminOnlyRequirement());
             })
 
-            .AddPolicy(PoliciesNames.StudentOwnershipPolicy,policy =>
+            .AddPolicy(PoliciesNames.StudentOwnershipPolicy, policy =>
             {
                 policy.Requirements.Add(new RegisteredUserRequirement());
                 policy.Requirements.Add(new StudentOwnerShipRequirement());
             })
 
-            .AddPolicy(PoliciesNames.RegisteredUserPolicy,policy =>
+            .AddPolicy(PoliciesNames.RegisteredUserPolicy, policy =>
             {
                 policy.Requirements.Add(new RegisteredUserRequirement());
             })
 
-            .AddPolicy(PoliciesNames.RegisteredUserOwnershipPolicy,policy =>
+            .AddPolicy(PoliciesNames.RegisteredUserOwnershipPolicy, policy =>
             {
                 policy.Requirements.Add(new RegisteredUserRequirement());
                 policy.Requirements.Add(new RegisteredUserOwnershipRequirement());
             })
 
-            .AddPolicy(PoliciesNames.StudentOnlyPolicy,policy =>
+            .AddPolicy(PoliciesNames.StudentOnlyPolicy, policy =>
             {
                 policy.Requirements.Add(new RegisteredUserRequirement());
                 policy.Requirements.Add(new StudentOnlyRequirement());
             })
 
 
-            .AddPolicy(PoliciesNames.ActiveStudentPolicy,policy =>
+            .AddPolicy(PoliciesNames.ActiveStudentPolicy, policy =>
             {
                 policy.Requirements.Add(new RegisteredUserRequirement());
                 policy.Requirements.Add(new ActiveStudentRequirement());
 
+            })
+
+            .AddPolicy(PoliciesNames.BorrowingRequestBorrowingStudentPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingRequestBorrowingStudentRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.BorrowingRequestLendingStudentPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingRequestLendingStudentRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.BorrowingRequestRelatedStudentPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingRequestBorrowingStudentRequirement());
+                policy.Requirements.Add(new BorrowingRequestLendingStudentRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.StudentOwnerOfBookCopyPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new StudentOwnerOfBookCopyRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.StudentOwnerOfLendingListRecordPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new StudentOwnerOfLendingListRecordRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.BorrowingTransactionBorrowingStudentPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingTransactionBorrowingStudentRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.BorrowingTransactionLendingStudentPolicy, policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingTransactionLendingStudentRequirement());
+            })
+
+            .AddPolicy(PoliciesNames.BorrowingTransactionRelatedStudentPolicy,policy =>
+            {
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingTransactionBorrowingStudentRequirement());
+                policy.Requirements.Add(new BorrowingTransactionLendingStudentRequirement());
             })
             ;
 

@@ -19,6 +19,25 @@ public class MakeUnAvilableBookCopyCommandHandler(
             return BookCopyApplicationErrors.NotFoundById;
         }
 
+        var isUsed = context.LendingListRecords
+            .Any(lr => lr.BookCopyId == command.BookCopyId && (
+            lr.State == LendingListRecordState.Available
+            ||
+            lr.State == LendingListRecordState.Reserved
+            ||
+            lr.State == LendingListRecordState.Borrowed
+            ));
+
+
+        if (isUsed)
+        {
+            logger.LogWarning(
+                "Book copy {BookCopyId} is currently in use and cannot be marked as unavailable.",
+                command.BookCopyId);
+
+            return BookCopyApplicationErrors.BookCopyInUse;
+        }
+
         var unavailableResult = bookCopy.MarkAsUnAvilable();
 
         if (unavailableResult.IsFailure)

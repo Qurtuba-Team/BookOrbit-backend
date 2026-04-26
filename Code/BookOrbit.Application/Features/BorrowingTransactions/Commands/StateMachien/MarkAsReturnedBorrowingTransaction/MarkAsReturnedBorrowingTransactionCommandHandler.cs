@@ -21,16 +21,6 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return BorrowingTransactionApplicationErrors.NotFoundById;
         }
 
-        if (transaction.BorrowerStudentId != command.StudentId)
-        {
-            logger.LogWarning(
-                "Student {StudentId} is not the borrower for borrowing transaction {BorrowingTransactionId}.",
-                command.StudentId,
-                transaction.Id);
-
-            return BorrowingTransactionApplicationErrors.StudentNotBorrower;
-        }
-
         var now = timeProvider.GetUtcNow();
         var returnResult = transaction.ReturnBookCopy(now, now);
 

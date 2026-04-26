@@ -9,9 +9,5 @@ public class MarkAsReturnedBorrowingTransactionCommandValidator : AbstractValida
         RuleFor(x => x.BorrowingTransactionId)
             .Cascade(CascadeMode.Stop)
             .BorrowingTransactionIdRules();
-
-        RuleFor(x => x.StudentId)
-            .Cascade(CascadeMode.Stop)
-            .StudentIdRules();
     }
 }

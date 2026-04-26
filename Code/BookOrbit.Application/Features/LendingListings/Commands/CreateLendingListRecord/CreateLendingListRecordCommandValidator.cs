@@ -10,9 +10,5 @@ public class CreateLendingListRecordCommandValidator : AbstractValidator<CreateL
         RuleFor(x => x.BorrowingDurationInDays)
             .Cascade(CascadeMode.Stop)
             .BorrowingDurationInDaysRules();
-
-        RuleFor(x => x.OwnerId)
-            .Cascade(CascadeMode.Stop)
-            .StudentIdRules();
     }
 }

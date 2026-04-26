@@ -8,9 +8,5 @@ public class GetBorrowingTransactionByIdQueryValidator : AbstractValidator<GetBo
         RuleFor(x => x.BorrowingTransactionId)
             .Cascade(CascadeMode.Stop)
             .BorrowingTransactionIdRules();
-
-            RuleFor(x => x.StudentId)
-            .Cascade(CascadeMode.Stop)
-            .StudentIdRules();
     }
 }

@@ -24,4 +24,28 @@ static public class PoliciesNames
 
     // Student With Active State
     public const string ActiveStudentPolicy = "ActiveStudentAccess";
+
+    // Student Who Is Borrowing Student In The Borrowing Request
+    public const string BorrowingRequestBorrowingStudentPolicy = "BorrowingRequestBorrowingStudentAccess";
+
+    // Student Who Is Lending Student In The Borrowing Request
+    public const string BorrowingRequestLendingStudentPolicy = "BorrowingRequestLendingStudentAccess";
+
+    // Student Who Is Borrowing Student In The Borrowing Request Or Lending Student
+    public const string BorrowingRequestRelatedStudentPolicy = "BorrowingRequestRelatedStudentAccess";
+
+    //Student who is owner of the book copy 
+    public const string StudentOwnerOfBookCopyPolicy = "StudentOwnerOfBookCopyAccess";
+
+    //Student who is owner of the lending list record
+    public const string StudentOwnerOfLendingListRecordPolicy = "StudentOwnerOfLendingListRecordAccess";
+
+    //Student who is borrowing student in the borrowing transaction record
+    public const string BorrowingTransactionBorrowingStudentPolicy = "BorrowingTransactionBorrowingStudentAccess";
+
+    //Student who is lending student in the borrowing transaction record
+    public const string BorrowingTransactionLendingStudentPolicy = "BorrowingTransactionLendingStudentAccess";
+
+    //Student who is related to the borrowing transaction record (borrowing student or lending student)
+    public const string BorrowingTransactionRelatedStudentPolicy = "BorrowingTransactionRelatedStudentAccess";
 }

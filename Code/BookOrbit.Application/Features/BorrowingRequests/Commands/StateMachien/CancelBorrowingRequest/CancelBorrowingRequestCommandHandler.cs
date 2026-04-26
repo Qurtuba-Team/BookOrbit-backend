@@ -19,16 +19,6 @@ public class CancelBorrowingRequestCommandHandler(
             return BorrowingRequestApplicationErrors.NotFoundById;
         }
 
-        if (borrowingRequest.BorrowingStudentId != command.StudentId)
-        {
-            logger.LogWarning(
-                "Student {StudentId} is not the borrower for borrowing request {BorrowingRequestId}.",
-                command.StudentId,
-                borrowingRequest.Id);
-
-            return BorrowingRequestApplicationErrors.StudentNotBorrower;
-        }
-
         var cancelResult = borrowingRequest.MarkAsCancelled();
 
         if (cancelResult.IsFailure)

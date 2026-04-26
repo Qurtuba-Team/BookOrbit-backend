@@ -20,16 +20,6 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
             return BorrowingTransactionApplicationErrors.NotFoundById;
         }
 
-        if (transaction.BorrowerStudentId != command.StudentId)
-        {
-            logger.LogWarning(
-                "Student {StudentId} is not the borrower for borrowing transaction {BorrowingTransactionId}.",
-                command.StudentId,
-                transaction.Id);
-
-            return BorrowingTransactionApplicationErrors.StudentNotBorrower;
-        }
-
         var lostResult = transaction.MarkAsLost();
 
         if (lostResult.IsFailure)

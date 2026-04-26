@@ -14,7 +14,7 @@ public class BorrowingRequestController(
     ICurrentUser currentUser) : ApiController
 {
     [HttpGet("{borrowingRequestId:guid}", Name = "GetBorrowingRequestById")]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestRelatedStudentPolicy)]
     [ProducesResponseType(typeof(BorrowingRequestDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -29,14 +29,7 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingRequestDto>> GetBorrowingRequestById([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var query = new GetBorrowingRequestByIdQuery(borrowingRequestId, studentResult.Value.Id);
+        var query = new GetBorrowingRequestByIdQuery(borrowingRequestId);
 
         var result = await sender.Send(query, ct);
 
@@ -158,7 +151,7 @@ public class BorrowingRequestController(
 
 
     [HttpPatch("{borrowingRequestId:guid}/accept")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -173,14 +166,7 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> AcceptBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var result = await sender.Send(new AcceptBorrowingRequestCommand(borrowingRequestId, studentResult.Value.Id), ct);
+        var result = await sender.Send(new AcceptBorrowingRequestCommand(borrowingRequestId), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -189,7 +175,7 @@ public class BorrowingRequestController(
 
 
     [HttpPatch("{borrowingRequestId:guid}/reject")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -204,14 +190,7 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> RejectBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var result = await sender.Send(new RejectBorrowingRequestCommand(borrowingRequestId, studentResult.Value.Id), ct);
+       var result = await sender.Send(new RejectBorrowingRequestCommand(borrowingRequestId), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -220,7 +199,7 @@ public class BorrowingRequestController(
 
 
     [HttpPatch("{borrowingRequestId:guid}/cancel")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestBorrowingStudentPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -235,14 +214,7 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> CancelBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var result = await sender.Send(new CancelBorrowingRequestCommand(borrowingRequestId, studentResult.Value.Id), ct);
+        var result = await sender.Send(new CancelBorrowingRequestCommand(borrowingRequestId), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -250,7 +222,7 @@ public class BorrowingRequestController(
     }
 
     [HttpPost("{borrowingRequestId:guid}/deliver")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
@@ -264,15 +236,7 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingTransactionDto>> CreateBorrowingTransaction([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var result = await sender.Send(new CreateBorrowingTransactionCommand(borrowingRequestId, studentResult.Value.Id), ct);
-
+        var result = await sender.Send(new CreateBorrowingTransactionCommand(borrowingRequestId), ct);
         return result.Match(
             Ok,
             e => Problem(e, HttpContext));

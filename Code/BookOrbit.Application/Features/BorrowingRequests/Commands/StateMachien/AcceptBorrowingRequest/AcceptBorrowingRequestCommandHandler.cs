@@ -11,7 +11,7 @@ public class AcceptBorrowingRequestCommandHandler(
             .Select(br =>new
             {
                 BorrowingRequest = br,
-                OwnerId = br.LendingRecord!.BookCopy!.OwnerId //Better than doing a naviagation property in the domain model, as it doesn't require loading the related entities into memory
+                br.LendingRecord!.BookCopy!.OwnerId //Better than doing a naviagation property in the domain model, as it doesn't require loading the related entities into memory
             })
             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
@@ -22,18 +22,6 @@ public class AcceptBorrowingRequestCommandHandler(
                 command.BorrowingRequestId);
 
             return BorrowingRequestApplicationErrors.NotFoundById;
-        }
-
-        var ownerId = borrowingRequestData.OwnerId;
-
-        if (ownerId != command.StudentId)
-        {
-            logger.LogWarning(
-                "Student {StudentId} is not the owner of borrowing request {BorrowingRequestId}.",
-                command.StudentId,
-                borrowingRequestData.BorrowingRequest.Id);
-
-            return BorrowingRequestApplicationErrors.StudentNotLendingRecordOwner;
         }
 
         var isAlreadyHasAceptedRequest = await context.BorrowingRequests

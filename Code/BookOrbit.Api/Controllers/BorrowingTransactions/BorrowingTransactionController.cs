@@ -4,11 +4,10 @@
 [ApiVersion("1.0")]
 [Authorize]
 public class BorrowingTransactionController(
-    ISender sender,
-    ICurrentUser currentUser) : ApiController
+    ISender sender) : ApiController
 {
     [HttpGet("{borrowingTransactionId:guid}", Name = "GetBorrowingTransactionById")]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingTransactionRelatedStudentPolicy)]
     [ProducesResponseType(typeof(BorrowingTransactionDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -23,14 +22,7 @@ public class BorrowingTransactionController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingTransactionDto>> GetBorrowingTransactionById([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var query = new GetBorrowingTransactionByIdQuery(borrowingTransactionId, studentResult.Value.Id);
+        var query = new GetBorrowingTransactionByIdQuery(borrowingTransactionId);
 
         var result = await sender.Send(query, ct);
 
@@ -73,7 +65,7 @@ public class BorrowingTransactionController(
     }
 
     [HttpPatch("{borrowingTransactionId:guid}/return")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingTransactionBorrowingStudentPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -88,14 +80,7 @@ public class BorrowingTransactionController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> MarkBorrowingTransactionAsReturned([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var result = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(borrowingTransactionId, studentResult.Value.Id), ct);
+        var result = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(borrowingTransactionId), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -118,14 +103,7 @@ public class BorrowingTransactionController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> MarkBorrowingTransactionAsLost([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
     {
-        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
-
-        if (studentResult.IsFailure)
-        {
-            return Problem(studentResult.Errors, HttpContext);
-        }
-
-        var result = await sender.Send(new MarkAsLostBorrowingTransactionCommand(borrowingTransactionId, studentResult.Value.Id), ct);
+        var result = await sender.Send(new MarkAsLostBorrowingTransactionCommand(borrowingTransactionId), ct);
 
         return result.Match(
             _ => NoContent(),
