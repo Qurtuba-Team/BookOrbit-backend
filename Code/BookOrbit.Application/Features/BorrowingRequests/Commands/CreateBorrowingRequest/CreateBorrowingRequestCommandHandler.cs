@@ -54,7 +54,10 @@ public class CreateBorrowingRequestCommandHandler(
                 .FirstOrDefaultAsync(br =>
                     br.BorrowingStudentId == command.BorrowingStudentId &&
                     (br.LendingRecordId == command.LendingRecordId 
-                    && br.LendingRecord!.State == LendingListRecordState.Available)
+                    && (
+                    br.State == BorrowingRequestState.Pending ||
+                    br.State == BorrowingRequestState.Accepted))
+                
                     , ct);
 
         if (existingRequest is not null)
