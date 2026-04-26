@@ -216,14 +216,25 @@ public class AppDbContextInitialiser(
             if (createdBook is null)
                 continue;
 
-            var copiesCount = rng.Next(1, 10);
-
-            for (var i = 0; i < copiesCount; i++)
+            if (rng.NextDouble() < 0.2)
             {
-                var ownerId = owners[rng.Next(owners.Count)];
-                var condition = GetRandomBookCopyCondition(rng);
+                createdBook.MarkAsRejected();
+                continue;//if rejectded we don't create copies for this book
+            }
 
-                await CreateBookCopyIfNotExistsAsync(ownerId, createdBook.Id, condition);
+            if (rng.NextDouble() < 0.6)
+            {
+                createdBook.MarkAsAvailable();
+
+                var copiesCount = rng.Next(1, 10);
+
+                for (var i = 0; i < copiesCount; i++)
+                {
+                    var ownerId = owners[rng.Next(owners.Count)];
+                    var condition = GetRandomBookCopyCondition(rng);
+
+                    await CreateBookCopyIfNotExistsAsync(ownerId, createdBook.Id, condition);
+                }
             }
         }
     }
@@ -297,15 +308,15 @@ public class AppDbContextInitialiser(
             switch (desiredState)
             {
                 case LendingListRecordState.Reserved:
-                    if (bookCopy.MarkAsReserved().IsFailure || record.MarkAsReserved().IsFailure)
+                    if (record.MarkAsReserved().IsFailure)
                     {
                         logger.LogError("Failed to reserve lending list record for book copy {BookCopyId}", bookCopy.Id);
                         continue;
                     }
                     break;
                 case LendingListRecordState.Borrowed:
-                    if (bookCopy.MarkAsReserved().IsFailure
-                        || bookCopy.MarkAsBorrowed().IsFailure
+                    if (
+                         bookCopy.MarkAsBorrowed().IsFailure
                         || record.MarkAsReserved().IsFailure
                         || record.MarkAsBorrowed().IsFailure)
                     {

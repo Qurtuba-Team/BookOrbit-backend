@@ -10,6 +10,138 @@
       "name": "BorrowingRequests",
       "item": [
         {
+          "id": "7c5e8a48-1a5f-457a-82fa-7122e4d41fe5",
+          "name": "Get Out Going Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/me/out?Page=1&PageSize=10",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "me",
+                "out"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "LendingListRecordId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "LendingStudentId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "4ee64ca8-7a21-474e-a481-80fc4f7e115b",
+          "name": "Get Incomming Requests",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/me/in?Page=1&PageSize=10",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "me",
+                "in"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "LendingListRecordId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
           "id": "f5708702-dccc-4d8a-9206-195f40d5fe8f",
           "name": "Get Borrowing Requests",
           "request": {
@@ -21,7 +153,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&LendingStudentId=0ec38ca2-8c42-4be4-816c-a93615cdcf01",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10&SearchTerm=&SortColumn=&SortDirection=&BorrowingStudentId=b9b386a7-e238-44bc-aee9-693e5a833e1a&LendingListRecordId=e301a512-7c1b-41f6-8b36-28e4a7573da7&States=&LendingStudentId=ef052e79-4038-49e6-a004-33670b6de87a",
               "host": [
                 "{{baseurl}}"
               ],
@@ -45,32 +177,27 @@
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "859ecb24-56fd-47d0-95b0-43ee6d6912c5",
-                  "disabled": true
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "LendingStudentId",
-                  "value": "0ec38ca2-8c42-4be4-816c-a93615cdcf01"
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 }
               ]
             }
@@ -361,7 +488,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/identity/users/send-email-confirmation?email=eyadred123345a@std.mans.edu.eg",
+              "raw": "{{baseurl}}/api/v1/identity/users/send-email-confirmation?email=eyaddre2d12d3345a@std.mans.edu.eg",
               "host": [
                 "{{baseurl}}"
               ],
@@ -375,7 +502,7 @@
               "query": [
                 {
                   "key": "email",
-                  "value": "eyadred123345a@std.mans.edu.eg"
+                  "value": "eyaddre2d12d3345a@std.mans.edu.eg"
                 }
               ]
             }
@@ -406,7 +533,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"student2@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -477,7 +604,7 @@
                 "method": "POST",
                 "header": [],
                 "url": {
-                  "raw": "{{baseurl}}/api/v1/identity/confirm-email?email=&token=",
+                  "raw": "{{baseurl}}/api/v1/identity/confirm-email?token=Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09&email=eyaddre2d12d3345a@std.mans.edu.eg",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -489,12 +616,12 @@
                   ],
                   "query": [
                     {
-                      "key": "email",
-                      "value": ""
+                      "key": "token",
+                      "value": "Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09"
                     },
                     {
-                      "key": "token",
-                      "value": ""
+                      "key": "email",
+                      "value": "eyaddre2d12d3345a@std.mans.edu.eg"
                     }
                   ]
                 }
@@ -537,6 +664,32 @@
       "id": "ba93a48a-b396-4453-9070-d42cee908578",
       "name": "Books",
       "item": [
+        {
+          "id": "c0292d67-699c-4707-b138-c86afeb41b84",
+          "name": "Reject",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/books/{{bookid}}/reject",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "{{bookid}}",
+                "reject"
+              ]
+            }
+          }
+        },
         {
           "id": "58af7838-d07e-4742-99e9-66ba00a4a935",
           "name": "Make Available",
@@ -851,7 +1004,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"Title\":\"ما وراء الطبيعة الجزء الخامس\"}",
+              "raw": "",
               "options": {
                 "raw": {
                   "language": "json"
@@ -928,32 +1081,6 @@
               }
             }
           ]
-        },
-        {
-          "id": "c0292d67-699c-4707-b138-c86afeb41b84",
-          "name": "Reject",
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/books/{{bookid}}/reject",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "{{bookid}}",
-                "reject"
-              ]
-            }
-          }
         }
       ]
     },
@@ -1857,6 +1984,32 @@
           "name": "Queries",
           "item": [
             {
+              "id": "a94f3993-fa2b-40d9-b790-1af7f472c334",
+              "name": "Get Student Profile",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/students/profiles/{{studentid}}",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "profiles",
+                    "{{studentid}}"
+                  ]
+                }
+              }
+            },
+            {
               "id": "fb2eb4a9-b9ef-483e-8169-238ad3dd60d8",
               "name": "Get Students",
               "description": "allow sorting by \\[joindate,state,name,updatedat,createdat\\] asc / desc",
@@ -1869,7 +2022,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "{{baseurl}}/api/v1/students?Page=5&PageSize=20",
+                  "raw": "{{baseurl}}/api/v1/students?Page=1&PageSize=25",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -1881,11 +2034,11 @@
                   "query": [
                     {
                       "key": "Page",
-                      "value": "5"
+                      "value": "1"
                     },
                     {
                       "key": "PageSize",
-                      "value": "20"
+                      "value": "25"
                     },
                     {
                       "key": "SearchTerm",
@@ -2011,6 +2164,32 @@
       "id": "16cd0eda-a9e9-4e7e-9efb-c811fd4317c1",
       "name": "Lending List",
       "item": [
+        {
+          "id": "254fa098-bb89-4d36-904c-17c5c55d7ab5",
+          "name": "Get Student Contacts",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/contact-info",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist",
+                "{{lendinglistrecordid}}",
+                "contact-info"
+              ]
+            }
+          }
+        },
         {
           "id": "d7751572-86c5-4217-8061-b4257380a68d",
           "name": "Copy of GetById",

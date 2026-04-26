@@ -1,7 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-
-namespace BookOrbit.Application.Features.Students.Commands.UpdateStudent;
+﻿namespace BookOrbit.Application.Features.Students.Commands.UpdateStudent;
 
 public class UpdateStudentCommandHandler
     (ILogger<UpdateStudentCommandHandler>logger,
@@ -28,7 +25,7 @@ public class UpdateStudentCommandHandler
 
         var updateResult = student.Update(
             nameCreationResult.Value,
-            command.personalPhotoFileName);
+            command.PersonalPhotoFileName);
 
         if (updateResult.IsFailure)
             return updateResult.Errors;

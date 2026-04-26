@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookOrbit.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260422142728_AddedBookStateWithConfigurations")]
-    partial class AddedBookStateWithConfigurations
+    [Migration("20260424111751_AddedBookStatus")]
+    partial class AddedBookStatus
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -104,7 +104,8 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
                         .HasDefaultValue("Pending");
 
                     b.HasKey("Id");

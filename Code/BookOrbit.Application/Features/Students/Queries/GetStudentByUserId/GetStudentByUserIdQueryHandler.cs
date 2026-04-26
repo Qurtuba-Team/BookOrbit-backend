@@ -1,9 +1,9 @@
 ﻿namespace BookOrbit.Application.Features.Students.Queries.GetStudentByUserId;
 public class GetStudentByUserIdQueryHandler(
     IAppDbContext context)
-    : IRequestHandler<GetStudentByUserIdQuery, Result<StudentDto>>
+    : IRequestHandler<GetStudentByUserIdQuery, Result<StudentDtoWithContactInfo>>
 {
-    public async Task<Result<StudentDto>> Handle(
+    public async Task<Result<StudentDtoWithContactInfo>> Handle(
         GetStudentByUserIdQuery query,
         CancellationToken ct)
     {
@@ -16,7 +16,7 @@ public class GetStudentByUserIdQueryHandler(
             return StudentApplicationErrors.NotFoundByUserId;
         }
 
-        return StudentDto.FromEntity(student);
+        return StudentDtoWithContactInfo.FromEntity(student);
     }
 }
 

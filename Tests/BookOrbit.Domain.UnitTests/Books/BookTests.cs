@@ -326,14 +326,16 @@ public class BookTests
         // Arrange
         var book = CreateValidBook();
         var newTitle = CreateValidTitle("New Title");
+        var newCoverImageFileName = "updated-cover.jpg";
 
         // Act
-        var result = book.Update(newTitle);
+        var result = book.Update(newTitle, newCoverImageFileName);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         book.Title.Should().Be(newTitle);
         book.Title.Value.Should().Be("New Title");
+        book.CoverImageFileName.Should().Be(newCoverImageFileName);
     }
 
     [Theory]
@@ -345,13 +347,15 @@ public class BookTests
         // Arrange
         var book = CreateValidBook();
         var validNewTitle = CreateValidTitle(newTitle);
+        var newCoverImageFileName = "updated-cover.jpg";
 
         // Act
-        var result = book.Update(validNewTitle);
+        var result = book.Update(validNewTitle, newCoverImageFileName);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         book.Title.Value.Should().Be(newTitle);
+        book.CoverImageFileName.Should().Be(newCoverImageFileName);
     }
 
     [Fact]
@@ -367,19 +371,19 @@ public class BookTests
         var originalISBN = book.ISBN.Value;
         var originalPublisher = book.Publisher.Value;
         var originalAuthor = book.Author.Value;
-        var originalCoverImage = book.CoverImageFileName;
+        var newCoverImageFileName = "updated-cover.jpg";
 
         var newTitle = CreateValidTitle("Updated Title");
 
         // Act
-        var result = book.Update(newTitle);
+        var result = book.Update(newTitle, newCoverImageFileName);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
         book.ISBN.Value.Should().Be(originalISBN);
         book.Publisher.Value.Should().Be(originalPublisher);
         book.Author.Value.Should().Be(originalAuthor);
-        book.CoverImageFileName.Should().Be(originalCoverImage);
+        book.CoverImageFileName.Should().Be(newCoverImageFileName);
     }
 
     #endregion
@@ -391,9 +395,10 @@ public class BookTests
     {
         // Arrange
         var book = CreateValidBook();
+        var newCoverImageFileName = "updated-cover.jpg";
 
         // Act
-        var result = book.Update(null!);
+        var result = book.Update(null!, newCoverImageFileName);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -467,13 +472,15 @@ public class BookTests
         var book = CreateValidBook(title: "Original Title");
         var originalTitle = book.Title;
         var newTitle = CreateValidTitle("New Title");
+        var newCoverImageFileName = "updated-cover.jpg";
 
         // Act
-        book.Update(newTitle);
+        book.Update(newTitle, newCoverImageFileName);
 
         // Assert
         book.Title.Should().NotBe(originalTitle);
         book.Title.Should().Be(newTitle);
+        book.CoverImageFileName.Should().Be(newCoverImageFileName);
     }
 
     #endregion
@@ -604,18 +611,21 @@ public class BookTests
         var book = CreateValidBook(title: "First Title");
         var secondTitle = CreateValidTitle("Second Title");
         var thirdTitle = CreateValidTitle("Third Title");
+        var secondCoverImageFileName = "second-cover.jpg";
+        var thirdCoverImageFileName = "third-cover.jpg";
 
         // Act
-        var result1 = book.Update(secondTitle);
+        var result1 = book.Update(secondTitle, secondCoverImageFileName);
         book.Title.Should().Be(secondTitle);
 
-        var result2 = book.Update(thirdTitle);
+        var result2 = book.Update(thirdTitle, thirdCoverImageFileName);
 
         // Assert
         result1.IsSuccess.Should().BeTrue();
         result2.IsSuccess.Should().BeTrue();
         book.Title.Should().Be(thirdTitle);
         book.Title.Value.Should().Be("Third Title");
+        book.CoverImageFileName.Should().Be(thirdCoverImageFileName);
     }
 
     #endregion
@@ -626,9 +636,10 @@ public class BookTests
         // Arrange
         var book = CreateValidBook();
         var newTitle = CreateValidTitle("New Title");
+        var newCoverImageFileName = "updated-cover.jpg";
 
         // Act
-        var result = book.Update(newTitle);
+        var result = book.Update(newTitle, newCoverImageFileName);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

@@ -12,10 +12,10 @@ public class BorrowingTransaction : AuditableEntity
     public DateTimeOffset? ActualReturnDate { get; private set; }
 
 
-    public BorrowingRequest BorrowingRequest { get; private set; }
-    public Student LenderStudent { get; private set; }
-    public Student BorrowerStudent { get; private set; }
-    public BookCopy BookCopy { get; private set; }
+    public BorrowingRequest? BorrowingRequest { get; private set; }
+    public Student? LenderStudent { get; private set; }
+    public Student? BorrowerStudent { get; private set; }
+    public BookCopy? BookCopy { get; private set; }
 
 #pragma warning disable CS8618
     private BorrowingTransaction() { }
@@ -109,8 +109,12 @@ public class BorrowingTransaction : AuditableEntity
         if(returnDate > currentTime)
             return BorrowingTransactionErrors.ReturnDateCannotBeInTheFuture;
 
+        BorrowingTransactionState ToState = BorrowingTransactionState.Returned;
 
-        var result = UpdateState(BorrowingTransactionState.Returned);
+        if (returnDate > ExpectedReturnDate)
+            ToState = BorrowingTransactionState.Overdue;
+
+        var result = UpdateState(ToState);
 
         if (result.IsFailure)
             return result;
@@ -130,6 +134,14 @@ public class BorrowingTransaction : AuditableEntity
     public Result<Updated> MarkAsLost()
     {
         return UpdateState(BorrowingTransactionState.Lost);
+    }
+
+    public Result<Updated> MarkAsBorrowed()
+    {
+        if (State == BorrowingTransactionState.Borrowed)
+            return Result.Updated;
+
+        return UpdateState(BorrowingTransactionState.Borrowed);
     }
 
 }

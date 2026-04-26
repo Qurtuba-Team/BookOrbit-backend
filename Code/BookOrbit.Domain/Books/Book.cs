@@ -6,7 +6,7 @@ public class Book : AuditableEntity
     public BookPublisher Publisher { get; }
     public BookCategory Category { get; }
     public BookAuthor Author { get; }
-    public string CoverImageFileName { get; }
+    public string CoverImageFileName { get; private set; }
     public BookStatus Status { get; private set; }
 
 #pragma warning disable CS8618
@@ -72,12 +72,17 @@ public class Book : AuditableEntity
 
 
     public Result<Updated> Update(
-        BookTitle title)
+        BookTitle title,
+        string coverImageFileName)
     {
         if (title is null)
             return BookErrors.TitleRequired;
 
+        if(string.IsNullOrWhiteSpace(coverImageFileName))
+            return BookErrors.CoverImagePhotoRequired;
+
         Title = title;
+        CoverImageFileName = coverImageFileName;
 
         return Result.Updated;
     }

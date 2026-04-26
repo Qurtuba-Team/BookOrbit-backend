@@ -12,7 +12,7 @@ public class StudentAccountController(
 {
     [HttpGet("me")]
     [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
-    [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(StudentDtoWithContactInfo), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
@@ -24,7 +24,7 @@ public class StudentAccountController(
     [EndpointName("GetCurrentStudent")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<StudentDto>> GetCurrentStudent(CancellationToken ct)
+    public async Task<ActionResult<StudentDtoWithContactInfo>> GetCurrentStudent(CancellationToken ct)
     {
         var userId = currentUser.Id;
 
@@ -40,7 +40,7 @@ public class StudentAccountController(
 
     [HttpPost]
     [AllowAnonymous]
-    [ProducesResponseType(typeof(StudentDto), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(StudentDtoWithContactInfo), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
@@ -48,8 +48,8 @@ public class StudentAccountController(
     [EndpointDescription("Registers a new student, stores the submitted profile information, and creates the linked user account required for authentication and future access to the platform.")]
     [EndpointName("CreateStudentAccount")]
     [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
-    public async Task<ActionResult<StudentDto>> CreateStudent([FromForm] CreateStudentRequest request, CancellationToken ct)
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
+    public async Task<ActionResult<StudentDtoWithContactInfo>> CreateStudent([FromForm] CreateStudentRequest request, CancellationToken ct)
     {
         using var stream = request.PersonalPhoto.OpenReadStream();
 
@@ -82,7 +82,7 @@ public class StudentAccountController(
                value: studentDto),
 
            e => Problem(e, HttpContext));
-    }
+    } 
 
 
     [HttpPatch("{studentId:guid}")]
@@ -98,7 +98,7 @@ public class StudentAccountController(
     [EndpointDescription("Updates the editable profile information for the specified student, including the uploaded personal photo when a new file is provided in the request.")]
     [EndpointName("UpdateStudent")]
     [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimmitingPolicyName)]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult> UpdateStudent([FromRoute] Guid studentId, [FromForm] UpdateStudentRequest request, CancellationToken ct)
     {
         var imageFileNameResult = await sender.Send(new GetStudentPersonalPhotoFileNameByIdQuery(studentId),ct);

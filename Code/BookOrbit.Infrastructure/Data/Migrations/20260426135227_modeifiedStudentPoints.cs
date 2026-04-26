@@ -5,32 +5,34 @@
 namespace BookOrbit.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedBookStateWithConfigurations : Migration
+    public partial class modeifiedStudentPoints : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<string>(
-                name: "Status",
-                table: "Books",
-                type: "nvarchar(max)",
+            migrationBuilder.AlterColumn<int>(
+                name: "Points",
+                table: "Students",
+                type: "int",
                 nullable: false,
-                defaultValue: "Pending",
+                defaultValue: 1,
                 oldClrType: typeof(int),
-                oldType: "int");
+                oldType: "int",
+                oldDefaultValue: 0);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterColumn<int>(
-                name: "Status",
-                table: "Books",
+                name: "Points",
+                table: "Students",
                 type: "int",
                 nullable: false,
-                oldClrType: typeof(string),
-                oldType: "nvarchar(max)",
-                oldDefaultValue: "Pending");
+                defaultValue: 0,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldDefaultValue: 1);
         }
     }
 }

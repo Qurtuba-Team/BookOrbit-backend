@@ -587,7 +587,7 @@ public class BookCopyTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -875,7 +875,7 @@ public class BookCopyTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -981,7 +981,7 @@ public class BookCopyTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -1083,7 +1083,7 @@ public class BookCopyTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -1098,7 +1098,7 @@ public class BookCopyTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -1113,7 +1113,7 @@ public class BookCopyTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -1128,7 +1128,7 @@ public class BookCopyTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -1143,7 +1143,7 @@ public class BookCopyTests
 
         // Assert
         result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     #endregion
@@ -1175,7 +1175,7 @@ public class BookCopyTests
         // Act & Assert - Unavailable
         var unavailableResult = bookCopy.MarkAsUnAvilable();
         unavailableResult.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvilable);
+        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
 
         // Act & Assert - Available
         var availableResult = bookCopy.MarkAsAvilable();

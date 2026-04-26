@@ -1,4 +1,5 @@
 using BookOrbit.Domain.BorrowingRequests.DomainEvents;
+using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.CreateBorrowingRequest;
 public class CreateBorrowingRequestCommandHandler(
@@ -10,7 +11,6 @@ public class CreateBorrowingRequestCommandHandler(
     public async Task<Result<BorrowingRequestDto>> Handle(CreateBorrowingRequestCommand command, CancellationToken ct)
     {
         var student = await context.Students
-            .AsNoTracking()
             .FirstOrDefaultAsync(s => s.Id == command.BorrowingStudentId, ct);
 
         if (student is null)
@@ -22,7 +22,7 @@ public class CreateBorrowingRequestCommandHandler(
         var lendingRecord = await context.LendingListRecords
             .AsNoTracking()
             .Where(lr => lr.Id == command.LendingRecordId)
-            .Select(lr => new { lr.State, lr.BookCopy!.OwnerId })
+            .Select(lr => new { lr.State, lr.BookCopy!.OwnerId , Cost = lr.Cost.Value})
             .FirstOrDefaultAsync(ct);
 
         if (lendingRecord is null)
@@ -42,12 +42,16 @@ public class CreateBorrowingRequestCommandHandler(
             logger.LogWarning("Student {StudentId} cannot request to borrow their own book copy.", command.BorrowingStudentId);
             return BorrowingRequestApplicationErrors.StudentCannotBorrowOwnedCopies;
         }
-
             var existingRequest = await context.BorrowingRequests
                 .AsNoTracking()
                 .FirstOrDefaultAsync(br =>
                     br.BorrowingStudentId == command.BorrowingStudentId &&
-                    br.LendingRecordId == command.LendingRecordId, ct);
+                    (br.LendingRecordId == command.LendingRecordId 
+                    && (
+                    br.State == BorrowingRequestState.Pending ||
+                    br.State == BorrowingRequestState.Accepted))
+                
+                    , ct);
 
         if (existingRequest is not null)
         {
@@ -72,6 +76,17 @@ public class CreateBorrowingRequestCommandHandler(
                 borrowingRequestResult.Errors);
             return borrowingRequestResult.Errors;
         }
+
+        //Take The Points (temp)
+        var deductingPointsResult = student.DeductPoints(Point.Create(lendingRecord.Cost).Value);
+        if (deductingPointsResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to deduct points for student {StudentId}. Errors: {Errors}",
+                command.BorrowingStudentId,
+                deductingPointsResult.Errors);
+            return deductingPointsResult.Errors;
+        }   
 
         borrowingRequestResult.Value.AddDomainEvent(new BorrowingRequestCreatedEvent(borrowingRequestResult.Value.Id, borrowingRequestResult.Value.LendingRecordId));
 

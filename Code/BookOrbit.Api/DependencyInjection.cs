@@ -55,6 +55,7 @@ static public class DependencyInjection
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<IApiDataService, ApiDataService>();
+        services.AddScoped<IRouteParameterService, RouteParameterService>();
         return services;
     }
 
@@ -114,11 +115,19 @@ static public class DependencyInjection
 
             RateLimitHelper.AddSlidingPolicy(
                 options,
-                ApiConstants.SensitiveRateLimmitingPolicyName,
-                ApiConstants.SensistiveRateLimiteMaxRequests,
-                ApiConstants.SensistiveRateLimitWindowSpanInMinutes,
-                ApiConstants.SensistiveRateLimitSegmentPerWindow,
-                ApiConstants.SensistiveRateLimitQueueLimit);
+                ApiConstants.SensitiveRateLimitingPolicyName,
+                ApiConstants.SensitiveRateLimitMaxRequests,
+                ApiConstants.SensitiveRateLimitWindowSpanInMinutes,
+                ApiConstants.SensitiveRateLimitSegmentPerWindow,
+                ApiConstants.SensitiveRateLimitQueueLimit);
+
+            RateLimitHelper.AddSlidingPolicy(
+                options,
+                ApiConstants.OnceAMinuteRateLimitingPolicyName,
+                ApiConstants.OnceAMinuteRateLimitMaxRequests,
+                ApiConstants.OnceAMinuteRateLimitWindowSpanInMinutes,
+                ApiConstants.OnceAMinuteRateLimitSegmentPerWindow,
+                ApiConstants.OnceAMinuteRateLimitQueueLimit);
 
             options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
         });

@@ -1,3 +1,5 @@
+using BookOrbit.Domain.BorrowingRequests.DomainEvents;
+
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.AcceptBorrowingRequest;
 public class AcceptBorrowingRequestCommandHandler(
     IAppDbContext context,
@@ -11,7 +13,7 @@ public class AcceptBorrowingRequestCommandHandler(
             .Select(br =>new
             {
                 BorrowingRequest = br,
-                OwnerId = br.LendingRecord!.BookCopy!.OwnerId //Better than doing a naviagation property in the domain model, as it doesn't require loading the related entities into memory
+                br.LendingRecord,
             })
             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
@@ -24,22 +26,33 @@ public class AcceptBorrowingRequestCommandHandler(
             return BorrowingRequestApplicationErrors.NotFoundById;
         }
 
-        var ownerId = borrowingRequestData.OwnerId;
+        var isAlreadyHasAceptedRequest = await context.BorrowingRequests
+            .AnyAsync(br =>
+                br.LendingRecordId == borrowingRequestData.BorrowingRequest.LendingRecordId &&
+                br.State == BorrowingRequestState.Accepted, ct);
 
-        if (ownerId != command.StudentId)
+        if(isAlreadyHasAceptedRequest) //Cannot Accept a borrowing request if there is already an accepted request for the same lending record, as the lending record is not available anymore
         {
             logger.LogWarning(
-                "Student {StudentId} is not the owner of borrowing request {BorrowingRequestId}.",
-                command.StudentId,
-                borrowingRequestData.BorrowingRequest.Id);
-
-            return BorrowingRequestApplicationErrors.StudentNotLendingRecordOwner;
+                "Lending record {LendingRecordId} already has an accepted borrowing request.",
+                borrowingRequestData.BorrowingRequest.LendingRecordId);
+            return BorrowingRequestApplicationErrors.LendingRecordNotAvailable;
         }
 
         var acceptResult = borrowingRequestData.BorrowingRequest.MarkAsApproved();
 
         if (acceptResult.IsFailure)
             return acceptResult.Errors;
+
+
+        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsReserved();
+
+        if (lendingRecordMarkingResult.IsFailure)
+            return lendingRecordMarkingResult.Errors;
+
+
+        borrowingRequestData.BorrowingRequest.AddDomainEvent(new BorrowingRequestAcceptedEvent(borrowingRequestData.BorrowingRequest.BorrowingStudentId,borrowingRequestData.BorrowingRequest.Id));
+
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

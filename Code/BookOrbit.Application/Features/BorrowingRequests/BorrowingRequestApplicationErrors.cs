@@ -32,4 +32,19 @@ static public class BorrowingRequestApplicationErrors
         ClassName,
         "StudentNotBorrower",
         "Student is not the borrower for this request.");
+
+    public static readonly Error BorrowingRequestNotAccepted = ApplicationCommonErrors.CustomConflict(
+        ClassName,
+        "BorrowingRequestNotAccepted",
+        "The borrowing request is not in accepted state.");
+
+   public static readonly Error NotOwnerOfLendingRecord = ApplicationCommonErrors.CustomUnauthorized(
+        ClassName,
+        "NotOwnerOfLendingRecord",
+        "The student is not the owner of the lending record associated with this borrowing request.");
+
+    public static readonly Error NotEnoughPoints = ApplicationCommonErrors.CustomConflict(
+        ClassName,
+        "NotEnoughPoints",
+        "The student does not have enough points to request this lending record.");
 }

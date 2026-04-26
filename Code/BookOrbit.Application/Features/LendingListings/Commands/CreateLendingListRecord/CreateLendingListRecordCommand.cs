@@ -2,5 +2,4 @@
 
 public record CreateLendingListRecordCommand(
         Guid BookCopyId,
-        Guid OwnerId,
         int BorrowingDurationInDays) : IRequest<Result<LendingListRecordDto>>;

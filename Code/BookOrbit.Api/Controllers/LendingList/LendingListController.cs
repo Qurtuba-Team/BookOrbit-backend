@@ -1,4 +1,7 @@
-﻿namespace BookOrbit.Api.Controllers.LendingList;
+﻿using BookOrbit.Application.Features.LendingListings.Commands.StateMachien.CloseLendingListRecord;
+using BookOrbit.Application.Features.Students.Queries.GetStudentContactInformationByLendingListId;
+
+namespace BookOrbit.Api.Controllers.LendingList;
 
 [Route("api/v{version:apiVersion}/lendinglist")]
 [ApiVersion("1.0")]
@@ -98,6 +101,63 @@ public class LendingListController(
                routeName: "GetBorrowingRequestById",
                routeValues: new { version = "1.0", borrowingRequestId = borrowingRequest.Id },
                value: borrowingRequest),
+           e => Problem(e, HttpContext));
+    }
+
+    [HttpGet("{lendingListRecordId:guid}/contact-info")]
+    [Authorize(Policy = PoliciesNames.StudentOwnerOfLendingListRecordPolicy)]
+    [ProducesResponseType(typeof(StudentContactInformationDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Retrieve a student's contact information by lending list record identifier.")]
+    [EndpointDescription("Returns the contact information for the specified lending list record identifier when the record exists.")]
+    [EndpointName("GetStudentContactInformationByLendingListId")]
+    [MapToApiVersion("1.0")]
+    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<StudentContactInformationDto>> GetStudentContactInformationById([FromRoute] Guid lendingListRecordId, CancellationToken ct)
+    {
+        var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentFound.IsFailure)
+        {
+            return Problem(studentFound.Errors, HttpContext);
+        }
+
+        var query = new GetStudentContactInformationByLendingListIdQuery(lendingListRecordId, studentFound.Value.Id);
+
+        var result = await sender.Send(query, ct);
+
+        return result.Match(
+           Ok,
+           e => Problem(e, HttpContext));
+    }
+
+
+    [HttpPost("{lendingListRecordId:guid}/close")]
+    [Authorize(Policy = PoliciesNames.StudentOwnerOfLendingListRecordPolicy)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status409Conflict)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Close a lending list record.")]
+    [EndpointDescription("Closes the specified lending list record, preventing further borrowing requests.")]
+    [EndpointName("CloseLendingListRecord")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<BorrowingRequestDto>> CloseLendingListRecord([FromRoute] Guid lendingListRecordId, CancellationToken ct)
+    {
+       var command = new CloseLendingListRecordCommand(lendingListRecordId);
+
+        var result = await sender.Send(command, ct);
+        return result.Match(
+           _ => NoContent(),
            e => Problem(e, HttpContext));
     }
 

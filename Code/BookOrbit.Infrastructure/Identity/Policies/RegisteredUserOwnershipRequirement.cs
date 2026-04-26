@@ -5,7 +5,7 @@ public class RegisteredUserOwnershipRequirement : IAuthorizationRequirement;
 
 public class RegisteredUserOwnershipHandler(
     ILogger<RegisteredUserOwnershipHandler>logger,
-    IHttpContextAccessor contextAccessor,
+    IRouteParameterService routeParameterService,
     ICurrentUser currentUser) : AuthorizationHandler<RegisteredUserOwnershipRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, RegisteredUserOwnershipRequirement requirement)
@@ -26,10 +26,16 @@ public class RegisteredUserOwnershipHandler(
             return Task.CompletedTask;
         }
 
-        var usertIdRouteValue = contextAccessor.HttpContext?
-            .Request.RouteValues["userId"]?.ToString();
+        var userIdRouteValueResult = routeParameterService.GetRouteParameter("userId");
 
-        var isOwner = userId == usertIdRouteValue;
+        if (userIdRouteValueResult.IsFailure)
+        {
+            logger.LogWarning("Authorization failed: userId route value not found");
+            context.Fail();
+            return Task.CompletedTask;
+        }
+
+        var isOwner = userId == userIdRouteValueResult.Value;
 
         if (!isOwner)
         {

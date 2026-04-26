@@ -4,7 +4,7 @@ public class StudentOwnerShipRequirement : IAuthorizationRequirement;
 public class StudentOwnerShipHandler(
     ILogger<StudentOwnerShipHandler> logger,
     IAppDbContext dbContext,
-    IHttpContextAccessor contextAccessor,
+    IRouteParameterService routeParameterService,
     ICurrentUser currentUser) : AuthorizationHandler<StudentOwnerShipRequirement>
 {
     protected override async Task HandleRequirementAsync(
@@ -34,10 +34,16 @@ public class StudentOwnerShipHandler(
             return;
         }
 
-        var idRouteValue = contextAccessor.HttpContext?
-            .Request.RouteValues["studentId"]?.ToString();
+        var studentIdRouteValueResult = routeParameterService.GetRouteParameter("studentId");
 
-        if (!Guid.TryParse(idRouteValue, out var routeStudentId))
+        if (studentIdRouteValueResult.IsFailure)
+        {
+            logger.LogWarning("Authorization failed: studentId route value not found");
+            context.Fail();
+            return;
+        }
+
+        if (!Guid.TryParse(studentIdRouteValueResult.Value, out var routeStudentId))
         {
             logger.LogWarning("Authorization failed: invalid or missing route id");
             context.Fail();

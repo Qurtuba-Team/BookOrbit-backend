@@ -23,7 +23,9 @@ public class UpdateBookCommandHandler(
         if (titleCreationResult.IsFailure)
             return titleCreationResult.Errors;
 
-        var updateResult = book.Update(titleCreationResult.Value);
+        var updateResult = book.Update(
+            titleCreationResult.Value,
+            command.BookCoverImageFileName);
 
         if (updateResult.IsFailure)
             return updateResult.Errors;

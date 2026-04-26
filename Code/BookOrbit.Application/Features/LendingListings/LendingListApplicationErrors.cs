@@ -11,6 +11,11 @@ static public class LendingListApplicationErrors
         "BookCopyIsNotAvilableForlending",
         "The book copy is not available for lending.");
 
+        public static readonly Error StateIsNotReserved = ApplicationCommonErrors.CustomConflict(
+            ClassName,
+            "StateIsNotReserved",
+            "The lending list record is not in reserved state.");
+
     public static readonly Error NotFoundById = ApplicationCommonErrors.NotFoundProp(
     ClassName,
     "LendingListRecord",

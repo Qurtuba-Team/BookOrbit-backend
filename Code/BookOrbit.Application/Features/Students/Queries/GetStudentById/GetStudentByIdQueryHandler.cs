@@ -3,9 +3,9 @@
 public class GetStudentByIdQueryHandler
     (ILogger<GetStudentByIdQueryHandler> logger,
     IAppDbContext context)
-    : IRequestHandler<GetStudentByIdQuery, Result<StudentDto>>
+    : IRequestHandler<GetStudentByIdQuery, Result<StudentDtoWithContactInfo>>
 {
-    public async Task<Result<StudentDto>> Handle(GetStudentByIdQuery query, CancellationToken ct)
+    public async Task<Result<StudentDtoWithContactInfo>> Handle(GetStudentByIdQuery query, CancellationToken ct)
     {
         var student = await context.Students
             .AsNoTracking()
@@ -18,6 +18,6 @@ public class GetStudentByIdQueryHandler
             return StudentApplicationErrors.NotFoundById;
         }
 
-        return StudentDto.FromEntity(student);
+        return StudentDtoWithContactInfo.FromEntity(student);
     }
 }

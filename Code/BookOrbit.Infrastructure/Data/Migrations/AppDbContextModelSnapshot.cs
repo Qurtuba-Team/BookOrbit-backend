@@ -101,7 +101,8 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)")
                         .HasDefaultValue("Pending");
 
                     b.HasKey("Id");
@@ -151,6 +152,63 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                     b.HasIndex("State");
 
                     b.ToTable("BorrowingRequests", (string)null);
+                });
+
+            modelBuilder.Entity("BookOrbit.Domain.BorrowingTransactions.BorrowingTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ActualReturnDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("BookCopyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BorrowerStudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BorrowingRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset>("ExpectedReturnDate")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<DateTimeOffset>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("LenderStudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookCopyId");
+
+                    b.HasIndex("BorrowerStudentId");
+
+                    b.HasIndex("BorrowingRequestId");
+
+                    b.HasIndex("LenderStudentId");
+
+                    b.HasIndex("State");
+
+                    b.ToTable("BorrowingTransactions", (string)null);
                 });
 
             modelBuilder.Entity("BookOrbit.Domain.Identity.RefreshToken", b =>
@@ -264,11 +322,6 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
-
-                    b.Property<int>("Points")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasDefaultValue(0);
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -620,6 +673,41 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                     b.Navigation("LendingRecord");
                 });
 
+            modelBuilder.Entity("BookOrbit.Domain.BorrowingTransactions.BorrowingTransaction", b =>
+                {
+                    b.HasOne("BookOrbit.Domain.BookCopies.BookCopy", "BookCopy")
+                        .WithMany()
+                        .HasForeignKey("BookCopyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookOrbit.Domain.Students.Student", "BorrowerStudent")
+                        .WithMany()
+                        .HasForeignKey("BorrowerStudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookOrbit.Domain.BorrowingRequests.BorrowingRequest", "BorrowingRequest")
+                        .WithMany()
+                        .HasForeignKey("BorrowingRequestId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BookOrbit.Domain.Students.Student", "LenderStudent")
+                        .WithMany()
+                        .HasForeignKey("LenderStudentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("BookCopy");
+
+                    b.Navigation("BorrowerStudent");
+
+                    b.Navigation("BorrowingRequest");
+
+                    b.Navigation("LenderStudent");
+                });
+
             modelBuilder.Entity("BookOrbit.Domain.Identity.RefreshToken", b =>
                 {
                     b.HasOne("BookOrbit.Infrastructure.Identity.AppUser", null)
@@ -708,6 +796,25 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                                 .HasForeignKey("StudentId");
                         });
 
+                    b.OwnsOne("BookOrbit.Domain.PointTransactions.ValueObjects.Point", "Points", b1 =>
+                        {
+                            b1.Property<Guid>("StudentId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<int>("Value")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int")
+                                .HasDefaultValue(1)
+                                .HasColumnName("Points");
+
+                            b1.HasKey("StudentId");
+
+                            b1.ToTable("Students");
+
+                            b1.WithOwner()
+                                .HasForeignKey("StudentId");
+                        });
+
                     b.OwnsOne("BookOrbit.Domain.Students.ValueObjects.StudentName", "Name", b1 =>
                         {
                             b1.Property<Guid>("StudentId")
@@ -754,6 +861,9 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("PhoneNumber");
+
+                    b.Navigation("Points")
+                        .IsRequired();
 
                     b.Navigation("TelegramUserId");
 
