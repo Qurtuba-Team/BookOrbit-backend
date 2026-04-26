@@ -22,7 +22,7 @@ public class CreateBorrowingRequestCommandHandler(
         var lendingRecord = await context.LendingListRecords
             .AsNoTracking()
             .Where(lr => lr.Id == command.LendingRecordId)
-            .Select(lr => new { lr.State, lr.BookCopy!.OwnerId , lr.Cost})
+            .Select(lr => new { lr.State, lr.BookCopy!.OwnerId , Cost = lr.Cost.Value})
             .FirstOrDefaultAsync(ct);
 
         if (lendingRecord is null)
@@ -43,7 +43,7 @@ public class CreateBorrowingRequestCommandHandler(
             return BorrowingRequestApplicationErrors.StudentCannotBorrowOwnedCopies;
         }
 
-        if(student.Points < lendingRecord.Cost)
+        if(student.Points.Value < lendingRecord.Cost)
         {
             logger.LogWarning("Student {StudentId} does not have enough points to request this lending record.", command.BorrowingStudentId);
             return BorrowingRequestApplicationErrors.NotEnoughPoints;
@@ -80,7 +80,7 @@ public class CreateBorrowingRequestCommandHandler(
         }
 
         //Take The Points (temp)
-        var deductingPointsResult = student.DeductPoints(lendingRecord.Cost);
+        var deductingPointsResult = student.DeductPoints(Point.Create(lendingRecord.Cost).Value);
         if (deductingPointsResult.IsFailure)
         {
             logger.LogWarning(

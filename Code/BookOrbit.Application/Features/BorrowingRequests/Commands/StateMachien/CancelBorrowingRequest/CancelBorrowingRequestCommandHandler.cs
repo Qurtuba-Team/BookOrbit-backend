@@ -1,3 +1,5 @@
+using BookOrbit.Domain.PointTransactions.ValueObjects;
+
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.CancelBorrowingRequest;
 public class CancelBorrowingRequestCommandHandler(
     IAppDbContext context,
@@ -12,7 +14,7 @@ public class CancelBorrowingRequestCommandHandler(
             {
                 BorrowingRequest = br,
                 BorrowingStudent = br.BorrowingStudent,
-                Cost = br.LendingRecord!.Cost
+                Cost = br.LendingRecord!.Cost.Value
             })
             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
@@ -31,7 +33,7 @@ public class CancelBorrowingRequestCommandHandler(
             return cancelResult.Errors;
 
         //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(borrowingRequestData.Cost);
+        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(Point.Create(borrowingRequestData.Cost).Value);
 
         if (addingPointResult.IsFailure)
         {
