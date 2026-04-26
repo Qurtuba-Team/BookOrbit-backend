@@ -43,7 +43,7 @@ public record StudentDtoWithContactInfo
             entity.Id,
             entity.Name.Value,
             entity.UniversityMail.Value,
-            entity.Points,
+            entity.Points.Value,
             entity.State,
             entity.JoinDateUtc,
             entity.PhoneNumber?.Value,

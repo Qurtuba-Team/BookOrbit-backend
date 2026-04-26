@@ -32,7 +32,7 @@ public record StudentDto
         new(
             entity.Id,
             entity.Name.Value,
-            entity.Points,
+            entity.Points.Value,
             entity.State,
             entity.JoinDateUtc);
 

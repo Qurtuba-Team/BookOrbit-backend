@@ -43,7 +43,7 @@ public record StudentListItemDto
         s.PhoneNumber != null ? s.PhoneNumber.Value : null,
         s.TelegramUserId != null ? s.TelegramUserId.Value : null,
         s.UniversityMail.Value,
-        s.Points,
+        s.Points.Value,
         s.State,
         s.JoinDateUtc
     );

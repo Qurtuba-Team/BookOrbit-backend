@@ -18,10 +18,6 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
             .IsUnicode(false)
             .IsRequired();
 
-        builder.Property(s => s.Points)
-            .HasDefaultValue(0)
-            .IsRequired();
-
         builder.Property(s => s.JoinDateUtc)
             .HasColumnType("datetimeoffset")
             .IsRequired(false);
@@ -78,6 +74,15 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
 
             m.HasIndex(x => x.Value).IsUnique();
         });
+
+        builder.OwnsOne(s => s.Points, n =>
+        {
+            n.Property(p => p.Value)
+             .HasColumnName("Points")
+             .IsRequired()
+             .HasDefaultValue(1);
+        });
+
 
         builder.Navigation(s => s.PhoneNumber).IsRequired(false);
         builder.Navigation(s => s.TelegramUserId).IsRequired(false);
