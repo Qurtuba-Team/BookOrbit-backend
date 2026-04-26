@@ -62,9 +62,9 @@ public class GetBorrowingTransactionsQueryHandler(
         var normalizedBookTitle = BookTitle.Normalize(searchQuery.SearchTerm);
 
         return query.Where(bt =>
-            bt.BorrowerStudent.Name.Value.Contains(normalizedStudentName) ||
-            bt.LenderStudent.Name.Value.Contains(normalizedStudentName) ||
-            bt.BookCopy.Book!.Title.Value.Contains(normalizedBookTitle));
+            bt.BorrowerStudent!.Name!.Value.Contains(normalizedStudentName) ||
+            bt.LenderStudent!.Name!.Value.Contains(normalizedStudentName) ||
+            bt.BookCopy!.Book!.Title!.Value.Contains(normalizedBookTitle));
     }
 
     private static IQueryable<BorrowingTransaction> ApplySorting(IQueryable<BorrowingTransaction> query, string? sortColumn, string? sortDirection)
@@ -84,9 +84,9 @@ public class GetBorrowingTransactionsQueryHandler(
             "expectedreturndate" => isDescending ? query.OrderByDescending(bt => bt.ExpectedReturnDate) : query.OrderBy(bt => bt.ExpectedReturnDate),
             "actualreturndate" => isDescending ? query.OrderByDescending(bt => bt.ActualReturnDate) : query.OrderBy(bt => bt.ActualReturnDate),
             "state" => isDescending ? query.OrderByDescending(bt => bt.State) : query.OrderBy(bt => bt.State),
-            "borrowername" => isDescending ? query.OrderByDescending(bt => bt.BorrowerStudent.Name.Value) : query.OrderBy(bt => bt.BorrowerStudent.Name.Value),
-            "lendername" => isDescending ? query.OrderByDescending(bt => bt.LenderStudent.Name.Value) : query.OrderBy(bt => bt.LenderStudent.Name.Value),
-            "booktitle" => isDescending ? query.OrderByDescending(bt => bt.BookCopy.Book!.Title.Value) : query.OrderBy(bt => bt.BookCopy.Book!.Title.Value),
+            "borrowername" => isDescending ? query.OrderByDescending(bt => bt.BorrowerStudent!.Name!.Value) : query.OrderBy(bt => bt.BorrowerStudent!.Name!.Value),
+            "lendername" => isDescending ? query.OrderByDescending(bt => bt.LenderStudent!.Name!.Value) : query.OrderBy(bt => bt.LenderStudent!.Name!.Value),
+            "booktitle" => isDescending ? query.OrderByDescending(bt => bt.BookCopy!.Book!.Title!.Value) : query.OrderBy(bt => bt.BookCopy!.Book!.Title!.Value),
             _ => query.OrderByDescending(bt => bt.CreatedAtUtc)
         };
     }

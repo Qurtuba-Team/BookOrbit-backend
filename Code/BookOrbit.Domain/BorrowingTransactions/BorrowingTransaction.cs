@@ -109,8 +109,12 @@ public class BorrowingTransaction : AuditableEntity
         if(returnDate > currentTime)
             return BorrowingTransactionErrors.ReturnDateCannotBeInTheFuture;
 
+        BorrowingTransactionState ToState = BorrowingTransactionState.Returned;
 
-        var result = UpdateState(BorrowingTransactionState.Returned);
+        if (returnDate > ExpectedReturnDate)
+            ToState = BorrowingTransactionState.Overdue;
+
+        var result = UpdateState(ToState);
 
         if (result.IsFailure)
             return result;

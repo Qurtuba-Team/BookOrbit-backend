@@ -6,6 +6,7 @@ public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailForm
     public const string BookCopyRequestedEmailFormatFilePath = @"Common/EmailTemplates/BookCopyRequestedEmailFormat.html";
     public const string ConfirmEmailFormatFilePath = @"Common/EmailTemplates/ConfirmEmailFormat.html";
     public const string ResetPasswordEmailFormatFilePath = @"Common/EmailTemplates/ResetPasswordEmailFormat.html";
+    public const string BorrowingRequestAcceptedEmailFormatFilePath = @"Common/EmailTemplates/BorrowingRequestAcceptedEmailFormat.html";
 
     private Result<string> GetEmailFormat(string filePath, string placeholder, string value)
     {
@@ -36,5 +37,10 @@ public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailForm
     public Result<string> ResetPasswordEmailFormat(string link)
     {
         return GetEmailFormat(ResetPasswordEmailFormatFilePath, "{{link}}", link);
+    }
+
+    public Result<string> BorrowingRequestAcceptedEmailFormat(string bookTitle)
+    {
+        return GetEmailFormat(BorrowingRequestAcceptedEmailFormatFilePath, "{{bookTitle}}", bookTitle);
     }
 }
