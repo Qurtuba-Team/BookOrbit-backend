@@ -1,10 +1,12 @@
 using BookOrbit.Application.Features.BorrowingTransactions;
+using Microsoft.Extensions.Caching.Hybrid;
 
 namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsReturnedBorrowingTransaction;
 public class MarkAsReturnedBorrowingTransactionCommandHandler(
     IAppDbContext context,
     TimeProvider timeProvider,
-    ILogger<MarkAsReturnedBorrowingTransactionCommandHandler> logger)
+    ILogger<MarkAsReturnedBorrowingTransactionCommandHandler> logger,
+    HybridCache hybridCache)
     : IRequestHandler<MarkAsReturnedBorrowingTransactionCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(MarkAsReturnedBorrowingTransactionCommand command, CancellationToken ct)
@@ -53,6 +55,8 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
         }
 
         await context.SaveChangesAsync(ct);
+        await hybridCache.RemoveByTagAsync(BorrowingTransactionCachingConstants.BorrowingTransactionTag, ct);
+
 
         logger.LogInformation(
             "Borrowing transaction {BorrowingTransactionId} has been marked as returned.",

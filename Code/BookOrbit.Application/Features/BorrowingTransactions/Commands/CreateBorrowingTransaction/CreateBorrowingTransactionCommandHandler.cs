@@ -4,7 +4,8 @@ namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.CreateBo
 public class CreateBorrowingTransactionCommandHandler(
     ILogger<CreateBorrowingTransactionCommandHandler> logger,
     IAppDbContext context,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    HybridCache hybridCache)
     : IRequestHandler<CreateBorrowingTransactionCommand, Result<BorrowingTransactionDto>>
 {
     public async Task<Result<BorrowingTransactionDto>> Handle(CreateBorrowingTransactionCommand command, CancellationToken ct)
@@ -94,7 +95,10 @@ public class CreateBorrowingTransactionCommandHandler(
         }
 
         context.BorrowingTransactions.Add(transactionResult.Value);
+
         await context.SaveChangesAsync(ct);
+        await hybridCache.RemoveByTagAsync(BorrowingTransactionCachingConstants.BorrowingTransactionTag, ct);
+
 
         logger.LogInformation(
             "Borrowing transaction {BorrowingTransactionId} created for borrowing request {BorrowingRequestId}.",
