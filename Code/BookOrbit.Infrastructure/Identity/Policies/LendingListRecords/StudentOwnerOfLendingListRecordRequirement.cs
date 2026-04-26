@@ -4,6 +4,7 @@ public class StudentOwnerOfLendingListRecordRequirement : IAuthorizationRequirem
 public class StudentOwnerOfLendingListRecordHandler(
     ILogger<StudentOwnerOfLendingListRecordHandler> logger,
     ICurrentUser currentUser,
+    IRouteParameterService routeParameterService,
     IAppDbContext dbContext)
     : AuthorizationHandler<StudentOwnerOfLendingListRecordRequirement>
 {
@@ -12,7 +13,7 @@ public class StudentOwnerOfLendingListRecordHandler(
         StudentOwnerOfLendingListRecordRequirement requirement)
     {
         var userId = currentUser.Id;
-        var lendingListRecordIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "lendingListRecordId");
+        var lendingListRecordIdResult = routeParameterService.GetRouteParameter("lendingListRecordId");
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -20,10 +21,10 @@ public class StudentOwnerOfLendingListRecordHandler(
             logger.LogWarning("Authorization failed: userId not found in token");
             return;
         }
-        if (lendingListRecordIdClaim is null)
+        if (lendingListRecordIdResult.IsFailure)
         {
             context.Fail();
-            logger.LogWarning("Authorization failed: lendingListRecordId claim not found");
+            logger.LogWarning("Authorization failed: lendingListRecordId route value not found");
             return;
         }
         //Admin Bypass
@@ -38,8 +39,17 @@ public class StudentOwnerOfLendingListRecordHandler(
             context.Fail();
             return;
         }
+
+
+        if (!Guid.TryParse(lendingListRecordIdResult.Value, out var routeLendingListRecordId))
+        {
+            logger.LogWarning("Authorization failed: invalid or missing route id");
+            context.Fail();
+            return;
+        }
+
         var isOwnerStudent = await dbContext.LendingListRecords
-            .Where(llr => (llr.BookCopy!.Owner!.UserId == userId) && (llr.Id.ToString() == lendingListRecordIdClaim.Value))
+            .Where(llr => (llr.BookCopy!.Owner!.UserId == userId) && (llr.Id == routeLendingListRecordId))
             .AnyAsync();
         if (!isOwnerStudent)
         {

@@ -4,6 +4,7 @@ public class BorrowingTransactionLendingStudentRequirement : IAuthorizationRequi
 public class BorrowingTransactionLendingStudentHandler(
     ILogger<BorrowingTransactionLendingStudentHandler> logger,
     ICurrentUser currentUser,
+    IRouteParameterService routeParameterService,
     IAppDbContext dbContext)
     : AuthorizationHandler<BorrowingTransactionLendingStudentRequirement>
 {
@@ -12,11 +13,11 @@ public class BorrowingTransactionLendingStudentHandler(
         BorrowingTransactionLendingStudentRequirement requirement)
     {
         var userId = currentUser.Id;
-        var borrowingTransactionIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "borrowingTransactionId");
-        if (borrowingTransactionIdClaim is null)
+        var borrowingTransactionIdResult = routeParameterService.GetRouteParameter("borrowingTransactionId");
+        if (borrowingTransactionIdResult.IsFailure)
         {
             context.Fail();
-            logger.LogWarning("Authorization failed: borrowingTransactionId claim not found");
+            logger.LogWarning("Authorization failed: borrowingTransactionId route value not found");
             return;
         }
         if (string.IsNullOrEmpty(userId))
@@ -37,8 +38,16 @@ public class BorrowingTransactionLendingStudentHandler(
             context.Fail();
             return;
         }
+
+            if (!Guid.TryParse(borrowingTransactionIdResult.Value, out var routeBorrowingTransactionId))
+            {
+                logger.LogWarning("Authorization failed: invalid or missing route id");
+                context.Fail();
+                return;
+        }
+
         var isLendingStudent = await dbContext.BorrowingTransactions
-            .Where(bt => (bt.LenderStudent!.UserId == userId) && (bt.Id.ToString() == borrowingTransactionIdClaim.Value))
+            .Where(bt => (bt.LenderStudent!.UserId == userId) && (bt.Id == routeBorrowingTransactionId))
             .AnyAsync();
         if (!isLendingStudent)
         {

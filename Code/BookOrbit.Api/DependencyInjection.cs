@@ -55,6 +55,7 @@ static public class DependencyInjection
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.AddScoped<IApiDataService, ApiDataService>();
+        services.AddScoped<IRouteParameterService, RouteParameterService>();
         return services;
     }
 

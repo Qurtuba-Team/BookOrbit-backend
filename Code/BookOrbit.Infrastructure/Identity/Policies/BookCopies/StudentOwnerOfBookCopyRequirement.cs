@@ -4,6 +4,7 @@ public class StudentOwnerOfBookCopyRequirement : IAuthorizationRequirement;
 public class StudentOwnerOfBookCopyHandler(
     ILogger<StudentOwnerOfBookCopyHandler> logger,
     ICurrentUser currentUser,
+    IRouteParameterService routeParameterService,
     IAppDbContext dbContext)
     : AuthorizationHandler<StudentOwnerOfBookCopyRequirement>
 {
@@ -12,17 +13,20 @@ public class StudentOwnerOfBookCopyHandler(
         StudentOwnerOfBookCopyRequirement requirement)
     {
         var userId = currentUser.Id;
-        var bookCopyIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "bookCopyId");
+
         if (string.IsNullOrEmpty(userId))
         {
             context.Fail();
             logger.LogWarning("Authorization failed: userId not found in token");
             return;
         }
-        if (bookCopyIdClaim is null)
+
+        var bookCopyIdResult = routeParameterService.GetRouteParameter("bookCopyId");
+
+        if (bookCopyIdResult.IsFailure)
         {
             context.Fail();
-            logger.LogWarning("Authorization failed: bookCopyId claim not found");
+            logger.LogWarning("Authorization failed: bookCopyId route value not found");
             return;
         }
         //Admin Bypass
@@ -37,8 +41,16 @@ public class StudentOwnerOfBookCopyHandler(
             context.Fail();
             return;
         }
+
+        if (!Guid.TryParse(bookCopyIdResult.Value, out var routeBookCopyId))
+        {
+            logger.LogWarning("Authorization failed: invalid or missing route id");
+            context.Fail();
+            return;
+        }
+
         var isOwnerStudent = await dbContext.BookCopies
-            .Where(bc => (bc.Owner!.UserId == userId) && (bc.Id.ToString() == bookCopyIdClaim.Value))
+            .Where(bc => (bc.Owner!.UserId == userId) && (bc.Id == routeBookCopyId))
             .AnyAsync();
         if (!isOwnerStudent)
         {

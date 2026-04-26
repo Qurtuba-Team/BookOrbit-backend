@@ -4,6 +4,7 @@ public class BorrowingRequestBorrowingStudentRequirement : IAuthorizationRequire
 public class BorrowingRequestBorrowingStudentHandler(
     ILogger<BorrowingRequestBorrowingStudentHandler> logger,
     ICurrentUser currentUser,
+    IRouteParameterService routeParameterService,
     IAppDbContext dbContext)
     : AuthorizationHandler<BorrowingRequestBorrowingStudentRequirement>
 {
@@ -12,7 +13,7 @@ public class BorrowingRequestBorrowingStudentHandler(
         BorrowingRequestBorrowingStudentRequirement requirement)
     {
         var userId = currentUser.Id;
-        var borrwoingRequestIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "borrowingRequestId");
+        var borrowingRequestIdResult = routeParameterService.GetRouteParameter("borrowingRequestId");
 
         if (string.IsNullOrEmpty(userId))
         {
@@ -21,13 +22,19 @@ public class BorrowingRequestBorrowingStudentHandler(
             return;
         }
 
-        if (borrwoingRequestIdClaim is null)
+        if (borrowingRequestIdResult.IsFailure)
         {
             context.Fail();
-            logger.LogWarning("Authorization failed: borrowingRequestId claim not found");
+            logger.LogWarning("Authorization failed: borrowingRequestId route value not found");
             return;
         }
 
+        if (!Guid.TryParse(borrowingRequestIdResult.Value, out var routeBorrowingRequestId))
+        {
+            context.Fail();
+            logger.LogWarning("Authorization failed: invalid or missing route id");
+            return;
+        }
         //Admin Bypass
         if (currentUser.IsInRole(IdentityRoles.admin.ToString()))
         {
@@ -43,7 +50,7 @@ public class BorrowingRequestBorrowingStudentHandler(
         }
 
         var isBorrowingStudent = await dbContext.BorrowingRequests
-            .Where(br => (br.BorrowingStudent!.UserId == userId) && (br.Id.ToString() == borrwoingRequestIdClaim.Value))
+            .Where(br => (br.BorrowingStudent!.UserId == userId) && (br.Id == routeBorrowingRequestId))
             .AnyAsync();
 
         if (!isBorrowingStudent)

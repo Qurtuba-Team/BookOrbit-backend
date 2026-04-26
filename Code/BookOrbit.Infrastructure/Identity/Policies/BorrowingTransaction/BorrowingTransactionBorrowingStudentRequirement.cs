@@ -4,6 +4,7 @@ public class BorrowingTransactionBorrowingStudentRequirement : IAuthorizationReq
 public class BorrowingTransactionBorrowingStudentHandler(
     ILogger<BorrowingTransactionBorrowingStudentHandler> logger,
     ICurrentUser currentUser,
+    IRouteParameterService routeParameterService,
     IAppDbContext dbContext)
     : AuthorizationHandler<BorrowingTransactionBorrowingStudentRequirement>
 {
@@ -12,17 +13,17 @@ public class BorrowingTransactionBorrowingStudentHandler(
         BorrowingTransactionBorrowingStudentRequirement requirement)
     {
         var userId = currentUser.Id;
-        var borrowingTransactionIdClaim = context.User.Claims.FirstOrDefault(c => c.Type == "borrowingTransactionId");
+        var borrowingTransactionIdResult = routeParameterService.GetRouteParameter("borrowingTransactionId");
         if (string.IsNullOrEmpty(userId))
         {
             context.Fail();
             logger.LogWarning("Authorization failed: userId not found in token");
             return;
         }
-        if (borrowingTransactionIdClaim is null)
+        if (borrowingTransactionIdResult.IsFailure)
         {
             context.Fail();
-            logger.LogWarning("Authorization failed: borrowingTransactionId claim not found");
+            logger.LogWarning("Authorization failed: borrowingTransactionId route value not found");
             return;
         }
         //Admin Bypass
@@ -37,8 +38,16 @@ public class BorrowingTransactionBorrowingStudentHandler(
             context.Fail();
             return;
         }
+
+        if (!Guid.TryParse(borrowingTransactionIdResult.Value, out var routeBorrowingTransactionId))
+        {
+            logger.LogWarning("Authorization failed: invalid or missing route id");
+            context.Fail();
+            return;
+        }
+
         var isBorrowingStudent = await dbContext.BorrowingTransactions
-            .Where(bt => (bt.BorrowingRequest!.BorrowingStudent!.UserId == userId) && (bt.Id.ToString() == borrowingTransactionIdClaim.Value))
+            .Where(bt => (bt.BorrowingRequest!.BorrowingStudent!.UserId == userId) && (bt.Id == routeBorrowingTransactionId))
             .AnyAsync();
         if (!isBorrowingStudent)
         {
