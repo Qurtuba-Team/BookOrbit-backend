@@ -42,13 +42,6 @@ public class CreateBorrowingRequestCommandHandler(
             logger.LogWarning("Student {StudentId} cannot request to borrow their own book copy.", command.BorrowingStudentId);
             return BorrowingRequestApplicationErrors.StudentCannotBorrowOwnedCopies;
         }
-
-        if(student.Points.Value < lendingRecord.Cost)
-        {
-            logger.LogWarning("Student {StudentId} does not have enough points to request this lending record.", command.BorrowingStudentId);
-            return BorrowingRequestApplicationErrors.NotEnoughPoints;
-        }
-
             var existingRequest = await context.BorrowingRequests
                 .AsNoTracking()
                 .FirstOrDefaultAsync(br =>

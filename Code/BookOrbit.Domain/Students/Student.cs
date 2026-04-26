@@ -141,6 +141,9 @@ public class Student : AuditableEntity
 
     public Result<Updated> DeductPoints(Point pointsToDeduct)
     {
+        if(pointsToDeduct > Points)
+            return StudentErrors.InsufficientPoints;
+
         Points -= pointsToDeduct;
         return Result.Updated;
     }
