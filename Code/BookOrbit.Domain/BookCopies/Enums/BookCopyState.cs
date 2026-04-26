@@ -3,8 +3,6 @@ public enum BookCopyState
 {
     Available,
     Borrowed,
-    Reserved,
     Lost,
-    Damaged,
-    UnAvilable
+    UnAvailable
 }

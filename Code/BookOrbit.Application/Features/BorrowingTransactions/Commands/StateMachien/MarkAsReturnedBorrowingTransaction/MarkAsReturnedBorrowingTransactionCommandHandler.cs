@@ -10,7 +10,13 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
     public async Task<Result<Updated>> Handle(MarkAsReturnedBorrowingTransactionCommand command, CancellationToken ct)
     {
         var transaction = await context.BorrowingTransactions
-            .FirstOrDefaultAsync(bt => bt.Id == command.BorrowingTransactionId, ct);
+            .Select(bt =>
+            new
+            {
+                borrowingTransaction = bt,
+                bookCopy = bt.BookCopy
+            })
+            .FirstOrDefaultAsync(bt => bt.borrowingTransaction.Id == command.BorrowingTransactionId, ct);
 
         if (transaction is null)
         {
@@ -22,16 +28,35 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
         }
 
         var now = timeProvider.GetUtcNow();
-        var returnResult = transaction.ReturnBookCopy(now, now);
+        var returnResult = transaction.borrowingTransaction.ReturnBookCopy(now, now);
 
         if (returnResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to mark borrowing transaction {BorrowingTransactionId} as returned. Errors: {Errors}",
+                command.BorrowingTransactionId,
+                string.Join(", ", returnResult.Errors.Select(e => e.Code)));
+
             return returnResult.Errors;
+        }
+
+        var updateBookCopyResult = transaction.bookCopy!.MarkAsAvilable();
+
+        if(updateBookCopyResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to mark book copy as available for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
+                command.BorrowingTransactionId,
+                string.Join(", ", updateBookCopyResult.Errors.Select(e => e.Code)));
+
+            return updateBookCopyResult.Errors;
+        }
 
         await context.SaveChangesAsync(ct);
 
         logger.LogInformation(
             "Borrowing transaction {BorrowingTransactionId} has been marked as returned.",
-            transaction.Id);
+            transaction.borrowingTransaction.Id);
 
         return Result.Updated;
     }

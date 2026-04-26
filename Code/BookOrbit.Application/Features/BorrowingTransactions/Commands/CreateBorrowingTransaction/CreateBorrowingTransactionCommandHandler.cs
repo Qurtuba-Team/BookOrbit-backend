@@ -9,17 +9,22 @@ public class CreateBorrowingTransactionCommandHandler(
 {
     public async Task<Result<BorrowingTransactionDto>> Handle(CreateBorrowingTransactionCommand command, CancellationToken ct)
     {
-        var borrowingRequest = await context.BorrowingRequests
-            .AsNoTracking()
-            .FirstOrDefaultAsync(br => br.Id == command.BorrowingRequestId, ct);
+        var borrowingRequestData = await context.BorrowingRequests
+            .Select(br =>
+            new {
+                borrowingRequest = br,
+                bookCopy = br!.LendingRecord!.BookCopy,
+                lendingRecord = br.LendingRecord
+            })
+            .FirstOrDefaultAsync(br => br.borrowingRequest.Id== command.BorrowingRequestId, ct);
 
-        if (borrowingRequest is null)
+        if (borrowingRequestData is null)
         {
             logger.LogWarning("Borrowing request {BorrowingRequestId} not found.", command.BorrowingRequestId);
             return BorrowingRequestApplicationErrors.NotFoundById;
         }
 
-        if(borrowingRequest.State is not BorrowingRequestState.Accepted)
+        if(borrowingRequestData.borrowingRequest.State is not BorrowingRequestState.Accepted)
         {
             logger.LogWarning("Borrowing request {BorrowingRequestId} is not in accepted state.", command.BorrowingRequestId);
             return BorrowingRequestApplicationErrors.BorrowingRequestNotAccepted;
@@ -27,7 +32,7 @@ public class CreateBorrowingTransactionCommandHandler(
 
         var lendingRecord = await context.LendingListRecords
             .AsNoTracking()
-            .Where(lr => lr.Id == borrowingRequest.LendingRecordId)
+            .Where(lr => lr.Id == borrowingRequestData.borrowingRequest.LendingRecordId)
             .Select(lr => new
             {
                 lr.BookCopyId,
@@ -39,7 +44,7 @@ public class CreateBorrowingTransactionCommandHandler(
 
         if (lendingRecord is null)
         {
-            logger.LogWarning("Lending list record {LendingRecordId} not found.", borrowingRequest.LendingRecordId);
+            logger.LogWarning("Lending list record {LendingRecordId} not found.", borrowingRequestData.borrowingRequest.LendingRecordId);
             return LendingListApplicationErrors.NotFoundById;
         }
 
@@ -48,9 +53,9 @@ public class CreateBorrowingTransactionCommandHandler(
 
         var transactionResult = BorrowingTransaction.Create(
             Guid.NewGuid(),
-            borrowingRequest.Id,
+            borrowingRequestData.borrowingRequest.Id,
             lendingRecord.OwnerId,
-            borrowingRequest.BorrowingStudentId,
+            borrowingRequestData.borrowingRequest.BorrowingStudentId,
             lendingRecord.BookCopyId,
             expectedReturnDate,
             now);
@@ -59,9 +64,33 @@ public class CreateBorrowingTransactionCommandHandler(
         {
             logger.LogWarning(
                 "Failed to create borrowing transaction for request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequest.Id,
+                borrowingRequestData.borrowingRequest.Id,
                 transactionResult.Errors);
             return transactionResult.Errors;
+        }
+
+        var bookCopyBorrowingResult = borrowingRequestData!.bookCopy!.MarkAsBorrowed();
+
+        if (bookCopyBorrowingResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to mark book copy {BookCopyId} as borrowed for borrowing request {BorrowingRequestId}. Errors: {Errors}",
+                lendingRecord.BookCopyId,
+                borrowingRequestData.borrowingRequest.Id,
+                bookCopyBorrowingResult.Errors);
+            return bookCopyBorrowingResult.Errors;
+        }
+
+        var lendingRecordBorrowingResult = borrowingRequestData.lendingRecord!.MarkAsBorrowed();
+
+        if (lendingRecordBorrowingResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to mark lending record {LendingRecordId} as borrowed for borrowing request {BorrowingRequestId}. Errors: {Errors}",
+                borrowingRequestData.lendingRecord.Id,
+                borrowingRequestData.borrowingRequest.Id,
+                lendingRecordBorrowingResult.Errors);
+            return lendingRecordBorrowingResult.Errors;
         }
 
         context.BorrowingTransactions.Add(transactionResult.Value);
@@ -70,7 +99,7 @@ public class CreateBorrowingTransactionCommandHandler(
         logger.LogInformation(
             "Borrowing transaction {BorrowingTransactionId} created for borrowing request {BorrowingRequestId}.",
             transactionResult.Value.Id,
-            borrowingRequest.Id);
+            borrowingRequestData.borrowingRequest.Id);
 
         return BorrowingTransactionDto.FromEntity(transactionResult.Value);
     }

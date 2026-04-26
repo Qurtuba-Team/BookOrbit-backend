@@ -308,15 +308,15 @@ public class AppDbContextInitialiser(
             switch (desiredState)
             {
                 case LendingListRecordState.Reserved:
-                    if (bookCopy.MarkAsReserved().IsFailure || record.MarkAsReserved().IsFailure)
+                    if (record.MarkAsReserved().IsFailure)
                     {
                         logger.LogError("Failed to reserve lending list record for book copy {BookCopyId}", bookCopy.Id);
                         continue;
                     }
                     break;
                 case LendingListRecordState.Borrowed:
-                    if (bookCopy.MarkAsReserved().IsFailure
-                        || bookCopy.MarkAsBorrowed().IsFailure
+                    if (
+                         bookCopy.MarkAsBorrowed().IsFailure
                         || record.MarkAsReserved().IsFailure
                         || record.MarkAsBorrowed().IsFailure)
                     {

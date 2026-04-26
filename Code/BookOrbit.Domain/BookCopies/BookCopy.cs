@@ -59,12 +59,10 @@ public class BookCopy : AuditableEntity
     {
         return State switch
         {
-            BookCopyState.Available => newState is BookCopyState.Reserved or BookCopyState.UnAvilable,
-            BookCopyState.Reserved => newState is BookCopyState.Borrowed or BookCopyState.Available,
-            BookCopyState.Borrowed => newState is BookCopyState.Available or BookCopyState.Lost or BookCopyState.Damaged,
-            BookCopyState.Damaged => newState is BookCopyState.Available or BookCopyState.UnAvilable,
-            BookCopyState.Lost => newState is BookCopyState.Available or BookCopyState.UnAvilable,
-            BookCopyState.UnAvilable => newState is BookCopyState.Available,
+            BookCopyState.Available => newState is  BookCopyState.UnAvailable,
+            BookCopyState.Borrowed => newState is BookCopyState.Available or BookCopyState.Lost,
+            BookCopyState.Lost => newState is BookCopyState.Available or BookCopyState.UnAvailable,
+            BookCopyState.UnAvailable => newState is BookCopyState.Available,
             _ => false
         };
     }
@@ -79,7 +77,7 @@ public class BookCopy : AuditableEntity
     }
 
     public Result<Updated> MarkAsUnAvilable() =>
-   UpdateState(BookCopyState.UnAvilable);
+   UpdateState(BookCopyState.UnAvailable);
 
     public Result<Updated> MarkAsAvilable() =>
    UpdateState(BookCopyState.Available);
@@ -87,13 +85,7 @@ public class BookCopy : AuditableEntity
     public Result<Updated> MarkAsBorrowed() =>
    UpdateState(BookCopyState.Borrowed);
 
-    public Result<Updated> MarkAsReserved() =>
-   UpdateState(BookCopyState.Reserved);
-
     public Result<Updated> MarkAsLost() =>
    UpdateState(BookCopyState.Lost);
-
-    public Result<Updated> MarkAsDamaged() =>
-   UpdateState(BookCopyState.Damaged);
 
 }

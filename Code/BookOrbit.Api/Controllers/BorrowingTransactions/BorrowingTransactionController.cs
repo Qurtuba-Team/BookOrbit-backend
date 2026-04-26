@@ -88,7 +88,7 @@ public class BorrowingTransactionController(
     }
 
     [HttpPatch("{borrowingTransactionId:guid}/lost")]
-    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingTransactionBorrowingStudentPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
