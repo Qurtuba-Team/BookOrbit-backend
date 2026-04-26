@@ -105,7 +105,9 @@ static public class DependencyInjection
         services.AddScoped<IAuthorizationHandler, BorrowingTransactionBorrowingStudentHandler>();
         services.AddScoped<IAuthorizationHandler, BorrowingTransactionLendingStudentHandler>();
         services.AddScoped<IAuthorizationHandler, StudentAcceptedForLendingListRecordHandler>();
-
+        services.AddScoped<IAuthorizationHandler, BorrowingRequestRelatedStudentHandler>();
+        services.AddScoped<IAuthorizationHandler, BorrowingTransactionRelatedStudentHandler>();
+        
         services.AddAuthorizationBuilder()
 
             .AddPolicy(PoliciesNames.ActiveUserPolicy, policy =>
@@ -163,9 +165,9 @@ static public class DependencyInjection
             .AddPolicy(PoliciesNames.BorrowingRequestRelatedStudentPolicy, policy =>
             {
                 policy.Requirements.Add(new ActiveStudentRequirement());
-                policy.Requirements.Add(new BorrowingRequestBorrowingStudentRequirement());
-                policy.Requirements.Add(new BorrowingRequestLendingStudentRequirement());
+                policy.Requirements.Add(new BorrowingRequestRelatedStudentRequirement());
             })
+
 
             .AddPolicy(PoliciesNames.StudentOwnerOfBookCopyPolicy, policy =>
             {
@@ -191,18 +193,18 @@ static public class DependencyInjection
                 policy.Requirements.Add(new BorrowingTransactionLendingStudentRequirement());
             })
 
-            .AddPolicy(PoliciesNames.BorrowingTransactionRelatedStudentPolicy,policy =>
+            .AddPolicy(PoliciesNames.BorrowingTransactionRelatedStudentPolicy, policy =>
             {
-                policy.Requirements.Add(new ActiveStudentRequirement());
-                policy.Requirements.Add(new BorrowingTransactionBorrowingStudentRequirement());
-                policy.Requirements.Add(new BorrowingTransactionLendingStudentRequirement());
+            policy.Requirements.Add(new ActiveStudentRequirement());
+            policy.Requirements.Add(new BorrowingTransactionRelatedStudentRequirement());
             })
+            
 
             .AddPolicy(PoliciesNames.StudentAcceptedForLendingListRecordPolicy, policy =>
             {
-                policy.Requirements.Add(new ActiveStudentRequirement());
-                policy.Requirements.Add(new StudentAcceptedForLendingListRecordRequirement());
-            })
+        policy.Requirements.Add(new ActiveStudentRequirement());
+        policy.Requirements.Add(new StudentAcceptedForLendingListRecordRequirement());
+    })
             ;
 
         return services;
