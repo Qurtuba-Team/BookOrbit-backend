@@ -12,7 +12,6 @@ public class AcceptBorrowingRequestCommandHandler(
             {
                 BorrowingRequest = br,
                 StudentPoints = br.BorrowingStudent!.Points,
-                 br.LendingRecord!.Cost,
                 br.LendingRecord!.BookCopy!.OwnerId //Better than doing a naviagation property in the domain model, as it doesn't require loading the related entities into memory
             })
             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
