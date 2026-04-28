@@ -1,6 +1,7 @@
 ﻿using BookOrbit.Domain.BookCopies;
 using BookOrbit.Domain.BorrowingRequests;
 using BookOrbit.Domain.BorrowingTransactions;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 using BookOrbit.Domain.LendingListings;
 using BookOrbit.Domain.PointTransactions;
@@ -22,6 +23,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator medi
     public DbSet<BorrowingRequest> BorrowingRequests => Set<BorrowingRequest>();
 
     public DbSet<BorrowingTransaction> BorrowingTransactions => Set<BorrowingTransaction>();
+
+    public DbSet<BorrowingReview> BorrowingReviews => Set<BorrowingReview>();
 
     public DbSet<BorrowingTransactionEvent> BorrowingTransactionEvents => Set<BorrowingTransactionEvent>();
 
