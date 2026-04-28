@@ -38,7 +38,8 @@ public class PointTransaction : AuditableEntity
         PointTransactionReason.Returning or
         PointTransactionReason.PositiveAdjustment or
         PointTransactionReason.Reward or
-        PointTransactionReason.BookBorrowedFrom;
+        PointTransactionReason.BookBorrowedFrom or
+        PointTransactionReason.Refund;
     static private PointTransactionDirection GetDirection(PointTransactionReason reason)
     {
         var canAdd = CanAddPoints(reason);

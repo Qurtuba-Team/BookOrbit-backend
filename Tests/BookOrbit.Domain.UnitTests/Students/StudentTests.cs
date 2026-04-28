@@ -3,6 +3,7 @@ namespace BookOrbit.Domain.UnitTests.Students;
 using BookOrbit.Domain.Students.ValueObjects;
 using BookOrbit.Domain.Students;
 using BookOrbit.Domain.Common.ValueObjects;
+using BookOrbit.Domain.PointTransactions.ValueObjects;
 using BookOrbit.Domain.Students.Enums;
 using BookOrbit.Domain.UnitTests.Helpers;
 
@@ -295,6 +296,37 @@ public class StudentTests
         result.Errors.Should().Contain(StudentErrors.CannotUpdateABannedStudent);
     }
 
+    [Fact]
+    public void Update_WithNullName_ReturnsNameRequiredError()
+    {
+        // Arrange
+        var student = CreateValidStudent();
+
+        // Act
+        var result = student.Update(null!, AlternativePhotoFileName);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(StudentErrors.NameRequired);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Update_WithEmptyPhotoFileName_ReturnsPersonalImageRequiredError(string fileName)
+    {
+        // Arrange
+        var student = CreateValidStudent();
+        var newName = CreateValidName();
+
+        // Act
+        var result = student.Update(newName, fileName);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(StudentErrors.PersonalImageRequired);
+    }
+
     [Theory]
     [InlineData("photo.jpg")]
     [InlineData("student_photo.png")]
@@ -312,6 +344,59 @@ public class StudentTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         student.PersonalPhotoFileName.Should().Be(fileName);
+    }
+
+    #endregion
+
+    #region Points Tests
+
+    [Fact]
+    public void AddPoints_WithValidPoints_IncreasesPoints()
+    {
+        // Arrange
+        var student = CreateValidStudent();
+        var pointsToAdd = new Point(2);
+        var originalPoints = student.Points.Value;
+
+        // Act
+        var result = student.AddPoints(pointsToAdd);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        student.Points.Value.Should().Be(originalPoints + pointsToAdd.Value);
+    }
+
+    [Fact]
+    public void DeductPoints_WithSufficientPoints_DecreasesPoints()
+    {
+        // Arrange
+        var student = CreateValidStudent();
+        student.AddPoints(new Point(2));
+        var pointsToDeduct = new Point(1);
+        var originalPoints = student.Points.Value;
+
+        // Act
+        var result = student.DeductPoints(pointsToDeduct);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        student.Points.Value.Should().Be(originalPoints - pointsToDeduct.Value);
+    }
+
+    [Fact]
+    public void DeductPoints_WithInsufficientPoints_ReturnsInsufficientPointsError()
+    {
+        // Arrange
+        var student = CreateValidStudent();
+        var pointsToDeduct = new Point(student.Points.Value + 1);
+
+        // Act
+        var result = student.DeductPoints(pointsToDeduct);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(StudentErrors.InsufficientPoints);
+        student.Points.Value.Should().Be(1);
     }
 
     #endregion

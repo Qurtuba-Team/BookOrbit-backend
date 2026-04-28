@@ -6,13 +6,13 @@ using BookOrbit.Application.Features.BorrowingReviews.Queries.GetBorrowingReview
 
 namespace BookOrbit.Api.Controllers.BorrowingReviews;
 
-[Route("api/v{version:apiVersion}/borrowingreviews")]
+[Route("api/v{version:apiVersion}")]
 [ApiVersion("1.0")]
 [Authorize]
 public class BorrowingReviewController(
     ISender sender) : ApiController
 {
-    [HttpPost]
+    [HttpPost("borrowingtransactions/{borrowingTransactionId:guid}/review")]
     [Authorize(Policy = PoliciesNames.BorrowingTransactionLendingStudentPolicy)]
     [ProducesResponseType(typeof(BorrowingReviewDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -26,12 +26,12 @@ public class BorrowingReviewController(
     [EndpointName("CreateBorrowingReview")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BorrowingReviewDto>> CreateBorrowingReview([FromBody] CreateBorrowingReviewRequest request, CancellationToken ct)
+    public async Task<ActionResult<BorrowingReviewDto>> CreateBorrowingReview([FromRoute] Guid borrowingTransactionId, [FromBody] CreateBorrowingReviewRequest request, CancellationToken ct)
     {
         var command = new CreateBorrowingReviewCommand(
             request.ReviewerStudentId,
             request.ReviewedStudentId,
-            request.BorrowingTransactionId,
+            borrowingTransactionId,
             request.Description,
             request.Rating);
 
@@ -45,7 +45,7 @@ public class BorrowingReviewController(
             e => Problem(e, HttpContext));
     }
 
-    [HttpGet("{borrowingReviewId:guid}", Name = "GetBorrowingReviewById")]
+    [HttpGet("borrowingreviews/{borrowingReviewId:guid}", Name = "GetBorrowingReviewById")]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(typeof(BorrowingReviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
@@ -70,7 +70,7 @@ public class BorrowingReviewController(
             e => Problem(e, HttpContext));
     }
 
-    [HttpGet]
+    [HttpGet("borrowingreviews")]
     [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
     [ProducesResponseType(typeof(PaginatedList<BorrowingReviewListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]

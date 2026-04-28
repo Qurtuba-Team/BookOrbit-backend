@@ -28,7 +28,7 @@ public class BorrowingReview : AuditableEntity
         BorrowingTransactionId = borrowingTransactionId;
         Description = string.IsNullOrWhiteSpace(description)?
             null:
-            Description;
+            description;
         Rating = rating;
     }
 

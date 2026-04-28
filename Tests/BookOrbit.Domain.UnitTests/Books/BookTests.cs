@@ -81,6 +81,7 @@ public class BookTests
         result.Value.Category.Should().Be(category);
         result.Value.Author.Should().Be(author);
         result.Value.CoverImageFileName.Should().Be(DefaultCoverImageFileName);
+        result.Value.Status.Should().Be(BookStatus.Pending);
     }
 
     [Theory]
@@ -405,6 +406,116 @@ public class BookTests
         result.Errors.Should().Contain(BookErrors.TitleRequired);
     }
 
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void Update_WithNullOrEmptyCoverImageFileName_ReturnsCoverImagePhotoRequiredError(string? coverImageFileName)
+    {
+        // Arrange
+        var book = CreateValidBook();
+        var newTitle = CreateValidTitle("Updated Title");
+
+        // Act
+        var result = book.Update(newTitle, coverImageFileName!);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(BookErrors.CoverImagePhotoRequired);
+    }
+
+
+    #endregion
+
+    #region Status Transition Tests
+
+    [Fact]
+    public void Pending_Book_CanTransitionToAvailable()
+    {
+        // Arrange
+        var book = CreateValidBook();
+
+        // Act
+        var result = book.MarkAsAvailable();
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        book.Status.Should().Be(BookStatus.Available);
+    }
+
+    [Fact]
+    public void Pending_Book_CanTransitionToRejected()
+    {
+        // Arrange
+        var book = CreateValidBook();
+
+        // Act
+        var result = book.MarkAsRejected();
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        book.Status.Should().Be(BookStatus.Rejected);
+    }
+
+    [Fact]
+    public void Available_Book_CannotTransitionToAvailable()
+    {
+        // Arrange
+        var book = CreateValidBook();
+        book.MarkAsAvailable();
+
+        // Act
+        var result = book.MarkAsAvailable();
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        book.Status.Should().Be(BookStatus.Available);
+    }
+
+    [Fact]
+    public void Available_Book_CannotTransitionToRejected()
+    {
+        // Arrange
+        var book = CreateValidBook();
+        book.MarkAsAvailable();
+
+        // Act
+        var result = book.MarkAsRejected();
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        book.Status.Should().Be(BookStatus.Available);
+    }
+
+    [Fact]
+    public void Rejected_Book_CannotTransitionToAvailable()
+    {
+        // Arrange
+        var book = CreateValidBook();
+        book.MarkAsRejected();
+
+        // Act
+        var result = book.MarkAsAvailable();
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        book.Status.Should().Be(BookStatus.Rejected);
+    }
+
+    [Fact]
+    public void Rejected_Book_CannotTransitionToRejected()
+    {
+        // Arrange
+        var book = CreateValidBook();
+        book.MarkAsRejected();
+
+        // Act
+        var result = book.MarkAsRejected();
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        book.Status.Should().Be(BookStatus.Rejected);
+    }
 
     #endregion
 
