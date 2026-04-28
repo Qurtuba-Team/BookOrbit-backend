@@ -1,4 +1,7 @@
-﻿namespace BookOrbit.Application.Common.Interfaces;
+﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
+using BookOrbit.Domain.PointTransactions;
+
+namespace BookOrbit.Application.Common.Interfaces;
 
 public interface IAppDbContext
 {
@@ -9,6 +12,8 @@ public interface IAppDbContext
     public DbSet<LendingListRecord> LendingListRecords { get; }
     public DbSet<BorrowingRequest> BorrowingRequests { get; }
     public DbSet<BorrowingTransaction> BorrowingTransactions { get; }
+    public DbSet<BorrowingTransactionEvent> BorrowingTransactionEvents { get; }
+    public DbSet<PointTransaction> PointTransactions { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 

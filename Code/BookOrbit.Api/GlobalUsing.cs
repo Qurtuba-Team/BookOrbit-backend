@@ -6,6 +6,7 @@ global using BookOrbit.Api.Common.Mappers;
 global using BookOrbit.Api.Contracts.Requests.BookCopies;
 global using BookOrbit.Api.Contracts.Requests.Books;
 global using BookOrbit.Api.Contracts.Requests.BorrowingRequests;
+global using BookOrbit.Api.Contracts.Requests.BorrowingTransactionEvents;
 global using BookOrbit.Api.Contracts.Requests.BorrowingTransactions;
 global using BookOrbit.Api.Contracts.Requests.Common;
 global using BookOrbit.Api.Contracts.Requests.LendingListRecords;
@@ -33,6 +34,9 @@ global using BookOrbit.Application.Features.BorrowingRequests.Commands.CreateBor
 global using BookOrbit.Application.Features.BorrowingRequests.Dtos;
 global using BookOrbit.Application.Features.BorrowingRequests.Queries.GetBorrowingRequestById;
 global using BookOrbit.Application.Features.BorrowingRequests.Queries.GetBorrowingRequests;
+global using BookOrbit.Application.Features.BorrowingTransactionEvents.Dtos;
+global using BookOrbit.Application.Features.BorrowingTransactionEvents.Queries.GetBorrowingTransactionEventById;
+global using BookOrbit.Application.Features.BorrowingTransactionEvents.Queries.GetBorrowingTransactionEvents;
 global using BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsLostBorrowingTransaction;
 global using BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsReturnedBorrowingTransaction;
 global using BookOrbit.Application.Features.BorrowingTransactions.Dtos;
