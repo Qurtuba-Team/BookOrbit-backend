@@ -28,6 +28,20 @@ public class BookCopyTests
         return BookCopy.Create(bookCopyId, validOwnerId, validBookId, condition).Value;
     }
 
+    private static void SetBookCopyState(BookCopy bookCopy, BookCopyState state)
+    {
+        var property = typeof(BookCopy).GetProperty("State", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public);
+
+        if (property != null && property.CanWrite)
+        {
+            property.SetValue(bookCopy, state);
+            return;
+        }
+
+        var field = typeof(BookCopy).GetField("<State>k__BackingField", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        field?.SetValue(bookCopy, state);
+    }
+
     #endregion
 
     #region Create Method - Success Tests
@@ -563,20 +577,6 @@ public class BookCopyTests
     #region State Transition - Available State Tests
 
     [Fact]
-    public void Available_BookCopy_CanTransitionToReserved()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-
-        // Act
-        var result = bookCopy.MarkAsReserved();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Reserved);
-    }
-
-    [Fact]
     public void Available_BookCopy_CanTransitionToUnAvilable()
     {
         // Arrange
@@ -619,20 +619,6 @@ public class BookCopyTests
     }
 
     [Fact]
-    public void Available_BookCopy_CannotTransitionToDamaged()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-
-        // Act
-        var result = bookCopy.MarkAsDamaged();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Available);
-    }
-
-    [Fact]
     public void Available_BookCopy_CannotTransitionToAvailable()
     {
         // Arrange
@@ -648,100 +634,6 @@ public class BookCopyTests
 
     #endregion
 
-    #region State Transition - Reserved State Tests
-
-    [Fact]
-    public void Reserved_BookCopy_CanTransitionToBorrowed()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-
-        // Act
-        var result = bookCopy.MarkAsBorrowed();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Borrowed);
-    }
-
-    [Fact]
-    public void Reserved_BookCopy_CanTransitionToAvailable()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-
-        // Act
-        var result = bookCopy.MarkAsAvilable();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Available);
-    }
-
-    [Fact]
-    public void Reserved_BookCopy_CannotTransitionToLost()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-
-        // Act
-        var result = bookCopy.MarkAsLost();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Reserved);
-    }
-
-    [Fact]
-    public void Reserved_BookCopy_CannotTransitionToDamaged()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-
-        // Act
-        var result = bookCopy.MarkAsDamaged();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Reserved);
-    }
-
-    [Fact]
-    public void Reserved_BookCopy_CannotTransitionToUnAvilable()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-
-        // Act
-        var result = bookCopy.MarkAsUnAvilable();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Reserved);
-    }
-
-    [Fact]
-    public void Reserved_BookCopy_CannotTransitionToReserved()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-
-        // Act
-        var result = bookCopy.MarkAsReserved();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Reserved);
-    }
-
-    #endregion
-
     #region State Transition - Borrowed State Tests
 
     [Fact]
@@ -749,8 +641,7 @@ public class BookCopyTests
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
+        SetBookCopyState(bookCopy, BookCopyState.Borrowed);
 
         // Act
         var result = bookCopy.MarkAsAvilable();
@@ -765,8 +656,7 @@ public class BookCopyTests
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
+        SetBookCopyState(bookCopy, BookCopyState.Borrowed);
 
         // Act
         var result = bookCopy.MarkAsLost();
@@ -777,44 +667,11 @@ public class BookCopyTests
     }
 
     [Fact]
-    public void Borrowed_BookCopy_CanTransitionToDamaged()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-
-        // Act
-        var result = bookCopy.MarkAsDamaged();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Damaged);
-    }
-
-    [Fact]
-    public void Borrowed_BookCopy_CannotTransitionToReserved()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-
-        // Act
-        var result = bookCopy.MarkAsReserved();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Borrowed);
-    }
-
-    [Fact]
     public void Borrowed_BookCopy_CannotTransitionToUnAvilable()
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
+        SetBookCopyState(bookCopy, BookCopyState.Borrowed);
 
         // Act
         var result = bookCopy.MarkAsUnAvilable();
@@ -829,8 +686,7 @@ public class BookCopyTests
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
+        SetBookCopyState(bookCopy, BookCopyState.Borrowed);
 
         // Act
         var result = bookCopy.MarkAsBorrowed();
@@ -842,112 +698,6 @@ public class BookCopyTests
 
     #endregion
 
-    #region State Transition - Damaged State Tests
-
-    [Fact]
-    public void Damaged_BookCopy_CanTransitionToAvailable()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsDamaged();
-
-        // Act
-        var result = bookCopy.MarkAsAvilable();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Available);
-    }
-
-    [Fact]
-    public void Damaged_BookCopy_CanTransitionToUnAvilable()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsDamaged();
-
-        // Act
-        var result = bookCopy.MarkAsUnAvilable();
-
-        // Assert
-        result.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
-    }
-
-    [Fact]
-    public void Damaged_BookCopy_CannotTransitionToReserved()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsDamaged();
-
-        // Act
-        var result = bookCopy.MarkAsReserved();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Damaged);
-    }
-
-    [Fact]
-    public void Damaged_BookCopy_CannotTransitionToBorrowed()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsDamaged();
-
-        // Act
-        var result = bookCopy.MarkAsBorrowed();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Damaged);
-    }
-
-    [Fact]
-    public void Damaged_BookCopy_CannotTransitionToLost()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsDamaged();
-
-        // Act
-        var result = bookCopy.MarkAsLost();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Damaged);
-    }
-
-    [Fact]
-    public void Damaged_BookCopy_CannotTransitionToDamaged()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsDamaged();
-
-        // Act
-        var result = bookCopy.MarkAsDamaged();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Damaged);
-    }
-
-    #endregion
-
     #region State Transition - Lost State Tests
 
     [Fact]
@@ -955,9 +705,7 @@ public class BookCopyTests
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsLost();
+        SetBookCopyState(bookCopy, BookCopyState.Lost);
 
         // Act
         var result = bookCopy.MarkAsAvilable();
@@ -972,9 +720,7 @@ public class BookCopyTests
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsLost();
+        SetBookCopyState(bookCopy, BookCopyState.Lost);
 
         // Act
         var result = bookCopy.MarkAsUnAvilable();
@@ -985,50 +731,14 @@ public class BookCopyTests
     }
 
     [Fact]
-    public void Lost_BookCopy_CannotTransitionToReserved()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsLost();
-
-        // Act
-        var result = bookCopy.MarkAsReserved();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Lost);
-    }
-
-    [Fact]
     public void Lost_BookCopy_CannotTransitionToBorrowed()
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsLost();
+        SetBookCopyState(bookCopy, BookCopyState.Lost);
 
         // Act
         var result = bookCopy.MarkAsBorrowed();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Lost);
-    }
-
-    [Fact]
-    public void Lost_BookCopy_CannotTransitionToDamaged()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsLost();
-
-        // Act
-        var result = bookCopy.MarkAsDamaged();
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -1040,9 +750,7 @@ public class BookCopyTests
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsReserved();
-        bookCopy.MarkAsBorrowed();
-        bookCopy.MarkAsLost();
+        SetBookCopyState(bookCopy, BookCopyState.Lost);
 
         // Act
         var result = bookCopy.MarkAsLost();
@@ -1069,21 +777,6 @@ public class BookCopyTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         bookCopy.State.Should().Be(BookCopyState.Available);
-    }
-
-    [Fact]
-    public void UnAvilable_BookCopy_CannotTransitionToReserved()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsUnAvilable();
-
-        // Act
-        var result = bookCopy.MarkAsReserved();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
     }
 
     [Fact]
@@ -1117,21 +810,6 @@ public class BookCopyTests
     }
 
     [Fact]
-    public void UnAvilable_BookCopy_CannotTransitionToDamaged()
-    {
-        // Arrange
-        var bookCopy = CreateValidBookCopy();
-        bookCopy.MarkAsUnAvilable();
-
-        // Act
-        var result = bookCopy.MarkAsDamaged();
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.UnAvailable);
-    }
-
-    [Fact]
     public void UnAvilable_BookCopy_CannotTransitionToUnAvilable()
     {
         // Arrange
@@ -1151,26 +829,11 @@ public class BookCopyTests
     #region Complete State Flow Tests
 
     [Fact]
-    public void CompleteFlow_Available_Reserved_Borrowed_Damaged_UnAvilable_Available()
+    public void CompleteFlow_Available_UnAvilable_Available()
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
         bookCopy.State.Should().Be(BookCopyState.Available);
-
-        // Act & Assert - Reserve
-        var reserveResult = bookCopy.MarkAsReserved();
-        reserveResult.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Reserved);
-
-        // Act & Assert - Borrow
-        var borrowResult = bookCopy.MarkAsBorrowed();
-        borrowResult.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Borrowed);
-
-        // Act & Assert - Damage
-        var damageResult = bookCopy.MarkAsDamaged();
-        damageResult.IsSuccess.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Damaged);
 
         // Act & Assert - Unavailable
         var unavailableResult = bookCopy.MarkAsUnAvilable();

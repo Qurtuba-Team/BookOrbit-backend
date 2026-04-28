@@ -91,7 +91,7 @@ public class StudentTests
         result.Value.PhoneNumber.Should().Be(phoneNumber);
         result.Value.TelegramUserId.Should().BeNull();
         result.Value.State.Should().Be(StudentState.Pending);
-        result.Value.Points.Should().Be(1);
+        result.Value.Points.Value.Should().Be(1);
         result.Value.JoinDateUtc.Should().BeNull();
     }
 
