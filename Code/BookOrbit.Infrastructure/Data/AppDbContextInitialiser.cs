@@ -3,8 +3,15 @@ using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Books.ValueObjects;
 using BookOrbit.Domain.BorrowingRequests;
 using BookOrbit.Domain.BorrowingRequests.Enums;
+using BookOrbit.Domain.BorrowingTransactions;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
+using BookOrbit.Domain.BorrowingTransactions.Enums;
 using BookOrbit.Domain.LendingListings;
 using BookOrbit.Domain.LendingListings.Enums;
+using BookOrbit.Domain.PointTransactions;
+using BookOrbit.Domain.PointTransactions.Enums;
 using BookOrbit.Domain.PointTransactions.ValueObjects;
 using BookOrbit.Domain.Students.Enums;
 
@@ -168,18 +175,43 @@ public class AppDbContextInitialiser(
         await SeedLendingRecordsAndBorrowingRequestsAsync();
 
         #endregion
+
+        #region BorrowingTransactionsAndRelated
+
+        await SeedBorrowingTransactionsAsync();
+        await SeedBorrowingTransactionEventsAsync();
+        await SeedBorrowingReviewsAsync();
+        await SeedPointTransactionsAsync();
+
+        #endregion
+
+        #region RefreshTokens
+
+        await SeedRefreshTokensAsync();
+
+        #endregion
     }
 
     #region Helpers
 
     private async Task SeedBooksAndCopiesAsync()
     {
-        if (await context.Books.AnyAsync())
-            return;
-
-        var owners = await context.Students.Select(s => s.Id).ToListAsync();
+        var owners = await context.Students
+            .Where(s => s.State == StudentState.Active)
+            .Select(s => s.Id)
+            .ToListAsync();
+        if (owners.Count == 0)
+        {
+            owners = await context.Students.Select(s => s.Id).ToListAsync();
+        }
         if (owners.Count == 0)
             return;
+
+        if (await context.Books.AnyAsync())
+        {
+            await EnsureMinimumAvailableCopiesAsync(owners, minimumAvailableCopies: 10);
+            return;
+        }
 
         var booksToSeed = new (string Title, string ISBN, string Publisher, BookCategory Category, string Author, string CoverFile)[]
         {
@@ -236,6 +268,37 @@ public class AppDbContextInitialiser(
                     await CreateBookCopyIfNotExistsAsync(ownerId, createdBook.Id, condition);
                 }
             }
+        }
+
+        await EnsureMinimumAvailableCopiesAsync(owners, minimumAvailableCopies: 10);
+    }
+
+    private async Task EnsureMinimumAvailableCopiesAsync(List<Guid> owners, int minimumAvailableCopies)
+    {
+        var availableBooks = await context.Books
+            .Where(b => b.Status == BookStatus.Available)
+            .Select(b => b.Id)
+            .ToListAsync();
+
+        if (availableBooks.Count == 0 || owners.Count == 0)
+            return;
+
+        var availableCopiesCount = await context.BookCopies
+            .CountAsync(bc => bc.State == BookCopyState.Available && owners.Contains(bc.OwnerId));
+
+        if (availableCopiesCount >= minimumAvailableCopies)
+            return;
+
+        var rng = new Random();
+        var copiesToCreate = minimumAvailableCopies - availableCopiesCount;
+
+        for (var i = 0; i < copiesToCreate; i++)
+        {
+            var ownerId = owners[rng.Next(owners.Count)];
+            var bookId = availableBooks[rng.Next(availableBooks.Count)];
+            var condition = GetRandomBookCopyCondition(rng);
+
+            await CreateBookCopyIfNotExistsAsync(ownerId, bookId, condition);
         }
     }
 
@@ -427,6 +490,299 @@ public class AppDbContextInitialiser(
         await context.SaveChangesAsync();
     }
 
+    private async Task SeedBorrowingTransactionsAsync()
+    {
+        if (await context.BorrowingTransactions.AnyAsync())
+            return;
+
+        var activeStudentIds = await context.Students
+            .Where(s => s.State == StudentState.Active)
+            .Select(s => s.Id)
+            .ToListAsync();
+
+        if (activeStudentIds.Count < 2)
+            return;
+
+        var lendingRecords = await context.LendingListRecords
+            .Include(lr => lr.BookCopy)
+            .Where(lr => lr.BookCopy != null
+                         && lr.BookCopy.State == BookCopyState.Available
+                         && (lr.State == LendingListRecordState.Available || lr.State == LendingListRecordState.Reserved))
+            .OrderBy(lr => lr.CreatedAtUtc)
+            .Take(4)
+            .ToListAsync();
+
+        if (lendingRecords.Count < 4)
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        var transactionSeeds = new[]
+        {
+            BorrowingTransactionState.Borrowed,
+            BorrowingTransactionState.Returned,
+            BorrowingTransactionState.Overdue,
+            BorrowingTransactionState.Lost
+        };
+
+        var transactions = new List<BorrowingTransaction>();
+
+        for (var i = 0; i < lendingRecords.Count; i++)
+        {
+            var record = lendingRecords[i];
+            var bookCopy = record.BookCopy!;
+
+            var lenderId = bookCopy.OwnerId;
+            var borrowerId = activeStudentIds.FirstOrDefault(id => id != lenderId);
+
+            if (borrowerId == Guid.Empty)
+                continue;
+
+            if (record.State == LendingListRecordState.Available)
+            {
+                if (record.MarkAsReserved().IsFailure || record.MarkAsBorrowed().IsFailure)
+                    continue;
+            }
+            else if (record.State == LendingListRecordState.Reserved)
+            {
+                if (record.MarkAsBorrowed().IsFailure)
+                    continue;
+            }
+
+            var requestResult = BorrowingRequest.Create(
+                Guid.NewGuid(),
+                borrowingStudentId: borrowerId,
+                lendingRecordId: record.Id,
+                expirationDateUtc: now.AddDays(BorrowingRequest.DefaultExpirationDays),
+                currentTime: now);
+
+            if (requestResult.IsFailure)
+                continue;
+
+            context.BorrowingRequests.Add(requestResult.Value);
+            context.Entry(requestResult.Value)
+                .Property(nameof(BorrowingRequest.State))
+                .CurrentValue = BorrowingRequestState.Accepted;
+
+            var transactionResult = BorrowingTransaction.Create(
+                Guid.NewGuid(),
+                borrowingRequestId: requestResult.Value.Id,
+                lenderStudentId: lenderId,
+                borrowerStudentId: borrowerId,
+                bookCopyId: bookCopy.Id,
+                expectedReturnDate: now.AddDays(14),
+                currentTime: now);
+
+            if (transactionResult.IsFailure)
+                continue;
+
+            context.Entry(bookCopy)
+                .Property(nameof(BookCopy.State))
+                .CurrentValue = BookCopyState.Borrowed;
+
+            transactions.Add(transactionResult.Value);
+            context.BorrowingTransactions.Add(transactionResult.Value);
+        }
+
+        await context.SaveChangesAsync();
+
+        for (var i = 0; i < transactions.Count && i < transactionSeeds.Length; i++)
+        {
+            var transaction = transactions[i];
+            var desiredState = transactionSeeds[i];
+
+            switch (desiredState)
+            {
+                case BorrowingTransactionState.Returned:
+                {
+                    var returnDate = transaction.CreatedAtUtc.AddDays(7);
+                    if (transaction.ReturnBookCopy(returnDate, returnDate).IsSuccess)
+                    {
+                        var bookCopy = await context.BookCopies.FirstAsync(bc => bc.Id == transaction.BookCopyId);
+                        bookCopy.MarkAsAvilable();
+                    }
+                    break;
+                }
+                case BorrowingTransactionState.Overdue:
+                {
+                    var overdueTime = transaction.CreatedAtUtc.AddDays(21);
+                    transaction.MarkAsOverdue(overdueTime);
+                    break;
+                }
+                case BorrowingTransactionState.Lost:
+                {
+                    if (transaction.MarkAsLost().IsSuccess)
+                    {
+                        var bookCopy = await context.BookCopies.FirstAsync(bc => bc.Id == transaction.BookCopyId);
+                        bookCopy.MarkAsLost();
+                    }
+                    break;
+                }
+            }
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task SeedBorrowingTransactionEventsAsync()
+    {
+        if (await context.BorrowingTransactionEvents.AnyAsync())
+            return;
+
+        var transactions = await context.BorrowingTransactions
+            .OrderBy(t => t.CreatedAtUtc)
+            .ToListAsync();
+
+        if (transactions.Count == 0)
+            return;
+
+        foreach (var transaction in transactions)
+        {
+            var borrowedEvent = BorrowingTransactionEvent.Create(
+                Guid.NewGuid(),
+                transaction.Id,
+                BorrowingTransactionState.Borrowed);
+
+            if (borrowedEvent.IsSuccess)
+                context.BorrowingTransactionEvents.Add(borrowedEvent.Value);
+
+            if (transaction.State != BorrowingTransactionState.Borrowed)
+            {
+                var finalEvent = BorrowingTransactionEvent.Create(
+                    Guid.NewGuid(),
+                    transaction.Id,
+                    transaction.State);
+
+                if (finalEvent.IsSuccess)
+                    context.BorrowingTransactionEvents.Add(finalEvent.Value);
+            }
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task SeedBorrowingReviewsAsync()
+    {
+        if (await context.BorrowingReviews.AnyAsync())
+            return;
+
+        var transactions = await context.BorrowingTransactions
+            .Where(t => t.State == BorrowingTransactionState.Returned || t.State == BorrowingTransactionState.Overdue)
+            .OrderBy(t => t.CreatedAtUtc)
+            .ToListAsync();
+
+        if (transactions.Count == 0)
+            return;
+
+        var goodRating = StartsRating.Create(5);
+        var badRating = StartsRating.Create(2);
+
+        if (goodRating.IsFailure || badRating.IsFailure)
+            return;
+
+        foreach (var transaction in transactions)
+        {
+            var isOverdue = transaction.State == BorrowingTransactionState.Overdue;
+
+            var reviewerId = isOverdue ? transaction.LenderStudentId : transaction.BorrowerStudentId;
+            var reviewedId = isOverdue ? transaction.BorrowerStudentId : transaction.LenderStudentId;
+
+            var rating = isOverdue ? badRating.Value : goodRating.Value;
+            var description = isOverdue ? "Returned late" : "Smooth borrowing and return";
+
+            var reviewResult = BorrowingReview.Create(
+                Guid.NewGuid(),
+                reviewerId,
+                reviewedId,
+                transaction.Id,
+                description,
+                rating);
+
+            if (reviewResult.IsFailure)
+                continue;
+
+            context.BorrowingReviews.Add(reviewResult.Value);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task SeedPointTransactionsAsync()
+    {
+        if (await context.PointTransactions.AnyAsync())
+            return;
+
+        var reviews = await context.BorrowingReviews
+            .OrderBy(r => r.CreatedAtUtc)
+            .ToListAsync();
+
+        if (reviews.Count == 0)
+            return;
+
+        foreach (var review in reviews)
+        {
+            var isBadReview = review.Rating.Value <= 2;
+            var reason = isBadReview ? PointTransactionReason.BadReview : PointTransactionReason.GoodReview;
+            var points = isBadReview ? 2 : 5;
+
+            var reviewedPointsResult = PointTransaction.Create(
+                Guid.NewGuid(),
+                review.ReviewedStudentId,
+                review.Id,
+                points,
+                reason);
+
+            if (reviewedPointsResult.IsSuccess)
+                context.PointTransactions.Add(reviewedPointsResult.Value);
+
+            var reviewerReason = PointTransactionReason.Reward;
+
+            var reviewerPointsResult = PointTransaction.Create(
+                Guid.NewGuid(),
+                review.ReviewerStudentId,
+                null,
+                1,
+                reviewerReason);
+
+            if (reviewerPointsResult.IsSuccess)
+                context.PointTransactions.Add(reviewerPointsResult.Value);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
+    private async Task SeedRefreshTokensAsync()
+    {
+        if (await context.RefreshTokens.AnyAsync())
+            return;
+
+        var users = await context.Users
+            .OrderBy(u => u.Email)
+            .Take(2)
+            .ToListAsync();
+
+        if (users.Count == 0)
+            return;
+
+        var now = DateTimeOffset.UtcNow;
+
+        foreach (var user in users)
+        {
+            var tokenResult = RefreshToken.Create(
+                Guid.NewGuid(),
+                token: Guid.NewGuid().ToString("N"),
+                userId: user.Id,
+                expiresOnUtc: now.AddDays(30));
+
+            if (tokenResult.IsFailure)
+                continue;
+
+            context.RefreshTokens.Add(tokenResult.Value);
+        }
+
+        await context.SaveChangesAsync();
+    }
+
     private static BookCopyCondition GetRandomBookCopyCondition(Random rng)
     {
         var values = Enum.GetValues<BookCopyCondition>();
@@ -547,8 +903,42 @@ public class AppDbContextInitialiser(
     private async Task CreateStudentIfNotExistsAsync(AppUser user,int index)
     {
         // check if student already exists
-        if (await context.Students.AnyAsync(s => s.UserId == user.Id))
+        var existingStudent = await context.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
+        if (existingStudent is not null)
+        {
+            var now = DateTimeOffset.UtcNow;
+
+            switch (existingStudent.State)
+            {
+                case StudentState.Active:
+                    return;
+                case StudentState.Approved:
+                    if (existingStudent.MarkAsActivated().IsFailure)
+                        logger.LogError("Failed to activate existing student {Email}", user.Email);
+                    break;
+                case StudentState.Pending:
+                    if (existingStudent.MarkAsApproved(now).IsFailure || existingStudent.MarkAsActivated().IsFailure)
+                        logger.LogError("Failed to approve/activate existing student {Email}", user.Email);
+                    break;
+                case StudentState.Rejected:
+                    if (existingStudent.MarkAsPend().IsFailure
+                        || existingStudent.MarkAsApproved(now).IsFailure
+                        || existingStudent.MarkAsActivated().IsFailure)
+                        logger.LogError("Failed to reinstate existing student {Email}", user.Email);
+                    break;
+                case StudentState.Banned:
+                    if (existingStudent.MarkAsUnBanned().IsFailure || existingStudent.MarkAsActivated().IsFailure)
+                        logger.LogError("Failed to unban/activate existing student {Email}", user.Email);
+                    break;
+                case StudentState.UnBanned:
+                    if (existingStudent.MarkAsActivated().IsFailure)
+                        logger.LogError("Failed to activate existing student {Email}", user.Email);
+                    break;
+            }
+
+            await context.SaveChangesAsync();
             return;
+        }
 
         var nameResult = StudentName.Create(user.UserName!);
         var emailResult = UniversityMail.Create(user.Email!);
@@ -599,21 +989,18 @@ public class AppDbContextInitialiser(
         }
 
 
-        if (index < 3)
+        var approveResult = studentResult.Value.MarkAsApproved(DateTimeOffset.UtcNow);
+        if (approveResult.IsFailure)
         {
-            var approveResult = studentResult.Value.MarkAsApproved(DateTimeOffset.UtcNow);
-            if (approveResult.IsFailure)
-            {
-                logger.LogError("Failed to approve student {Email}", user.Email);
-                return;
-            }
+            logger.LogError("Failed to approve student {Email}", user.Email);
+            return;
+        }
 
-            var activateResult = studentResult.Value.MarkAsActivated();
-            if (activateResult.IsFailure)
-            {
-                logger.LogError("Failed to activate student {Email}", user.Email);
-                return;
-            }
+        var activateResult = studentResult.Value.MarkAsActivated();
+        if (activateResult.IsFailure)
+        {
+            logger.LogError("Failed to activate student {Email}", user.Email);
+            return;
         }
 
         context.Students.Add(studentResult.Value);
