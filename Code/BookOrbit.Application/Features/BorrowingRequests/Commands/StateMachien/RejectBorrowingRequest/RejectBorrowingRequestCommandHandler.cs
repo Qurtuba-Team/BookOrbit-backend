@@ -1,3 +1,5 @@
+using BookOrbit.Domain.PointTransactions;
+using BookOrbit.Domain.PointTransactions.Enums;
 using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.RejectBorrowingRequest;
@@ -43,6 +45,24 @@ public class RejectBorrowingRequestCommandHandler(
                 addingPointResult.Errors);
             return addingPointResult.Errors;
         }
+
+        var pointTransactionResult = PointTransaction.Create(
+            Guid.NewGuid(),
+            borrowingRequestData.BorrowingStudent.Id,
+            null,
+            borrowingRequestData.Cost,
+            PointTransactionReason.Refund);
+
+        if(pointTransactionResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create point transaction for student {StudentId}. Errors: {Errors}",
+                borrowingRequestData.BorrowingStudent.Id,
+                pointTransactionResult.Errors);
+            return pointTransactionResult.Errors;
+        }
+
+        context.PointTransactions.Add(pointTransactionResult.Value);
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

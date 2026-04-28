@@ -1,4 +1,5 @@
 using BookOrbit.Application.Features.BorrowingTransactions;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 using Microsoft.Extensions.Caching.Hybrid;
 
 namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsReturnedBorrowingTransaction;
@@ -53,6 +54,13 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
 
             return updateBookCopyResult.Errors;
         }
+
+        var logCreationResult = BorrowingTransactionEvent.Create(
+            Guid.NewGuid(),
+            transaction.borrowingTransaction.Id,
+            transaction.borrowingTransaction.State);
+
+        context.BorrowingTransactionEvents.Add(logCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
         await hybridCache.RemoveByTagAsync(BorrowingTransactionCachingConstants.BorrowingTransactionTag, ct);

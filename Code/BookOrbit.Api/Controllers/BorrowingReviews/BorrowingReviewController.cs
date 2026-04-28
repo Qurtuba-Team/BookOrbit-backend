@@ -13,7 +13,7 @@ public class BorrowingReviewController(
     ISender sender) : ApiController
 {
     [HttpPost]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.BorrowingTransactionLendingStudentPolicy)]
     [ProducesResponseType(typeof(BorrowingReviewDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]

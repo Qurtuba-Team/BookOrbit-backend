@@ -1,4 +1,5 @@
 using BookOrbit.Application.Features.BorrowingTransactions;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 
 namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsLostBorrowingTransaction;
 public class MarkAsLostBorrowingTransactionCommandHandler(
@@ -49,6 +50,13 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
 
             return updateBookCopyResult.Errors;
         }
+
+        var logCreationResult = BorrowingTransactionEvent.Create(
+            Guid.NewGuid(),
+            transactionData.BorrowingTransaction.Id,
+            transactionData.BorrowingTransaction.State);
+
+        context.BorrowingTransactionEvents.Add(logCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
 

@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Domain.PointTransactions.ValueObjects;
+
 namespace BookOrbit.Domain.PointTransactions;
 
 public class PointTransaction : AuditableEntity

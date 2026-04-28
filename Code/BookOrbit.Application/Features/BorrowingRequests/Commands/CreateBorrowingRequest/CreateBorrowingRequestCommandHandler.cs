@@ -1,4 +1,6 @@
 using BookOrbit.Domain.BorrowingRequests.DomainEvents;
+using BookOrbit.Domain.PointTransactions;
+using BookOrbit.Domain.PointTransactions.Enums;
 using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.CreateBorrowingRequest;
@@ -87,6 +89,24 @@ public class CreateBorrowingRequestCommandHandler(
                 deductingPointsResult.Errors);
             return deductingPointsResult.Errors;
         }   
+
+        var pointTransactionResult = PointTransaction.Create(
+            Guid.NewGuid(),
+            command.BorrowingStudentId,
+            null,
+            lendingRecord.Cost,
+            PointTransactionReason.Borrowing);
+
+        if(pointTransactionResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create point transaction for student {StudentId}. Errors: {Errors}",
+                command.BorrowingStudentId,
+                pointTransactionResult.Errors);
+            return pointTransactionResult.Errors;
+        }
+
+        context.PointTransactions.Add(pointTransactionResult.Value);
 
         borrowingRequestResult.Value.AddDomainEvent(new BorrowingRequestCreatedEvent(borrowingRequestResult.Value.Id, borrowingRequestResult.Value.LendingRecordId));
 

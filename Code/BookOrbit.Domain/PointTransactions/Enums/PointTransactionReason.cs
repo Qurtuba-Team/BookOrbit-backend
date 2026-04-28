@@ -10,5 +10,6 @@ public enum PointTransactionReason
     Penalty ,
     Reward ,
     PositiveAdjustment ,
-    NegativeAdjustment
+    NegativeAdjustment,
+    Refund
 }
