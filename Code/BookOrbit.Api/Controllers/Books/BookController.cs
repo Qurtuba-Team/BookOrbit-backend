@@ -11,6 +11,7 @@ public class BookController(
     ISender sender,
     IBookImageService bookImageService) : ApiController
 {
+
     [HttpPost]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(BookDto), StatusCodes.Status201Created)]

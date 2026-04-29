@@ -516,6 +516,237 @@
               }
             }
           ]
+        },
+        {
+          "id": "019192bd-4c77-49cd-b513-7d5a0535c885",
+          "name": "Get All IN",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/in?PageSize=10&Page=1",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "me",
+                "in"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowerStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "026d80db-768b-4735-bc31-014d1851f3f5",
+          "name": "Get All Out",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/out?PageSize=10&Page=1",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "me",
+                "out"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "LenderStudentId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "1372825c-80f6-4e75-ba87-afdbcef71654",
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=10&Page=1",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowerStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "LenderStudentId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
         }
       ]
     },
@@ -1054,7 +1285,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
+              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"

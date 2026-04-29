@@ -699,12 +699,6 @@ public class AppDbContextInitialiser(
         if (transactions.Count == 0)
             return;
 
-        var goodRating = StarsRating.Create(5);
-        var badRating = StarsRating.Create(2);
-
-        if (goodRating.IsFailure || badRating.IsFailure)
-            return;
-
         foreach (var transaction in transactions)
         {
             var isOverdue = transaction.State == BorrowingTransactionState.Overdue;
@@ -712,7 +706,13 @@ public class AppDbContextInitialiser(
             var reviewerId = isOverdue ? transaction.LenderStudentId : transaction.BorrowerStudentId;
             var reviewedId = isOverdue ? transaction.BorrowerStudentId : transaction.LenderStudentId;
 
-            var rating = isOverdue ? badRating.Value : goodRating.Value;
+            // Create a FRESH StarsRating instance for each review.
+            // EF Core owned types cannot be shared across multiple parent entities —
+            // reusing the same StarsRating object causes EF to generate INSERTs without the Rating column.
+            var ratingResult = StarsRating.Create(isOverdue ? 2 : 5);
+            if (ratingResult.IsFailure)
+                continue;
+
             var description = isOverdue ? "Returned late" : "Smooth borrowing and return";
 
             var reviewResult = BorrowingReview.Create(
@@ -721,15 +721,16 @@ public class AppDbContextInitialiser(
                 reviewedId,
                 transaction.Id,
                 description,
-                rating);
+                ratingResult.Value);
 
             if (reviewResult.IsFailure)
                 continue;
 
+            // Clear tracker to avoid cross-entity owned-type tracking conflicts
+            context.ChangeTracker.Clear();
             context.BorrowingReviews.Add(reviewResult.Value);
+            await context.SaveChangesAsync();
         }
-
-        await context.SaveChangesAsync();
     }
 
     private async Task SeedPointTransactionsAsync()
