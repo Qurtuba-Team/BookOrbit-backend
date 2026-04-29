@@ -1,6 +1,4 @@
-using BookOrbit.Application.Features.PointTransactions.Dtos;
-using BookOrbit.Domain.PointTransactions.Enums;
-
+﻿
 namespace BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactions;
 
 public record GetPointTransactionsQuery(

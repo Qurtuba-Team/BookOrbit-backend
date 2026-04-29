@@ -1,5 +1,4 @@
-using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingTransactionEvents.Dtos;
 
 public record BorrowingTransactionEventDto

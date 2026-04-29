@@ -1,5 +1,4 @@
-using BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactions;
-
+﻿
 namespace BookOrbit.Application.Common.Constants;
 
 public class PointTransactionCachingConstants

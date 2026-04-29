@@ -1,6 +1,4 @@
-﻿using BookOrbit.Application.Features.LendingListings.Commands.StateMachien.CloseLendingListRecord;
-using BookOrbit.Application.Features.Students.Queries.GetStudentContactInformationByLendingListId;
-
+﻿
 namespace BookOrbit.Api.Controllers.LendingList;
 
 [Route("api/v{version:apiVersion}/lendinglist")]

@@ -1,4 +1,4 @@
-namespace BookOrbit.Application.SubcutaneousTests.Students;
+﻿namespace BookOrbit.Application.SubcutaneousTests.Students;
 
 using BookOrbit.Domain.BookCopies;
 using BookOrbit.Domain.BookCopies.Enums;
@@ -168,7 +168,7 @@ internal static class StudentTestFactory
             reviewedStudentId,
             borrowingTransactionId,
             description,
-            StartsRating.Create(rating).Value).Value;
+            StarsRating.Create(rating).Value).Value;
     }
 
     public static T SetCreatedAt<T>(T entity, DateTimeOffset createdAtUtc) where T : class

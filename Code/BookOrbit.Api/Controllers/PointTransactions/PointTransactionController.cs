@@ -1,8 +1,4 @@
-using BookOrbit.Api.Contracts.Requests.PointTransactions;
-using BookOrbit.Application.Features.PointTransactions.Dtos;
-using BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactionById;
-using BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactions;
-
+﻿
 namespace BookOrbit.Api.Controllers.PointTransactions;
 
 [Route("api/v{version:apiVersion}/pointtransactions")]

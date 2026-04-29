@@ -1,5 +1,4 @@
-using BookOrbit.Application.Features.BorrowingTransactions.Dtos;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingTransactions.Queries.GetBorrowingTransactions;
 public class GetBorrowingTransactionsQueryHandler(
     IAppDbContext context) : IRequestHandler<GetBorrowingTransactionsQuery, Result<PaginatedList<BorrowingTransactionListItemDto>>>

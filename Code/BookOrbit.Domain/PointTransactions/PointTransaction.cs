@@ -1,5 +1,4 @@
 ﻿
-using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Domain.PointTransactions;
 

@@ -1,6 +1,4 @@
-using BookOrbit.Domain.BorrowingTransactions;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
-
+﻿
 namespace BookOrbit.Infrastructure.Data.Configurations;
 
 public class BorrowingTransactionEventConfiguration : IEntityTypeConfiguration<BorrowingTransactionEvent>

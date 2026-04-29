@@ -1,6 +1,4 @@
-using BookOrbit.Domain.BorrowingTransactions;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-
+﻿
 namespace BookOrbit.Infrastructure.Data.Configurations;
 
 public class BorrowingReviewConfiguration : IEntityTypeConfiguration<BorrowingReview>

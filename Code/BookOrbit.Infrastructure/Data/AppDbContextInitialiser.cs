@@ -1,20 +1,4 @@
-﻿using BookOrbit.Domain.BookCopies.Enums;
-using BookOrbit.Domain.Books.Enums;
-using BookOrbit.Domain.Books.ValueObjects;
-using BookOrbit.Domain.BorrowingRequests;
-using BookOrbit.Domain.BorrowingRequests.Enums;
-using BookOrbit.Domain.BorrowingTransactions;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
-using BookOrbit.Domain.BorrowingTransactions.Enums;
-using BookOrbit.Domain.LendingListings;
-using BookOrbit.Domain.LendingListings.Enums;
-using BookOrbit.Domain.PointTransactions;
-using BookOrbit.Domain.PointTransactions.Enums;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-using BookOrbit.Domain.Students.Enums;
-
+﻿
 namespace BookOrbit.Infrastructure.Data;
 
 
@@ -674,8 +658,8 @@ public class AppDbContextInitialiser(
         if (transactions.Count == 0)
             return;
 
-        var goodRating = StartsRating.Create(5);
-        var badRating = StartsRating.Create(2);
+        var goodRating = StarsRating.Create(5);
+        var badRating = StarsRating.Create(2);
 
         if (goodRating.IsFailure || badRating.IsFailure)
             return;

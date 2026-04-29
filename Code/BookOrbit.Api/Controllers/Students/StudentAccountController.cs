@@ -1,5 +1,4 @@
-﻿using BookOrbit.Application.Common.Interfaces.ImageServices;
-
+﻿
 namespace BookOrbit.Api.Controllers.Students;
 
 [Route("api/v{version:apiVersion}/students")]

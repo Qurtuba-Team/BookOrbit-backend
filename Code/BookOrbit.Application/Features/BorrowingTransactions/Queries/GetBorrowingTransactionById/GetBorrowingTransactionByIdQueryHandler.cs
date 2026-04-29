@@ -1,5 +1,4 @@
-using BookOrbit.Application.Features.BorrowingTransactions.Dtos;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingTransactions.Queries.GetBorrowingTransactionById;
 public class GetBorrowingTransactionByIdQueryHandler(
     ILogger<GetBorrowingTransactionByIdQueryHandler> logger,

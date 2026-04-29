@@ -1,5 +1,3 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 
@@ -10,9 +8,8 @@ public class BorrowingReview : AuditableEntity
     public Guid BorrowingTransactionId { get; }
 
     public string? Description { get; }
-    public StartsRating Rating { get; }
+    public StarsRating Rating { get; } = null!;
 
-#pragma warning disable CS8618
     private BorrowingReview() { }
 
     private BorrowingReview(
@@ -21,7 +18,7 @@ public class BorrowingReview : AuditableEntity
         Guid reviewedStudentId,
         Guid borrowingTransactionId,
         string? description,
-        StartsRating rating) : base(id)
+        StarsRating rating) : base(id)
     {
         ReviewerStudentId = reviewerStudentId;
         ReviewedStudentId = reviewedStudentId;
@@ -38,7 +35,7 @@ public class BorrowingReview : AuditableEntity
         Guid reviewedStudentId,
         Guid borrowingTransactionId,
         string? description,
-        StartsRating rating)
+        StarsRating rating)
     {
         if (id == Guid.Empty)
             return BorrowingReviewErrors.IdRequired;

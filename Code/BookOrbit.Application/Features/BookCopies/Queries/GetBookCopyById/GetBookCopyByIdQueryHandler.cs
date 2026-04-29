@@ -1,5 +1,4 @@
-﻿using BookOrbit.Domain.Books;
-
+﻿
 namespace BookOrbit.Application.Features.BookCopies.Queries.GetBookCopyById;
 public class GetBookCopyByIdQueryHandler(
     ILogger<GetBookCopyByIdQueryHandler> logger,

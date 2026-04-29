@@ -1,4 +1,4 @@
-namespace BookOrbit.Domain.UnitTests.BorrowingTransactions.BorrowingReviews;
+﻿namespace BookOrbit.Domain.UnitTests.BorrowingTransactions.BorrowingReviews;
 
 using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
@@ -15,7 +15,7 @@ public class BorrowingReviewTests
         var reviewerId = Guid.NewGuid();
         var reviewedId = Guid.NewGuid();
         var transactionId = Guid.NewGuid();
-        var rating = StartsRating.Create(4).Value;
+        var rating = StarsRating.Create(4).Value;
         var description = "Great experience";
 
         // Act
@@ -35,7 +35,7 @@ public class BorrowingReviewTests
     public void Create_WithWhitespaceDescription_SetsDescriptionToNull()
     {
         // Arrange
-        var rating = StartsRating.Create(3).Value;
+        var rating = StarsRating.Create(3).Value;
 
         // Act
         var result = BorrowingReview.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "   ", rating);
@@ -49,7 +49,7 @@ public class BorrowingReviewTests
     public void Create_WithEmptyId_ReturnsIdRequiredError()
     {
         // Arrange
-        var rating = StartsRating.Create(3).Value;
+        var rating = StarsRating.Create(3).Value;
 
         // Act
         var result = BorrowingReview.Create(Guid.Empty, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), null, rating);
@@ -63,7 +63,7 @@ public class BorrowingReviewTests
     public void Create_WithEmptyReviewerStudentId_ReturnsReviewerStudentIdRequiredError()
     {
         // Arrange
-        var rating = StartsRating.Create(3).Value;
+        var rating = StarsRating.Create(3).Value;
 
         // Act
         var result = BorrowingReview.Create(Guid.NewGuid(), Guid.Empty, Guid.NewGuid(), Guid.NewGuid(), null, rating);
@@ -77,7 +77,7 @@ public class BorrowingReviewTests
     public void Create_WithEmptyReviewedStudentId_ReturnsReviewedStudentIdRequiredError()
     {
         // Arrange
-        var rating = StartsRating.Create(3).Value;
+        var rating = StarsRating.Create(3).Value;
 
         // Act
         var result = BorrowingReview.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, Guid.NewGuid(), null, rating);
@@ -91,7 +91,7 @@ public class BorrowingReviewTests
     public void Create_WithEmptyBorrowingTransactionId_ReturnsBorrowingTransactionIdRequiredError()
     {
         // Arrange
-        var rating = StartsRating.Create(3).Value;
+        var rating = StarsRating.Create(3).Value;
 
         // Act
         var result = BorrowingReview.Create(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.Empty, null, rating);

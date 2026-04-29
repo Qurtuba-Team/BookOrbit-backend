@@ -1,24 +1,21 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Domain.Students;
 
 public class Student : AuditableEntity
 {
-    public StudentName Name { get; private set; }
+    public StudentName Name { get; private set; } = null!;
     public PhoneNumber? PhoneNumber { get; }
     public TelegramUserId? TelegramUserId { get; }
-    public UniversityMail UniversityMail { get; }
-    public string PersonalPhotoFileName { get; private set; }
-    public Point Points { get; private set; }
+    public UniversityMail UniversityMail { get; } = null!;
+    public string PersonalPhotoFileName { get; private set; } = null!;
+    public Point Points { get; private set; } = null!;
     public DateTimeOffset? JoinDateUtc { get; private set; } = null;
     public StudentState State { get; private set; }
 
    //Identity
-   public string UserId { get; }
+   public string UserId { get; } = null!;
 
 
-#pragma warning disable CS8618
     private Student()
     { }
 

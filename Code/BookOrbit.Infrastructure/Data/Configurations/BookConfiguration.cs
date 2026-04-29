@@ -1,6 +1,4 @@
 ﻿
-using BookOrbit.Domain.Books.Enums;
-using BookOrbit.Domain.Books.ValueObjects;
 
 namespace BookOrbit.Infrastructure.Data.Configurations;
 public class BookConfiguration : IEntityTypeConfiguration<Book>

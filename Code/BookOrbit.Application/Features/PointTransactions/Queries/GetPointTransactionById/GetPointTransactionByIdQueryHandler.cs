@@ -1,6 +1,4 @@
-using BookOrbit.Application.Features.PointTransactions.Dtos;
-using BookOrbit.Domain.PointTransactions;
-
+﻿
 namespace BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactionById;
 
 public class GetPointTransactionByIdQueryHandler(

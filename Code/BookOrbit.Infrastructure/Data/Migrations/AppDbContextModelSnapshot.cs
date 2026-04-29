@@ -815,7 +815,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.OwnsOne("BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects.StartsRating", "Rating", b1 =>
+                    b.OwnsOne("BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects.StarsRating", "Rating", b1 =>
                         {
                             b1.Property<Guid>("BorrowingReviewId")
                                 .HasColumnType("uniqueidentifier");

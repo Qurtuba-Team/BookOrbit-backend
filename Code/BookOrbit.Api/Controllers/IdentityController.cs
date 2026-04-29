@@ -1,9 +1,4 @@
-﻿using BookOrbit.Api.Contracts.Requests.Identity;
-using BookOrbit.Application.Features.Identity.Commands.ChangePassword;
-using BookOrbit.Application.Features.Identity.Commands.ResetPassowrd;
-using BookOrbit.Application.Features.Identity.Commands.SendEmailConfirmation;
-using BookOrbit.Application.Features.Identity.Commands.SendResetPassword;
-
+﻿
 namespace BookOrbit.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/identity")]

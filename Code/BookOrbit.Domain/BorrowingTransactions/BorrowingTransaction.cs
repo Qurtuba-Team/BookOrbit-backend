@@ -1,4 +1,4 @@
-﻿
+
 namespace BookOrbit.Domain.BorrowingTransactions;
 
 public class BorrowingTransaction : AuditableEntity
@@ -17,7 +17,6 @@ public class BorrowingTransaction : AuditableEntity
     public Student? BorrowerStudent { get; private set; }
     public BookCopy? BookCopy { get; private set; }
 
-#pragma warning disable CS8618
     private BorrowingTransaction() { }
 
     private BorrowingTransaction(

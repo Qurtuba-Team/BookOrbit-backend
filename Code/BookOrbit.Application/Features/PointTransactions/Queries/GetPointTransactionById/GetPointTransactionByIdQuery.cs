@@ -1,5 +1,4 @@
-using BookOrbit.Application.Features.PointTransactions.Dtos;
-
+﻿
 namespace BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactionById;
 
 public record GetPointTransactionByIdQuery(Guid PointTransactionId)

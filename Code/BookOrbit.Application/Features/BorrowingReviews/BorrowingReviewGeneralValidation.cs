@@ -1,6 +1,4 @@
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingReviews;
 
 public static class BorrowingReviewGeneralValidation
@@ -27,6 +25,6 @@ public static class BorrowingReviewGeneralValidation
 
     public static IRuleBuilder<T, int> BorrowingReviewRatingRules<T>(this IRuleBuilder<T, int> ruleBuilder) =>
         ruleBuilder
-            .InclusiveBetween(StartsRating.MinRating, StartsRating.MaxRating)
+            .InclusiveBetween(StarsRating.MinRating, StarsRating.MaxRating)
             .WithMessage(BorrowingReviewErrors.InvalidRating.Description);
 }

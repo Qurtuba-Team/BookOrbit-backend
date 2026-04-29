@@ -1,5 +1,4 @@
-﻿using BookOrbit.Infrastructure.Common.Errors;
-
+﻿
 namespace BookOrbit.Infrastructure.Services;
 public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailFormatService
 {

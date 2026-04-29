@@ -1,6 +1,4 @@
-﻿using BookOrbit.Application.Features.Identity.Commands.SendEmailConfirmation;
-using BookOrbit.Domain.Students.DomainEvents;
-
+﻿
 namespace BookOrbit.Application.Features.Students.EventHandlers;
 public class StudentCreatedEventHandler(ISender sender) : INotificationHandler<StudentCreatedEvent>
 {

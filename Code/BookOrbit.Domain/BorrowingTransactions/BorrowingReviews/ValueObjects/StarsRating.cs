@@ -1,6 +1,6 @@
 ﻿namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
 
-public record StartsRating(int Value) : ValueObject<int>(Value)
+public record StarsRating(int Value) : ValueObject<int>(Value)
 {
     public const int MinRating = 1;
     public const int MaxRating = 5;
@@ -18,7 +18,7 @@ public record StartsRating(int Value) : ValueObject<int>(Value)
 
         return value;
     }
-    public static Result<StartsRating> Create(int? rate)
+    public static Result<StarsRating> Create(int? rate)
     {
         if (rate is null)
             return BorrowingReviewErrors.RatingRequired;
@@ -27,7 +27,7 @@ public record StartsRating(int Value) : ValueObject<int>(Value)
         var validationResult = Validate(normalized);
 
         if (validationResult.IsSuccess)
-            return new StartsRating(validationResult.Value);
+            return new StarsRating(validationResult.Value);
 
         return validationResult.Errors;
     }

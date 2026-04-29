@@ -1,12 +1,5 @@
 ﻿
 
-using BookOrbit.Application.Common.Constants;
-using BookOrbit.Application.Common.Interfaces.ImageServices;
-using BookOrbit.Infrastructure.Identity.Policies.BookCopies;
-using BookOrbit.Infrastructure.Identity.Policies.BorrowingRequests;
-using BookOrbit.Infrastructure.Identity.Policies.BorrowingTransaction;
-using BookOrbit.Infrastructure.Identity.Policies.LendingListRecords;
-using BookOrbit.Infrastructure.Services.ImageServices;
 
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection

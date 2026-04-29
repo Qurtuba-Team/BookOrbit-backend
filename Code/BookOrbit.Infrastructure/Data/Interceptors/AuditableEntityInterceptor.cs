@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-
+﻿
 namespace BookOrbit.Infrastructure.Data.Interceptors;
 
 public class AuditableEntityInterceptor

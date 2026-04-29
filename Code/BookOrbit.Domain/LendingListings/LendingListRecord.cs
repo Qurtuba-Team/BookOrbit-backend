@@ -1,5 +1,4 @@
-﻿
-using BookOrbit.Domain.PointTransactions.ValueObjects;
+
 
 namespace BookOrbit.Domain.LendingListings;
 public class LendingListRecord : ExpirableEntity
@@ -7,7 +6,7 @@ public class LendingListRecord : ExpirableEntity
     public Guid BookCopyId { get; }
     public LendingListRecordState State { get; private set; }
     public int BorrowingDurationInDays { get; }
-    public Point Cost { get; }
+    public Point Cost { get; } = null!;
 
     public BookCopy? BookCopy { get; private set; }
 
@@ -22,7 +21,6 @@ public class LendingListRecord : ExpirableEntity
 
     public const int DefaultCostInPoints = 1;
 
-#pragma warning disable CS8618
     private LendingListRecord() { }
 
     private LendingListRecord(

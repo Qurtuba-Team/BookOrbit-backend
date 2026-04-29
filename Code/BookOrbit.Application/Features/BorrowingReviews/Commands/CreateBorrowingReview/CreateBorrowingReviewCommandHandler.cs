@@ -1,8 +1,4 @@
-using BookOrbit.Application.Features.BorrowingReviews.Dtos;
-using BookOrbit.Application.Features.BorrowingTransactions;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingReviews.Commands.CreateBorrowingReview;
 
 public class CreateBorrowingReviewCommandHandler(
@@ -63,7 +59,7 @@ public class CreateBorrowingReviewCommandHandler(
             return BorrowingReviewApplicationErrors.AlreadyExists;
         }
 
-        var ratingResult = StartsRating.Create(command.Rating);
+        var ratingResult = StarsRating.Create(command.Rating);
 
         if (ratingResult.IsFailure)
         {

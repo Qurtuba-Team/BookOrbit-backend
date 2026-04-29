@@ -1,5 +1,4 @@
-using BookOrbit.Domain.PointTransactions.Enums;
-
+﻿
 namespace BookOrbit.Api.Contracts.Requests.PointTransactions;
 
 public record PointTransactionPagedFilterRequest : PagedFilterRequest
