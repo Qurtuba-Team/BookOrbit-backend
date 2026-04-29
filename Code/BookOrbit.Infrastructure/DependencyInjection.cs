@@ -2,6 +2,8 @@
 
 
 
+using BookOrbit.Infrastructure.BackgroundJobs;
+
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
