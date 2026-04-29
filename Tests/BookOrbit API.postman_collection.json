@@ -1674,7 +1674,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/books?Page=1&PageSize=15&SearchTerm=العادات الذرية&Statuses=available",
+              "raw": "{{baseurl}}/api/v1/books?Page=1&PageSize=15&Statuses=available",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1694,7 +1694,8 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "العادات الذرية"
+                  "value": "العادات الذرية",
+                  "disabled": true
                 },
                 {
                   "key": "SortColumn",
@@ -1831,6 +1832,31 @@
               }
             }
           ]
+        },
+        {
+          "id": "16ff5a03-4336-4a9d-a38f-f29f560cd763",
+          "name": "Book Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/books/categories",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "categories"
+              ]
+            }
+          }
         }
       ]
     },

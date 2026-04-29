@@ -12,6 +12,25 @@ public class BookController(
     IBookImageService bookImageService) : ApiController
 {
 
+    [HttpGet("categories")]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [ProducesResponseType(typeof(List<string>), StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Retrieve a list of book categories")]
+    [EndpointDescription("Retrieve all book categories form the system")]
+    [EndpointName("CreateBook")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+
+    public async Task<ActionResult<List<string>>> GetBookCategories(CancellationToken ct)
+    {
+        var categories = Enum.GetValues<BookCategory>()
+            .Select(c => c.ToString())
+            .ToList();
+
+        return Ok(categories);
+    }
+
     [HttpPost]
     [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(BookDto), StatusCodes.Status201Created)]

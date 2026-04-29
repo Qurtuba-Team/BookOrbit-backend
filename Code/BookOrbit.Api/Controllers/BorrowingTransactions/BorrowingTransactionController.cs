@@ -113,7 +113,7 @@ public class BorrowingTransactionController(
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
-    [EndpointSummary("Retrieve a paginated list of borrowing transactions.")]
+    [EndpointSummary("Retrieve a paginated list of borrowing transactions that is outgoing.")]
     [EndpointDescription("Returns a paginated collection of borrowing transactions and supports searching, filtering, and sorting by [createdat,updatedat,expectedreturndate,actualreturndate,state,borrowername,lendername,booktitle] so administrators can review borrowing activity efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetOutgoingBorrowingTransactions")]
