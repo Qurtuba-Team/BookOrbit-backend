@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Code\BookOrbit.Domain\BookOrbit.Domain.csproj" />
-    <ProjectReference Include="..\..\Code\BookOrbit.Application\BookOrbit.Application.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="FakeItEasy" Version="9.0.1" />
     <PackageReference Include="FluentAssertions" Version="8.9.0" />
@@ -22,8 +17,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Code\BookOrbit.Application\BookOrbit.Application.csproj" />
+    <ProjectReference Include="..\Code\BookOrbit.Domain\BookOrbit.Domain.csproj" />
+    <ProjectReference Include="..\Tests\BookOrbit.Domain.UnitTests\BookOrbit.Domain.UnitTests.csproj" />
+  </ItemGroup>
+
+
+	<ItemGroup>
     <Using Include="Xunit" />
-    <Using Include="FluentAssertions" />
   </ItemGroup>
 
 </Project>

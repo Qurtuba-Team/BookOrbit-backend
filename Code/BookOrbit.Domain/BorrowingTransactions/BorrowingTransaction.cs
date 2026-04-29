@@ -138,9 +138,6 @@ public class BorrowingTransaction : AuditableEntity
 
     public Result<Updated> MarkAsBorrowed()
     {
-        if (State == BorrowingTransactionState.Borrowed)
-            return Result.Updated;
-
         return UpdateState(BorrowingTransactionState.Borrowed);
     }
 
