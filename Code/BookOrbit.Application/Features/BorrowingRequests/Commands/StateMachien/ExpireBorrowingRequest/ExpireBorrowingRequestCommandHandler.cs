@@ -13,7 +13,8 @@ public class ExpireBorrowingRequestCommandHandler(
             {
                 BorrowingRequest = br,
                 BorrowingStudent = br.BorrowingStudent,
-                Cost = br.LendingRecord!.Cost.Value
+                Cost = br.LendingRecord!.Cost.Value,
+                LendingRecord = br.LendingRecord
             })
             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
@@ -41,6 +42,17 @@ public class ExpireBorrowingRequestCommandHandler(
                 borrowingRequestData.BorrowingStudent.Id,
                 addingPointResult.Errors);
             return addingPointResult.Errors;
+        }
+
+        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsAvailable();
+
+        if (lendingRecordMarkingResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to mark lending record as available for borrowing request {BorrowingRequestId}. Errors: {Errors}",
+                borrowingRequestData.BorrowingRequest.Id,
+                lendingRecordMarkingResult.Errors);
+            return lendingRecordMarkingResult.Errors;
         }
 
         var pointTransactionResult = PointTransaction.Create(

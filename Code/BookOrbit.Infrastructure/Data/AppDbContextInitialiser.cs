@@ -1,4 +1,4 @@
-﻿
+
 namespace BookOrbit.Infrastructure.Data;
 
 
@@ -193,7 +193,7 @@ public class AppDbContextInitialiser(
 
         if (await context.Books.AnyAsync())
         {
-            await EnsureMinimumAvailableCopiesAsync(owners, minimumAvailableCopies: 10);
+            await EnsureMinimumAvailableCopiesAsync(owners, minimumAvailableCopies: 50);
             return;
         }
 
@@ -254,7 +254,7 @@ public class AppDbContextInitialiser(
             }
         }
 
-        await EnsureMinimumAvailableCopiesAsync(owners, minimumAvailableCopies: 10);
+        await EnsureMinimumAvailableCopiesAsync(owners, minimumAvailableCopies: 50);
     }
 
     private async Task EnsureMinimumAvailableCopiesAsync(List<Guid> owners, int minimumAvailableCopies)
@@ -305,7 +305,47 @@ public class AppDbContextInitialiser(
         if (activeOwnerIds.Count == 0)
             return;
 
-        var requiredRecordsCount = 7;
+        var desiredStates = new List<LendingListRecordState>
+        {
+            LendingListRecordState.Available,
+            LendingListRecordState.Reserved,
+            LendingListRecordState.Borrowed,
+            LendingListRecordState.Expired,
+            LendingListRecordState.Closed,
+            
+            // Available records for requests
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            
+            // Available records for transactions
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            
+            // More available records for general listing
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available,
+            LendingListRecordState.Available
+        };
+
+        var requiredRecordsCount = desiredStates.Count;
 
         var bookCopies = await context.BookCopies
             .Where(bc => activeOwnerIds.Contains(bc.OwnerId) && bc.State == BookCopyState.Available)
@@ -317,17 +357,6 @@ public class AppDbContextInitialiser(
             return;
 
         var now = DateTimeOffset.UtcNow;
-
-        var desiredStates = new List<LendingListRecordState>
-        {
-            LendingListRecordState.Available,
-            LendingListRecordState.Reserved,
-            LendingListRecordState.Borrowed,
-            LendingListRecordState.Expired,
-            LendingListRecordState.Closed,
-            LendingListRecordState.Available,
-            LendingListRecordState.Available
-        };
 
         for (var i = 0; i < desiredStates.Count; i++)
         {
@@ -422,7 +451,7 @@ public class AppDbContextInitialiser(
         var expiredRecord = lendingRecords
             .FirstOrDefault(lr => lr.State == LendingListRecordState.Expired);
 
-        if (availableRecords.Count < 3 || reservedRecord is null || expiredRecord is null)
+        if (availableRecords.Count < 10 || reservedRecord is null || expiredRecord is null)
             return;
 
         var now = DateTimeOffset.UtcNow;
@@ -430,9 +459,13 @@ public class AppDbContextInitialiser(
         var requestSeeds = new List<(LendingListRecord Record, BorrowingRequestState State)>
         {
             (availableRecords[0], BorrowingRequestState.Pending),
+            (availableRecords[1], BorrowingRequestState.Pending),
+            (availableRecords[2], BorrowingRequestState.Pending),
             (reservedRecord, BorrowingRequestState.Accepted),
-            (availableRecords[1], BorrowingRequestState.Rejected),
-            (availableRecords[2], BorrowingRequestState.Cancelled),
+            (availableRecords[3], BorrowingRequestState.Rejected),
+            (availableRecords[4], BorrowingRequestState.Rejected),
+            (availableRecords[5], BorrowingRequestState.Cancelled),
+            (availableRecords[6], BorrowingRequestState.Cancelled),
             (expiredRecord, BorrowingRequestState.Expired)
         };
 
@@ -493,10 +526,10 @@ public class AppDbContextInitialiser(
                          && lr.BookCopy.State == BookCopyState.Available
                          && (lr.State == LendingListRecordState.Available || lr.State == LendingListRecordState.Reserved))
             .OrderBy(lr => lr.CreatedAtUtc)
-            .Take(4)
+            .Take(12)
             .ToListAsync();
 
-        if (lendingRecords.Count < 4)
+        if (lendingRecords.Count < 12)
             return;
 
         var now = DateTimeOffset.UtcNow;
@@ -506,7 +539,15 @@ public class AppDbContextInitialiser(
             BorrowingTransactionState.Borrowed,
             BorrowingTransactionState.Returned,
             BorrowingTransactionState.Overdue,
-            BorrowingTransactionState.Lost
+            BorrowingTransactionState.Lost,
+            BorrowingTransactionState.Borrowed,
+            BorrowingTransactionState.Returned,
+            BorrowingTransactionState.Overdue,
+            BorrowingTransactionState.Lost,
+            BorrowingTransactionState.Returned,
+            BorrowingTransactionState.Returned,
+            BorrowingTransactionState.Borrowed,
+            BorrowingTransactionState.Overdue
         };
 
         var transactions = new List<BorrowingTransaction>();

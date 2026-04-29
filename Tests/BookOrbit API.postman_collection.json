@@ -2750,7 +2750,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/lendinglist?States=borrowed&Page=1&PageSize=3",
+              "raw": "{{baseurl}}/api/v1/lendinglist?States=available&Page=1&PageSize=3",
               "host": [
                 "{{baseurl}}"
               ],
@@ -2777,7 +2777,7 @@
                 },
                 {
                   "key": "States",
-                  "value": "borrowed"
+                  "value": "available"
                 },
                 {
                   "key": "Page",
@@ -2786,6 +2786,16 @@
                 {
                   "key": "PageSize",
                   "value": "3"
+                },
+                {
+                  "key": "BookId",
+                  "value": "d91b6325-0606-46ee-85d3-3e652739e9aa",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
                 }
               ]
             }

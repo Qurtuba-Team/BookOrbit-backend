@@ -13,7 +13,8 @@ public class RejectBorrowingRequestCommandHandler(
             {
                 BorrowingRequest = br,
                 BorrowingStudent = br.BorrowingStudent,
-                Cost = br.LendingRecord!.Cost.Value
+                Cost = br.LendingRecord!.Cost.Value,
+                LendingRecord = br.LendingRecord
             })
             .FirstOrDefaultAsync(br => br.BorrowingRequest.Id == command.BorrowingRequestId, ct);
 
@@ -43,14 +44,24 @@ public class RejectBorrowingRequestCommandHandler(
             return addingPointResult.Errors;
         }
 
-        var pointTransactionResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            borrowingRequestData.BorrowingStudent.Id,
-            null,
-            borrowingRequestData.Cost,
-            PointTransactionReason.Refund);
+        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsAvailable();
+        if (lendingRecordMarkingResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to mark lending record {LendingRecordId} as available. Errors: {Errors}",
+                borrowingRequestData.LendingRecord.Id,
+                lendingRecordMarkingResult.Errors);
+            return lendingRecordMarkingResult.Errors;
+        }
 
-        if(pointTransactionResult.IsFailure)
+        var pointTransactionResult = PointTransaction.Create(
+        Guid.NewGuid(),
+        borrowingRequestData.BorrowingStudent.Id,
+        null,
+        borrowingRequestData.Cost,
+        PointTransactionReason.Refund);
+
+        if (pointTransactionResult.IsFailure)
         {
             logger.LogWarning(
                 "Failed to create point transaction for student {StudentId}. Errors: {Errors}",

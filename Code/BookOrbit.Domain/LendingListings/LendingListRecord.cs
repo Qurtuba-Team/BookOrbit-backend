@@ -103,5 +103,7 @@ public class LendingListRecord : ExpirableEntity
         => UpdateState(LendingListRecordState.Borrowed);
     public Result<Updated> MarkAsExpired()
        => UpdateState(LendingListRecordState.Expired);
+    public Result<Updated> MarkAsAvailable()
+        => UpdateState(LendingListRecordState.Available);
 }
 
