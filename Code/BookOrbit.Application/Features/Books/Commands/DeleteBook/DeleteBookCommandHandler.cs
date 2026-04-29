@@ -29,9 +29,15 @@ public class DeleteBookCommandHandler(
             logger.LogWarning("Book {BookId} is used by book copies and cannot be deleted.", command.Id);
             return BookApplicationErrors.IsUsedByBookCopies;
         }
-        await context.Books
-            .Where(b => b.Id == command.Id)
-            .ExecuteDeleteAsync(ct); // Perform the delete operation directly in the database without loading the entity into memory
+
+        var book = await context.Books
+            .FirstOrDefaultAsync(b => b.Id == command.Id, ct);
+
+        if (book != null)
+        {
+            context.Books.Remove(book);
+            await context.SaveChangesAsync(ct);
+        }
 
         await cache.RemoveByTagAsync(BookCachingConstants.BookTag, ct);
 
