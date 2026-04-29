@@ -591,7 +591,7 @@ public class BookCopyTests
     }
 
     [Fact]
-    public void Available_BookCopy_CannotTransitionToBorrowed()
+    public void Available_BookCopy_CanTransitionToBorrowed()
     {
         // Arrange
         var bookCopy = CreateValidBookCopy();
@@ -600,8 +600,8 @@ public class BookCopyTests
         var result = bookCopy.MarkAsBorrowed();
 
         // Assert
-        result.IsFailure.Should().BeTrue();
-        bookCopy.State.Should().Be(BookCopyState.Available);
+        result.IsSuccess.Should().BeTrue();
+        bookCopy.State.Should().Be(BookCopyState.Borrowed);
     }
 
     [Fact]

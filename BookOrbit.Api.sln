@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Domain.UnitTests"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Application.UnitTests", "BookOrbit.Application.UnitTests\BookOrbit.Application.UnitTests.csproj", "{C8D91398-D915-47A6-A139-392AA2E83556}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Application.SubcutaneousTests", "BookOrbit.Application.SubcutaneousTests\BookOrbit.Application.SubcutaneousTests.csproj", "{8E030156-51C9-4C79-9F9A-7FE4BF283859}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{C8D91398-D915-47A6-A139-392AA2E83556}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8D91398-D915-47A6-A139-392AA2E83556}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8D91398-D915-47A6-A139-392AA2E83556}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,6 +80,7 @@ Global
 		{3727F951-BC22-23C7-6F7E-0E5DD74790A7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{B49D7E61-48B4-4B36-A12D-72C5AC47999F} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
 		{C8D91398-D915-47A6-A139-392AA2E83556} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
+		{8E030156-51C9-4C79-9F9A-7FE4BF283859} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A2294DF-C566-4A67-8093-ED2EC2DF4C48}

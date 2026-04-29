@@ -59,7 +59,7 @@ public class BookCopy : AuditableEntity
     {
         return State switch
         {
-            BookCopyState.Available => newState is  BookCopyState.UnAvailable,
+            BookCopyState.Available => newState is BookCopyState.UnAvailable or BookCopyState.Borrowed,
             BookCopyState.Borrowed => newState is BookCopyState.Available or BookCopyState.Lost,
             BookCopyState.Lost => newState is BookCopyState.Available or BookCopyState.UnAvailable,
             BookCopyState.UnAvailable => newState is BookCopyState.Available,
