@@ -31,9 +31,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2E980F40
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Domain.UnitTests", "Tests\BookOrbit.Domain.UnitTests\BookOrbit.Domain.UnitTests.csproj", "{B49D7E61-48B4-4B36-A12D-72C5AC47999F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Application.UnitTests", "BookOrbit.Application.UnitTests\BookOrbit.Application.UnitTests.csproj", "{C8D91398-D915-47A6-A139-392AA2E83556}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Application.UnitTests", "Tests\BookOrbit.Application.UnitTests\BookOrbit.Application.UnitTests.csproj", "{64EA5318-A512-9A2F-7BFE-94D9F7274498}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Application.SubcutaneousTests", "BookOrbit.Application.SubcutaneousTests\BookOrbit.Application.SubcutaneousTests.csproj", "{8E030156-51C9-4C79-9F9A-7FE4BF283859}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookOrbit.Application.SubcutaneousTests", "Tests\BookOrbit.Application.SubcutaneousTests\BookOrbit.Application.SubcutaneousTests.csproj", "{49F52F11-78D6-F997-6D92-CBC6D043C754}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,14 +61,14 @@ Global
 		{B49D7E61-48B4-4B36-A12D-72C5AC47999F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B49D7E61-48B4-4B36-A12D-72C5AC47999F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B49D7E61-48B4-4B36-A12D-72C5AC47999F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C8D91398-D915-47A6-A139-392AA2E83556}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C8D91398-D915-47A6-A139-392AA2E83556}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C8D91398-D915-47A6-A139-392AA2E83556}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C8D91398-D915-47A6-A139-392AA2E83556}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8E030156-51C9-4C79-9F9A-7FE4BF283859}.Release|Any CPU.Build.0 = Release|Any CPU
+		{64EA5318-A512-9A2F-7BFE-94D9F7274498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64EA5318-A512-9A2F-7BFE-94D9F7274498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64EA5318-A512-9A2F-7BFE-94D9F7274498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64EA5318-A512-9A2F-7BFE-94D9F7274498}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49F52F11-78D6-F997-6D92-CBC6D043C754}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49F52F11-78D6-F997-6D92-CBC6D043C754}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49F52F11-78D6-F997-6D92-CBC6D043C754}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49F52F11-78D6-F997-6D92-CBC6D043C754}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,8 +79,8 @@ Global
 		{9C6B713F-236E-4939-9F45-E67C0BB7FB2D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3727F951-BC22-23C7-6F7E-0E5DD74790A7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{B49D7E61-48B4-4B36-A12D-72C5AC47999F} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
-		{C8D91398-D915-47A6-A139-392AA2E83556} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
-		{8E030156-51C9-4C79-9F9A-7FE4BF283859} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
+		{64EA5318-A512-9A2F-7BFE-94D9F7274498} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
+		{49F52F11-78D6-F997-6D92-CBC6D043C754} = {2E980F40-F988-4FBE-97F3-DAF3BE28605D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4A2294DF-C566-4A67-8093-ED2EC2DF4C48}
