@@ -32,14 +32,25 @@ public class CreateBorrowingReviewCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var transactionExists = await context.BorrowingTransactions
+        var transactionState = await context.BorrowingTransactions
             .AsNoTracking()
-            .AnyAsync(bt => bt.Id == command.BorrowingTransactionId, ct);
+            .Select(bt => new
+            {
+                bt.Id,
+                bt.State
+            })
+            .FirstOrDefaultAsync(bt => bt.Id == command.BorrowingTransactionId, ct);
 
-        if (!transactionExists)
+        if (transactionState is null)
         {
             logger.LogWarning("Borrowing transaction not found. BorrowingTransactionId: {BorrowingTransactionId}", command.BorrowingTransactionId);
             return BorrowingTransactionApplicationErrors.NotFoundById;
+        }
+
+        if(transactionState is not BorrowingTransactionState.Returned)
+        {
+            logger.LogWarning("Borrowing transaction is not in a returned state. BorrowingTransactionId: {BorrowingTransactionId}", command.BorrowingTransactionId);
+            return BorrowingTransactionApplicationErrors.InvalidState;
         }
 
         var reviewAlreadyExists = await context.BorrowingReviews

@@ -12,4 +12,8 @@ public static class BorrowingTransactionApplicationErrors
         ClassName,
         "StudentNotBorrower",
         "Student is not the borrower for this transaction.");
+    public static readonly Error InvalidState = ApplicationCommonErrors.CustomValidation(
+        ClassName,
+        "InvalidState",
+        "The borrowing transaction is not in a valid state for this operation.");
 }
