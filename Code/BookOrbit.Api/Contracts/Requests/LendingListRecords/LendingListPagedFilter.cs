@@ -1,5 +1,4 @@
-﻿using BookOrbit.Domain.LendingListings.Enums;
-
+﻿
 namespace BookOrbit.Api.Contracts.Requests.LendingListRecords;
 public record LendingListPagedFilter : PagedFilterRequest
 {

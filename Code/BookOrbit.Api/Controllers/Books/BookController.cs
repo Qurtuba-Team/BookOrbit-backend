@@ -1,11 +1,7 @@
 ﻿
-using BookOrbit.Application.Common.Interfaces.ImageServices;
 
 namespace BookOrbit.Api.Controllers.Books;
 
-using BookOrbit.Application.Features.Books.Commands.StateMachien.MakeBookAvilable;
-using BookOrbit.Application.Features.Books.Commands.StateMachien.RejectBook;
-using BookOrbit.Infrastructure.Services.ImageServices;
 
 [Route("api/v{version:apiVersion}/books")]
 [ApiVersion("1.0")]

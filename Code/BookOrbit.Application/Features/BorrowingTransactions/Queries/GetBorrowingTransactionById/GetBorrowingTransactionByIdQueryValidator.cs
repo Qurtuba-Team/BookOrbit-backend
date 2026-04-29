@@ -1,5 +1,4 @@
-using BookOrbit.Application.Features.BorrowingTransactions;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingTransactions.Queries.GetBorrowingTransactionById;
 public class GetBorrowingTransactionByIdQueryValidator : AbstractValidator<GetBorrowingTransactionByIdQuery>
 {

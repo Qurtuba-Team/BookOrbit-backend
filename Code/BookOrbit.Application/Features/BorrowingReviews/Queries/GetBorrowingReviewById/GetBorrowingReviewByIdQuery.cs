@@ -1,5 +1,4 @@
-using BookOrbit.Application.Features.BorrowingReviews.Dtos;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingReviews.Queries.GetBorrowingReviewById;
 
 public record GetBorrowingReviewByIdQuery(Guid BorrowingReviewId)

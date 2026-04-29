@@ -1,9 +1,4 @@
-using BookOrbit.Api.Contracts.Requests.BorrowingReviews;
-using BookOrbit.Application.Features.BorrowingReviews.Commands.CreateBorrowingReview;
-using BookOrbit.Application.Features.BorrowingReviews.Dtos;
-using BookOrbit.Application.Features.BorrowingReviews.Queries.GetBorrowingReviewById;
-using BookOrbit.Application.Features.BorrowingReviews.Queries.GetBorrowingReviews;
-
+﻿
 namespace BookOrbit.Api.Controllers.BorrowingReviews;
 
 [Route("api/v{version:apiVersion}")]

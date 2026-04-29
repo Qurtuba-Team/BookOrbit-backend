@@ -1,5 +1,4 @@
-﻿using BookOrbit.Application.Features.Students.Queries.GetStudentPublicProfileById;
-
+﻿
 namespace BookOrbit.Api.Controllers.Students;
 
 [Route("api/v{version:apiVersion}/students")]

@@ -1,5 +1,4 @@
-﻿using BookOrbit.Domain.Identity;
-
+﻿
 namespace BookOrbit.Application.Features.Identity;
 static public class IdentityGeneralValidator
 {

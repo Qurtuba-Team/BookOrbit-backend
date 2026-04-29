@@ -1,5 +1,4 @@
-using BookOrbit.Domain.PointTransactions.Enums;
-
+﻿
 namespace BookOrbit.Application.Features.PointTransactions.Dtos;
 
 public record PointTransactionListItemDto

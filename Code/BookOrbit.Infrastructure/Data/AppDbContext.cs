@@ -1,12 +1,4 @@
-﻿using BookOrbit.Domain.BookCopies;
-using BookOrbit.Domain.BorrowingRequests;
-using BookOrbit.Domain.BorrowingTransactions;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
-using BookOrbit.Domain.LendingListings;
-using BookOrbit.Domain.PointTransactions;
-using MediatR;
-
+﻿
 namespace BookOrbit.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : IdentityDbContext<AppUser>(options), IAppDbContext
 {

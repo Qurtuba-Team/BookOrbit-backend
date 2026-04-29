@@ -1,7 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
-using BookOrbit.Domain.PointTransactions;
-
+﻿
 namespace BookOrbit.Application.Common.Interfaces;
 
 public interface IAppDbContext

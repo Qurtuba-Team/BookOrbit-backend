@@ -1,5 +1,4 @@
-using BookOrbit.Domain.BorrowingRequests.Enums;
-
+﻿
 namespace BookOrbit.Api.Contracts.Requests.BorrowingRequests;
 public record BorrowingRequestPagedFilterRequest : PagedFilterRequest
 {

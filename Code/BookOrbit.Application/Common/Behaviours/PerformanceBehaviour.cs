@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-
+﻿
 namespace BookOrbit.Application.Common.Behaviours;
 
 public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>

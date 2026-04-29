@@ -1,20 +1,4 @@
-﻿using BookOrbit.Domain.BookCopies.Enums;
-using BookOrbit.Domain.Books.Enums;
-using BookOrbit.Domain.Books.ValueObjects;
-using BookOrbit.Domain.BorrowingRequests;
-using BookOrbit.Domain.BorrowingRequests.Enums;
-using BookOrbit.Domain.BorrowingTransactions;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
-using BookOrbit.Domain.BorrowingTransactions.Enums;
-using BookOrbit.Domain.LendingListings;
-using BookOrbit.Domain.LendingListings.Enums;
-using BookOrbit.Domain.PointTransactions;
-using BookOrbit.Domain.PointTransactions.Enums;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-using BookOrbit.Domain.Students.Enums;
-
+﻿
 namespace BookOrbit.Infrastructure.Data;
 
 
@@ -215,21 +199,21 @@ public class AppDbContextInitialiser(
 
         var booksToSeed = new (string Title, string ISBN, string Publisher, BookCategory Category, string Author, string CoverFile)[]
         {
-            ("الكود النظيف", "9780132350884", "Prentice Hall", BookCategory.Nonfiction | BookCategory.Business, "روبرت مارتن", $"{Guid.NewGuid()}.png"),
-            ("The Pragmatic Programmer", "9780201616224", "Addison Wesley", BookCategory.Nonfiction | BookCategory.Business, "أندرو هنت", $"{Guid.NewGuid()}.png"),
-            ("Design Patterns", "9780201633610", "Addison Wesley", BookCategory.Nonfiction | BookCategory.Science, "إريك غاما", $"{Guid.NewGuid()}.png"),
-            ("Refactoring", "9780201485677", "Addison Wesley", BookCategory.Nonfiction | BookCategory.Science, "مارتن فلور", $"{Guid.NewGuid()}.png"),
-            ("The Hobbit", "9780547928227", "Houghton Mifflin", BookCategory.Fantasy | BookCategory.Fiction, "ج ر ر تولكين", $"{Guid.NewGuid()}.png"),
-            ("Dune", "9780441013593", "Ace Books", BookCategory.ScienceFiction | BookCategory.Fiction, "فرانك هربرت", $"{Guid.NewGuid()}.png"),
-            ("The Shining", "9780307743657", "Anchor", BookCategory.Horror | BookCategory.Fiction, "ستيفن كينغ", $"{Guid.NewGuid()}.png"),
-            ("Gone Girl", "9780307588371", "Crown", BookCategory.Thriller | BookCategory.Mystery, "جيليان فلين", $"{Guid.NewGuid()}.png"),
-            ("Pride And Prejudice", "9780141439518", "Penguin Classics", BookCategory.Romance | BookCategory.Fiction, "Jane Austen", $"{Guid.NewGuid()}.png"),
-            ("Sapiens", "9780062316097", "Harper", BookCategory.Nonfiction | BookCategory.Biography, "Yuval Noah", $"{Guid.NewGuid()}.png"),
-            ("العادات الذرية", "9780735211292", "Avery", BookCategory.SelfHelp | BookCategory.Psychology, "James Clear", $"{Guid.NewGuid()}.png"),
-            ("The Alchemist", "9780062315007", "HarperOne", BookCategory.Fiction | BookCategory.Philosophy, "Paulo Coelho", $"{Guid.NewGuid()}.png"),
-            ("The Martian", "9780804139021", "Crown", BookCategory.ScienceFiction | BookCategory.Fiction, "Andy Weir", $"{Guid.NewGuid()}.png"),
-            ("هاري بوتر", "9780439554930", "Scholastic", BookCategory.Fantasy | BookCategory.ChildrenBooks, "J K Rowling", $"{Guid.NewGuid()}.png"),
-            ("The Da Vinci Code", "9780307474278", "Anchor", BookCategory.Mystery | BookCategory.Thriller, "Dan Brown", $"{Guid.NewGuid()}.png")
+            ("Sapiens", "9780062316097", "Harper", BookCategory.Nonfiction | BookCategory.Biography, "Yuval Noah", $"book1.jpg"),
+            ("Design Patterns", "9780201633610", "Addison Wesley", BookCategory.Nonfiction | BookCategory.Science, "إريك غاما", $"book2.jpg"),
+            ("The Martian", "9780804139021", "Crown", BookCategory.ScienceFiction | BookCategory.Fiction, "Andy Weir", $"book3.jpg"),
+            ("هاري بوتر", "9780439554930", "Scholastic", BookCategory.Fantasy | BookCategory.ChildrenBooks, "J K Rowling", $"book4.jpg"),
+            ("The Da Vinci Code", "9780307474278", "Anchor", BookCategory.Mystery | BookCategory.Thriller, "Dan Brown", $"book5.jpg"),
+            ("Refactoring", "9780201485677", "Addison Wesley", BookCategory.Nonfiction | BookCategory.Science, "مارتن فلور", $"book6.jpg"),
+            ("The Hobbit", "9780547928227", "Houghton Mifflin", BookCategory.Fantasy | BookCategory.Fiction, "ج ر ر تولكين", $"book7.jpg"),
+            ("Dune", "9780441013593", "Ace Books", BookCategory.ScienceFiction | BookCategory.Fiction, "فرانك هربرت", $"book8.jpg"),
+            ("The Shining", "9780307743657", "Anchor", BookCategory.Horror | BookCategory.Fiction, "ستيفن كينغ", $"book9.jpg"),
+            ("Gone Girl", "9780307588371", "Crown", BookCategory.Thriller | BookCategory.Mystery, "جيليان فلين", $"book10.jpg"),
+            ("Pride And Prejudice", "9780141439518", "Penguin Classics", BookCategory.Romance | BookCategory.Fiction, "Jane Austen", $"book11.jpg"),
+            ("العادات الذرية", "9780735211292", "Avery", BookCategory.SelfHelp | BookCategory.Psychology, "James Clear", $"book12.jpg"),
+            ("The Alchemist", "9780062315007", "HarperOne", BookCategory.Fiction | BookCategory.Philosophy, "Paulo Coelho", $"book13.jpg"),
+            ("الكود النظيف", "9780132350884", "Prentice Hall", BookCategory.Nonfiction | BookCategory.Business, "روبرت مارتن", $"book14.jpg"),
+            ("The Pragmatic Programmer", "9780201616224", "Addison Wesley", BookCategory.Nonfiction | BookCategory.Business, "أندرو هنت", $"book15.jpg"),
         };
 
 
@@ -674,8 +658,8 @@ public class AppDbContextInitialiser(
         if (transactions.Count == 0)
             return;
 
-        var goodRating = StartsRating.Create(5);
-        var badRating = StartsRating.Create(2);
+        var goodRating = StarsRating.Create(5);
+        var badRating = StarsRating.Create(2);
 
         if (goodRating.IsFailure || badRating.IsFailure)
             return;
@@ -942,7 +926,7 @@ public class AppDbContextInitialiser(
 
         var nameResult = StudentName.Create(user.UserName!);
         var emailResult = UniversityMail.Create(user.Email!);
-        string personalPhoto =$"{Guid.NewGuid()}.png";
+        string personalPhoto =$"student{index}.jpg";
         var telegramUserIdResult = TelegramUserId.Create($"student{index}");
         var phoneNumberResult = PhoneNumber.Create($"0109690981{index}");
 

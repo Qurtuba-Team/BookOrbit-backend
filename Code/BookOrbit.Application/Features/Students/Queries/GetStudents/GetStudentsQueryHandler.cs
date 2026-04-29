@@ -1,6 +1,4 @@
 ﻿
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
 
 namespace BookOrbit.Application.Features.Students.Queries.GetStudents;
 

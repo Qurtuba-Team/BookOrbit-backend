@@ -1,5 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingRequests.DomainEvents;
-
+﻿
 namespace BookOrbit.Application.Features.BorrowingRequests.EventHandlers;
 public class BorrowingRequestAcceptedEventHandler(
     IEmailService emailService,

@@ -1,11 +1,11 @@
-﻿namespace BookOrbit.Application.Features.LendingListings.Commands.CreateLendingListRecord;
+namespace BookOrbit.Application.Features.LendingListings.Commands.CreateLendingListRecord;
 public class CreateLendingListRecordCommandValidator : AbstractValidator<CreateLendingListRecordCommand>
 {
     public CreateLendingListRecordCommandValidator()
     {
-        RuleFor(x => x.BookCopyId)
+        RuleFor(x=>x.BookCopyId)
             .Cascade(CascadeMode.Stop)
-           .BookCopyIdRules();
+            .BookCopyIdRules();
 
         RuleFor(x => x.BorrowingDurationInDays)
             .Cascade(CascadeMode.Stop)

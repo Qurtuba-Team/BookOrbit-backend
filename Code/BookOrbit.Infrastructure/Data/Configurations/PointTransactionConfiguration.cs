@@ -1,5 +1,4 @@
-using BookOrbit.Domain.PointTransactions;
-
+﻿
 namespace BookOrbit.Infrastructure.Data.Configurations;
 
 public class PointTransactionConfiguration : IEntityTypeConfiguration<PointTransaction>

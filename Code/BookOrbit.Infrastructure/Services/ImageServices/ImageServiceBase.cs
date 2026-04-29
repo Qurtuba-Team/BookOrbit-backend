@@ -1,5 +1,4 @@
-﻿using BookOrbit.Application.Common.Interfaces.ImageServices;
-
+﻿
 namespace BookOrbit.Infrastructure.Services.ImageServices
 {
     public abstract class ImageServiceBase(

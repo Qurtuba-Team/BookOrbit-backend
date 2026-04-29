@@ -1,17 +1,17 @@
-namespace BookOrbit.Domain.UnitTests.BorrowingTransactions.BorrowingReviews.ValueObjects;
+﻿namespace BookOrbit.Domain.UnitTests.BorrowingTransactions.BorrowingReviews.ValueObjects;
 
 using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
 using FluentAssertions;
 using Xunit;
 
-public class StartsRatingTests
+public class StarsRatingTests
 {
     [Fact]
     public void Create_WithNullRating_ReturnsRatingRequiredError()
     {
         // Act
-        var result = StartsRating.Create(null);
+        var result = StarsRating.Create(null);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -19,12 +19,12 @@ public class StartsRatingTests
     }
 
     [Theory]
-    [InlineData(StartsRating.MinRating)]
-    [InlineData(StartsRating.MaxRating)]
+    [InlineData(StarsRating.MinRating)]
+    [InlineData(StarsRating.MaxRating)]
     public void Create_WithValidRating_ReturnsSuccess(int rating)
     {
         // Act
-        var result = StartsRating.Create(rating);
+        var result = StarsRating.Create(rating);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -37,7 +37,7 @@ public class StartsRatingTests
     public void Create_WithInvalidRating_ReturnsInvalidRatingError(int rating)
     {
         // Act
-        var result = StartsRating.Create(rating);
+        var result = StarsRating.Create(rating);
 
         // Assert
         result.IsFailure.Should().BeTrue();

@@ -1,5 +1,4 @@
-using BookOrbit.Domain.LendingListings;
-
+﻿
 namespace BookOrbit.Infrastructure.Data.Configurations;
 public class LendingListRecordConfiguration : IEntityTypeConfiguration<LendingListRecord>
 {

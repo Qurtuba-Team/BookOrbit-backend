@@ -1,15 +1,14 @@
-﻿namespace BookOrbit.Domain.Books;
+namespace BookOrbit.Domain.Books;
 public class Book : AuditableEntity
 {
-    public BookTitle Title { get; private set; }
-    public ISBN ISBN { get; }
-    public BookPublisher Publisher { get; }
+    public BookTitle Title { get; private set; } = null!;
+    public ISBN ISBN { get; } = null!;
+    public BookPublisher Publisher { get; } = null!;
     public BookCategory Category { get; }
-    public BookAuthor Author { get; }
-    public string CoverImageFileName { get; private set; }
+    public BookAuthor Author { get; } = null!;
+    public string CoverImageFileName { get; private set; } = null!;
     public BookStatus Status { get; private set; }
 
-#pragma warning disable CS8618
     private Book() { }
 
     private Book(

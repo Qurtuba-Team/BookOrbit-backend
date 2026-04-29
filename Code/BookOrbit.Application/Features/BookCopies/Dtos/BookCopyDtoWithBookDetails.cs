@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Application.Features.BookCopies.Dtos;
+namespace BookOrbit.Application.Features.BookCopies.Dtos;
 public record BookCopyDtoWithBookDetails
 {
     public Guid Id { get; set; } = Guid.Empty;
@@ -15,7 +15,6 @@ public record BookCopyDtoWithBookDetails
     public bool IsListed { get; set; }
     public string BookCoverImageUrl { get; set; } = string.Empty;
 
-#pragma warning disable CS8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
     [JsonConstructor]
     private BookCopyDtoWithBookDetails() { }

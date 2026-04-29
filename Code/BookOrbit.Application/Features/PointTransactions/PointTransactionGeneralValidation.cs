@@ -1,5 +1,4 @@
-using BookOrbit.Domain.PointTransactions;
-
+﻿
 namespace BookOrbit.Application.Features.PointTransactions;
 
 static public class PointTransactionGeneralValidation
