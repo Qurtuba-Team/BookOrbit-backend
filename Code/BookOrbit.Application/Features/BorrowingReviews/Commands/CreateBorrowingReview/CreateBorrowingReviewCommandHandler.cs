@@ -47,7 +47,7 @@ public class CreateBorrowingReviewCommandHandler(
             return BorrowingTransactionApplicationErrors.NotFoundById;
         }
 
-        if(transactionState is not BorrowingTransactionState.Returned)
+        if(transactionState.State is not BorrowingTransactionState.Returned)
         {
             logger.LogWarning("Borrowing transaction is not in a returned state. BorrowingTransactionId: {BorrowingTransactionId}", command.BorrowingTransactionId);
             return BorrowingTransactionApplicationErrors.InvalidState;
