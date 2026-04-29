@@ -1,57 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Borrow Request Received</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>New Borrow Request – BookOrbit</title>
 </head>
-<body style="margin:0; padding:0; background-color:#f5f7fb; font-family:Arial, Helvetica, sans-serif; color:#1f2a37;">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color:#f5f7fb; padding:32px 12px;">
+
+<body style="margin:0;padding:0;background-color:#0d1117;font-family:Arial,sans-serif;color:#e2e8f0;">
+
+<table role="presentation" width="100%" cellspacing="0" cellpadding="0"
+       style="background-color:#0d1117;padding:48px 16px;">
+  <tr>
+    <td align="center">
+
+      <table role="presentation" width="560" cellspacing="0" cellpadding="0"
+             style="background-color:#111827;border-radius:20px;overflow:hidden;
+                    border:1px solid #1f2d3d;">
+
+        <!-- Top bar -->
         <tr>
-            <td align="center">
-                <table role="presentation" width="600" cellspacing="0" cellpadding="0" style="background-color:#ffffff; border-radius:16px; overflow:hidden; box-shadow:0 8px 24px rgba(31,42,55,0.08);">
-
-                    <!-- Header -->
-                    <tr>
-                        <td style="background:linear-gradient(90deg,#4f46e5,#6366f1); padding:28px;">
-                            <h1 style="margin:0; color:#ffffff; font-size:24px;">
-                                New borrowing request
-                            </h1>
-                        </td>
-                    </tr>
-
-                    <!-- Content -->
-                    <tr>
-                        <td style="padding:28px;">
-                            <p style="margin:0 0 16px 0; font-size:16px; line-height:1.6;">
-                                Hi there,
-                            </p>
-
-                            <p style="margin:0 0 16px 0; font-size:16px; line-height:1.6;">
-                                Someone has requested to borrow your book:
-                            </p>
-
-                            <!-- Book Title -->
-                            <div style="background-color:#eef2ff; border-left:4px solid #4f46e5; padding:16px; border-radius:8px; font-weight:600; font-size:16px;">
-                                {{bookTitle}}
-                            </div>
-
-                            <p style="margin:16px 0 0 0; font-size:16px; line-height:1.6;">
-                                Please review this request and decide whether to accept or decline it from your dashboard.
-                            </p>
-                        </td>
-                    </tr>
-
-                    <!-- Footer -->
-                    <tr>
-                        <td style="padding:20px 28px; background-color:#f9fafb; font-size:12px; color:#6b7280; text-align:center;">
-                            If this wasn’t expected, you can safely ignore this email.
-                        </td>
-                    </tr>
-
-                </table>
-            </td>
+          <td style="background:#6366f1;height:4px;"></td>
         </tr>
-    </table>
+
+        <!-- Header -->
+        <tr>
+          <td style="padding:40px 48px 28px 48px;">
+            <table role="presentation">
+              <tr>
+                <td style="background:#4f46e5;border-radius:10px;padding:10px;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"
+                          stroke="#ffffff" stroke-width="1.8"/>
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+                          stroke="#ffffff" stroke-width="1.8"/>
+                  </svg>
+                </td>
+
+                <td style="padding-left:12px;">
+                  <span style="font-size:22px;font-weight:600;color:#818cf8;">
+                    BookOrbit
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Divider -->
+        <tr>
+          <td style="padding:0 48px;">
+            <table width="100%">
+              <tr><td style="height:1px;background:#1f2d3d;"></td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+          <td style="padding:40px 48px 32px 48px;">
+
+            <!-- Icon -->
+            <table role="presentation" width="64" height="64"
+                   style="margin-bottom:28px;border-radius:50%;background:#1e1b4b;border:1px solid #4338ca;">
+              <tr>
+                <td align="center" valign="middle">
+                  <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 5v14M5 12h14"
+                          stroke="#818cf8" stroke-width="1.8"
+                          stroke-linecap="round"/>
+                  </svg>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Heading -->
+            <h1 style="margin:0 0 12px 0;font-size:26px;color:#eef2ff;">
+              Someone wants to borrow your book
+            </h1>
+
+            <!-- Text -->
+            <p style="margin:0 0 20px 0;font-size:15px;color:#94a3b8;">
+              Hi there,
+            </p>
+
+            <p style="margin:0 0 24px 0;font-size:15px;color:#94a3b8;">
+              You have received a new borrowing request for one of your books.
+            </p>
+
+            <!-- Book -->
+            <table width="100%" style="margin-bottom:24px;">
+              <tr>
+                <td style="background:#1e1b4b;border:1px solid #312e81;border-radius:10px;padding:16px;">
+                  <p style="margin:0;font-size:16px;font-weight:600;color:#e0e7ff;">
+                    {{bookTitle}}
+                  </p>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Updated text -->
+            <p style="margin:0;font-size:15px;color:#94a3b8;">
+              Please review this request and decide whether to accept or decline it from your account.
+            </p>
+
+          </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+          <td style="padding:24px 48px 36px 48px;">
+            <p style="margin:0 0 12px 0;font-size:12px;color:#4b5563;">
+              If you weren’t expecting this request, you can safely ignore this email.
+            </p>
+
+            <p style="margin:0;font-size:11px;color:#374151;">
+              © 2026 BookOrbit · Privacy · Unsubscribe
+            </p>
+          </td>
+        </tr>
+
+        <!-- Bottom bar -->
+        <tr>
+          <td style="background:#6366f1;height:3px;"></td>
+        </tr>
+
+      </table>
+
+    </td>
+  </tr>
+</table>
+
 </body>
 </html>
