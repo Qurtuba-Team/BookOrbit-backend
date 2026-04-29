@@ -1,4 +1,4 @@
-﻿
+
 namespace BookOrbit.Infrastructure.Data.Configurations;
 
 public class BorrowingReviewConfiguration : IEntityTypeConfiguration<BorrowingReview>

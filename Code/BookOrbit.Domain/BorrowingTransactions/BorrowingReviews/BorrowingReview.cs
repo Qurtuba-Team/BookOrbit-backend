@@ -8,8 +8,9 @@ public class BorrowingReview : AuditableEntity
     public Guid BorrowingTransactionId { get; }
 
     public string? Description { get; }
-    public StarsRating Rating { get; } = null!;
+    public StarsRating Rating { get; }
 
+#pragma warning disable CS8618 // Non-nullable property must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private BorrowingReview() { }
 
     private BorrowingReview(
