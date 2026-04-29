@@ -1,6 +1,7 @@
 ﻿
 
 
+
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
@@ -10,7 +11,9 @@ static public class DependencyInjection
             .AddDbContext(configuration)
             .AddIdentity()
             .AddInfrastructureServices()
-            .AddPolicies();
+            .AddPolicies()
+            .AddDbContext();
+
     }
     static private IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
@@ -36,6 +39,14 @@ static public class DependencyInjection
 
         return services;
     }
+
+    static private IServiceCollection AddDbContext(this IServiceCollection services)
+    {
+        services.AddHostedService<ExpirationEntitiesMarkupService>();
+
+        return services;
+    }
+
     static private IServiceCollection AddIdentity(this IServiceCollection services)
     {
         services
