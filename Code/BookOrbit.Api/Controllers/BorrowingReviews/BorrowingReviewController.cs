@@ -46,7 +46,7 @@ public class BorrowingReviewController(
     }
 
     [HttpGet("borrowingreviews/{borrowingReviewId:guid}", Name = "GetBorrowingReviewById")]
-    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(BorrowingReviewDto), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -71,7 +71,7 @@ public class BorrowingReviewController(
     }
 
     [HttpGet("borrowingreviews")]
-    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(PaginatedList<BorrowingReviewListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
