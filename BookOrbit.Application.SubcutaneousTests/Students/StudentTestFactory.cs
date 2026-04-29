@@ -7,6 +7,10 @@ using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Books.ValueObjects;
 using BookOrbit.Domain.BorrowingRequests;
 using BookOrbit.Domain.BorrowingTransactions;
+using BookOrbit.Domain.BorrowingTransactions.Enums;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 using BookOrbit.Domain.Common.ValueObjects;
 using BookOrbit.Domain.LendingListings;
 using BookOrbit.Domain.PointTransactions.ValueObjects;
@@ -141,6 +145,32 @@ internal static class StudentTestFactory
             now).Value;
     }
 
+    public static BorrowingTransactionEvent CreateBorrowingTransactionEvent(
+        Guid borrowingTransactionId,
+        BorrowingTransactionState state)
+    {
+        return BorrowingTransactionEvent.Create(
+            Guid.NewGuid(),
+            borrowingTransactionId,
+            state).Value;
+    }
+
+    public static BorrowingReview CreateBorrowingReview(
+        Guid reviewerStudentId,
+        Guid reviewedStudentId,
+        Guid borrowingTransactionId,
+        int rating = 5,
+        string? description = "Helpful review")
+    {
+        return BorrowingReview.Create(
+            Guid.NewGuid(),
+            reviewerStudentId,
+            reviewedStudentId,
+            borrowingTransactionId,
+            description,
+            StartsRating.Create(rating).Value).Value;
+    }
+
     public static T SetCreatedAt<T>(T entity, DateTimeOffset createdAtUtc) where T : class
     {
         var property = typeof(T).GetProperty("CreatedAtUtc", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
@@ -153,6 +183,23 @@ internal static class StudentTestFactory
         {
             var field = typeof(T).GetField("<CreatedAtUtc>k__BackingField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             field?.SetValue(entity, createdAtUtc);
+        }
+
+        return entity;
+    }
+
+    public static T SetLastModifiedAt<T>(T entity, DateTimeOffset lastModifiedUtc) where T : class
+    {
+        var property = typeof(T).GetProperty("LastModifiedUtc", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+
+        if (property != null && property.CanWrite)
+        {
+            property.SetValue(entity, lastModifiedUtc);
+        }
+        else
+        {
+            var field = typeof(T).GetField("<LastModifiedUtc>k__BackingField", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            field?.SetValue(entity, lastModifiedUtc);
         }
 
         return entity;
