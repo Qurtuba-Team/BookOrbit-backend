@@ -6,6 +6,7 @@ using BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien
 using BookOrbit.Application.SubcutaneousTests.Students;
 using BookOrbit.Domain.BookCopies.Enums;
 using BookOrbit.Domain.BorrowingRequests.Enums;
+using BookOrbit.Domain.BorrowingTransactions;
 using BookOrbit.Domain.BorrowingTransactions.Enums;
 using BookOrbit.Domain.LendingListings.Enums;
 using FluentAssertions;
@@ -161,5 +162,137 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         bookCopy.State.Should().Be(BookCopyState.Lost);
         context.BorrowingTransactionEvents.Should().HaveCount(1);
         context.BorrowingTransactionEvents.Single().State.Should().Be(BorrowingTransactionState.Lost);
+    }
+
+    [Fact]
+    public async Task CreateBorrowingTransactionCommand_ShouldReturnError_WhenBorrowingRequestNotFound()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var handler = new CreateBorrowingTransactionCommandHandler(
+            NullLogger<CreateBorrowingTransactionCommandHandler>.Instance,
+            context,
+            TimeProvider.System,
+            cache);
+
+        // Act
+        var result = await handler.Handle(new CreateBorrowingTransactionCommand(Guid.NewGuid()), CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(e => e.Code == "BorrowingRequest.BorrowingRequest.NotFound");
+    }
+
+    [Fact]
+    public async Task CreateBorrowingTransactionCommand_ShouldReturnError_WhenBorrowingRequestNotAccepted()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var now = DateTimeOffset.UtcNow;
+
+        var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-fail");
+        var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-fail");
+        var book = StudentTestFactory.CreateBook(title: "Failed Book");
+        var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
+        var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
+        var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
+
+        // Borrowing request is still Pending, not Accepted
+        StudentTestFactory.SetNavigation(borrowingRequest, "LendingRecord", lendingRecord);
+        StudentTestFactory.SetNavigation(lendingRecord, "BookCopy", bookCopy);
+
+        context.Students.AddRange(lender, borrower);
+        context.Books.Add(book);
+        context.BookCopies.Add(bookCopy);
+        context.LendingListRecords.Add(lendingRecord);
+        context.BorrowingRequests.Add(borrowingRequest);
+        await context.SaveChangesAsync();
+
+        var handler = new CreateBorrowingTransactionCommandHandler(
+            NullLogger<CreateBorrowingTransactionCommandHandler>.Instance,
+            context,
+            TimeProvider.System,
+            cache);
+
+        // Act
+        var result = await handler.Handle(new CreateBorrowingTransactionCommand(borrowingRequest.Id), CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(e => e.Code == "BorrowingRequest.BorrowingRequestNotAccepted");
+    }
+
+    [Fact]
+    public async Task MarkAsReturnedBorrowingTransactionCommand_ShouldMarkAsOverdue_WhenReturnedAfterExpectedDate()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var now = DateTimeOffset.UtcNow;
+        var expectedReturnDate = now.AddDays(-1);
+
+        var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-overdue");
+        var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-overdue");
+        var book = StudentTestFactory.CreateBook(title: "Overdue Book");
+        var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
+        
+        // Manual creation to control ExpectedReturnDate exactly
+        var transactionResult = BorrowingTransaction.Create(
+            Guid.NewGuid(),
+            Guid.NewGuid(), // borrowingRequestId
+            lender.Id,
+            borrower.Id,
+            bookCopy.Id,
+            expectedReturnDate,
+            expectedReturnDate.AddDays(-5));
+            
+        var transaction = transactionResult.Value;
+
+        bookCopy.MarkAsBorrowed();
+        StudentTestFactory.SetCreatedAt(transaction, expectedReturnDate.AddDays(-5));
+        StudentTestFactory.SetNavigation(transaction, "BookCopy", bookCopy);
+
+        context.Students.AddRange(lender, borrower);
+        context.Books.Add(book);
+        context.BookCopies.Add(bookCopy);
+        context.BorrowingTransactions.Add(transaction);
+        await context.SaveChangesAsync();
+
+        var handler = new MarkAsReturnedBorrowingTransactionCommandHandler(
+            context,
+            TimeProvider.System,
+            NullLogger<MarkAsReturnedBorrowingTransactionCommandHandler>.Instance,
+            cache);
+
+        // Act
+        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id), CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        transaction.State.Should().Be(BorrowingTransactionState.Overdue);
+        transaction.ActualReturnDate.Should().NotBeNull();
+        bookCopy.State.Should().Be(BookCopyState.Available);
+    }
+
+    [Fact]
+    public async Task MarkAsReturnedBorrowingTransactionCommand_ShouldReturnError_WhenTransactionNotFound()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var handler = new MarkAsReturnedBorrowingTransactionCommandHandler(
+            context,
+            TimeProvider.System,
+            NullLogger<MarkAsReturnedBorrowingTransactionCommandHandler>.Instance,
+            cache);
+
+        // Act
+        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(Guid.NewGuid()), CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(e => e.Code == "BorrowingTransaction.BorrowingTransaction.NotFound");
     }
 }

@@ -142,4 +142,65 @@ public class BorrowingTransactionQueriesSubcutaneousTests
         items[0].BorrowerStudentName.Should().Be("Target Borrower");
         items[1].Id.Should().Be(olderTransaction.Id);
     }
+
+    [Fact]
+    public async Task GetBorrowingTransactionByIdQuery_ShouldReturnError_WhenNotFound()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var handler = new GetBorrowingTransactionByIdQueryHandler(
+            NullLogger<GetBorrowingTransactionByIdQueryHandler>.Instance,
+            context);
+
+        // Act
+        var result = await handler.Handle(new GetBorrowingTransactionByIdQuery(Guid.NewGuid()), CancellationToken.None);
+
+        // Assert
+        result.IsFailure.Should().BeTrue();
+        result.Errors.Should().Contain(e => e.Code == "BorrowingTransaction.BorrowingTransaction.NotFound");
+    }
+
+    [Fact]
+    public async Task GetBorrowingTransactionsQuery_ShouldFilterByLenderStudentId()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var now = DateTimeOffset.UtcNow;
+
+        var lender = StudentTestFactory.CreateStudent(name: "Lender One", userId: "lender-filter-1");
+        var otherLender = StudentTestFactory.CreateStudent(name: "Lender Two", userId: "lender-filter-2");
+        var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-filter");
+
+        var book = StudentTestFactory.CreateBook(title: "Filter Book");
+        var bookCopy1 = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
+        var bookCopy2 = StudentTestFactory.CreateBookCopy(book, otherLender.Id, BookCopyCondition.New);
+
+        var transaction1 = StudentTestFactory.CreateBorrowingTransaction(Guid.NewGuid(), lender.Id, borrower.Id, bookCopy1.Id, now.AddDays(7));
+        var transaction2 = StudentTestFactory.CreateBorrowingTransaction(Guid.NewGuid(), otherLender.Id, borrower.Id, bookCopy2.Id, now.AddDays(7));
+
+        StudentTestFactory.SetNavigation(bookCopy1, "Book", book);
+        StudentTestFactory.SetNavigation(bookCopy2, "Book", book);
+        StudentTestFactory.SetNavigation(transaction1, "LenderStudent", lender);
+        StudentTestFactory.SetNavigation(transaction1, "BorrowerStudent", borrower);
+        StudentTestFactory.SetNavigation(transaction1, "BookCopy", bookCopy1);
+        StudentTestFactory.SetNavigation(transaction2, "LenderStudent", otherLender);
+        StudentTestFactory.SetNavigation(transaction2, "BorrowerStudent", borrower);
+        StudentTestFactory.SetNavigation(transaction2, "BookCopy", bookCopy2);
+
+        context.Students.AddRange(lender, otherLender, borrower);
+        context.Books.Add(book);
+        context.BookCopies.AddRange(bookCopy1, bookCopy2);
+        context.BorrowingTransactions.AddRange(transaction1, transaction2);
+        await context.SaveChangesAsync();
+
+        var handler = new GetBorrowingTransactionsQueryHandler(context);
+
+        // Act
+        var result = await handler.Handle(new GetBorrowingTransactionsQuery(Page: 1, PageSize: 10, SearchTerm: null, LenderStudentId: lender.Id), CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        result.Value.Items.Should().HaveCount(1);
+        result.Value.Items!.Single().LenderStudentId.Should().Be(lender.Id);
+    }
 }
