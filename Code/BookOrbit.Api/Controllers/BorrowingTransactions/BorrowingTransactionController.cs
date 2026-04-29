@@ -4,7 +4,8 @@
 [ApiVersion("1.0")]
 [Authorize]
 public class BorrowingTransactionController(
-    ISender sender) : ApiController
+    ISender sender,
+    ICurrentUser currentUser) : ApiController
 {
     [HttpGet("{borrowingTransactionId:guid}", Name = "GetBorrowingTransactionById")]
     [Authorize(Policy = PoliciesNames.BorrowingTransactionRelatedStudentPolicy)]
@@ -63,6 +64,90 @@ public class BorrowingTransactionController(
            Ok,
            e => Problem(e, HttpContext));
     }
+
+    [HttpGet("me/in")]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [ProducesResponseType(typeof(PaginatedList<BorrowingTransactionListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Retrieve a paginated list of borrowing transactions that is incomming.")]
+    [EndpointDescription("Returns a paginated collection of borrowing transactions and supports searching, filtering, and sorting by [createdat,updatedat,expectedreturndate,actualreturndate,state,borrowername,lendername,booktitle] so administrators can review borrowing activity efficiently.")]
+    [MapToApiVersion("1.0")]
+    [EndpointName("GetIncommingBorrowingTransactions")]
+    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<PaginatedList<BorrowingTransactionListItemDto>>> GetIncommingBorrowingTransactions([FromQuery] BorrowingTransactionPagedFilterRequest request, CancellationToken ct)
+    {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+
+        var query = new GetBorrowingTransactionsQuery(
+            request.Page,
+            request.PageSize,
+            request.SearchTerm,
+            request.SortColumn,
+            request.SortDirection,
+            request.BorrowerStudentId,
+            studentResult.Value.Id,
+            request.BookCopyId,
+            request.BorrowingRequestId,
+            request.States);
+
+        var result = await sender.Send(query, ct);
+
+        return result.Match(
+           Ok,
+           e => Problem(e, HttpContext));
+    }
+
+
+    [HttpGet("me/out")]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [ProducesResponseType(typeof(PaginatedList<BorrowingTransactionListItemDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Retrieve a paginated list of borrowing transactions.")]
+    [EndpointDescription("Returns a paginated collection of borrowing transactions and supports searching, filtering, and sorting by [createdat,updatedat,expectedreturndate,actualreturndate,state,borrowername,lendername,booktitle] so administrators can review borrowing activity efficiently.")]
+    [MapToApiVersion("1.0")]
+    [EndpointName("GetOutgoingBorrowingTransactions")]
+    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<PaginatedList<BorrowingTransactionListItemDto>>> GetOutgoingBorrowingTransactions([FromQuery] BorrowingTransactionPagedFilterRequest request, CancellationToken ct)
+    {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+        var query = new GetBorrowingTransactionsQuery(
+            request.Page,
+            request.PageSize,
+            request.SearchTerm,
+            request.SortColumn,
+            request.SortDirection,
+            studentResult.Value.Id,
+            request.LenderStudentId,
+            request.BookCopyId,
+            request.BorrowingRequestId,
+            request.States);
+
+        var result = await sender.Send(query, ct);
+
+        return result.Match(
+           Ok,
+           e => Problem(e, HttpContext));
+    }
+
+
 
     [HttpPatch("{borrowingTransactionId:guid}/return")]
     [Authorize(Policy = PoliciesNames.BorrowingTransactionBorrowingStudentPolicy)]
