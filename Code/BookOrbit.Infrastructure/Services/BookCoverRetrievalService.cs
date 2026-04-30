@@ -1,3 +1,5 @@
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using BookOrbit.Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -14,7 +16,9 @@ public class BookCoverRetrievalService(
 
     public async Task<string> GetCoverUrlAsync(string isbn, string title, CancellationToken ct = default)
     {
-        string cacheKey = $"book-cover:isbn={isbn}:title={title}";
+        // Use a stable, bounded cache key that is immune to separator-injection.
+        // SHA-256 of the canonical form keeps the key at a fixed 64-char hex string.
+        string cacheKey = BuildCacheKey(isbn, title);
 
         return await cache.GetOrCreateAsync(
             key: cacheKey,
@@ -22,6 +26,17 @@ public class BookCoverRetrievalService(
             expiration: CacheExpiration,
             tags: [BookCoverCachingConstants.BookCoverTag],
             cancellationToken: ct);
+    }
+
+    /// <summary>
+    /// Builds a collision-resistant, bounded cache key from isbn + title.
+    /// Normalises to lowercase to avoid case-variant cache misses.
+    /// </summary>
+    internal static string BuildCacheKey(string isbn, string title)
+    {
+        string raw = $"isbn|{isbn.ToLowerInvariant()}|title|{title.ToLowerInvariant()}";
+        byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
+        return $"book-cover:{Convert.ToHexString(hashBytes).ToLowerInvariant()}";
     }
 
     private async ValueTask<string> ResolveAsync(string isbn, string title, CancellationToken ct)
@@ -48,6 +63,11 @@ public class BookCoverRetrievalService(
                 "Failed to retrieve book cover from both providers for ISBN {Isbn} and Title {Title}. Using default cover.",
                 isbn, title);
         }
+        catch (OperationCanceledException)
+        {
+            // Never swallow cancellation — propagate so the caller can honour it.
+            throw;
+        }
         catch (Exception ex)
         {
             logger.LogError(ex,
@@ -63,16 +83,17 @@ public class BookCoverRetrievalService(
         if (string.IsNullOrWhiteSpace(isbn))
             return null;
 
-        // Clean ISBN by removing hyphens
+        // Remove hyphens to normalise ISBN format.
         string cleanIsbn = isbn.Replace("-", string.Empty);
 
-        // ?default=false ensures Open Library returns 404 when no cover exists,
-        // rather than serving a 1x1 pixel placeholder image.
+        // ?default=false makes Open Library return 404 when no cover exists,
+        // rather than serving a 1×1 pixel placeholder image.
         string url = $"https://covers.openlibrary.org/b/isbn/{cleanIsbn}-L.jpg?default=false";
 
         try
         {
-            var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+            // Dispose the response to return the connection to the pool promptly.
+            using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
             if (response.IsSuccessStatusCode)
                 return url;
         }
@@ -95,21 +116,25 @@ public class BookCoverRetrievalService(
 
         try
         {
-            var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
-            if (response.IsSuccessStatusCode)
-            {
-                var contentStream = await response.Content.ReadAsStreamAsync(ct);
-                using var document = await JsonDocument.ParseAsync(contentStream, cancellationToken: ct);
+            using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+            if (!response.IsSuccessStatusCode)
+                return null;
 
-                if (document.RootElement.TryGetProperty("items", out var items) && items.GetArrayLength() > 0)
+            var contentStream = await response.Content.ReadAsStreamAsync(ct);
+            using var document = await JsonDocument.ParseAsync(contentStream, cancellationToken: ct);
+
+            if (document.RootElement.TryGetProperty("items", out var items) && items.GetArrayLength() > 0)
+            {
+                var firstItem = items[0];
+                if (firstItem.TryGetProperty("volumeInfo", out var volumeInfo) &&
+                    volumeInfo.TryGetProperty("imageLinks", out var imageLinks) &&
+                    imageLinks.TryGetProperty("thumbnail", out var thumbnail))
                 {
-                    var firstItem = items[0];
-                    if (firstItem.TryGetProperty("volumeInfo", out var volumeInfo) &&
-                        volumeInfo.TryGetProperty("imageLinks", out var imageLinks) &&
-                        imageLinks.TryGetProperty("thumbnail", out var thumbnail))
-                    {
-                        return thumbnail.GetString();
-                    }
+                    // Google Books serves http:// thumbnails — upgrade to https:// for security.
+                    var thumbnailUrl = thumbnail.GetString();
+                    return thumbnailUrl is not null
+                        ? thumbnailUrl.Replace("http://", "https://", StringComparison.OrdinalIgnoreCase)
+                        : null;
                 }
             }
         }

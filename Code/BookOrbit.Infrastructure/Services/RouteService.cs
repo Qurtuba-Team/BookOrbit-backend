@@ -4,7 +4,7 @@ public class RouteService(
     IOptionsSnapshot<Urls> settings) : IRouteService
     
 {
-    public readonly Urls _settings = settings.Value;
+    private readonly Urls _settings = settings.Value;
 
     public string GetBookCoverImageRoute()
     {
