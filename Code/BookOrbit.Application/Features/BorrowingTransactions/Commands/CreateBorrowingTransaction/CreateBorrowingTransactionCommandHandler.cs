@@ -107,6 +107,38 @@ public class CreateBorrowingTransactionCommandHandler(
             return logCreationResult.Errors;
         }
 
+        var student = await context.Students.FirstOrDefaultAsync(
+            s => s.Id == lendingRecord.OwnerId);
+
+        if(student is null)
+        {
+            logger.LogWarning(
+                "Student {StudentId} not found for lending record {LendingRecordId}.",
+                lendingRecord.OwnerId,
+                borrowingRequestData.lendingRecord.Id);
+            return StudentApplicationErrors.NotFoundById;
+        }
+
+        var pointAdditionResult = student!.AddPoints(Point.Create(2).Value);
+
+        var pointLogCreationResult = PointTransaction.Create(
+            Guid.NewGuid(),
+            student.Id,
+            null,
+            2,
+            PointTransactionReason.BookBorrowedFrom);
+
+        if(pointLogCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create point transaction for student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
+                student.Id,
+                transactionResult.Value.Id,
+                pointLogCreationResult.Errors);
+            return pointLogCreationResult.Errors;
+        }
+
+        context.PointTransactions.Add(pointLogCreationResult.Value);
         context.BorrowingTransactionEvents.Add(logCreationResult.Value);
         context.BorrowingTransactions.Add(transactionResult.Value);
 

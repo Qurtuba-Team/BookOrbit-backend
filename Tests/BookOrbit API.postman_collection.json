@@ -240,7 +240,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/pointtransactions?Page=1&PageSize=5",
+              "raw": "{{baseurl}}/api/v1/pointtransactions?Page=1&PageSize=5&StudentId=cb10ee1b-75bf-452e-8d2a-66d33a9518b1",
               "host": [
                 "{{baseurl}}"
               ],
@@ -275,8 +275,7 @@
                 },
                 {
                   "key": "StudentId",
-                  "value": "",
-                  "disabled": true
+                  "value": "cb10ee1b-75bf-452e-8d2a-66d33a9518b1"
                 },
                 {
                   "key": "BorrowingReviewId",
@@ -491,7 +490,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/deliver",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/deliver?otp=",
               "host": [
                 "{{baseurl}}"
               ],
@@ -501,6 +500,12 @@
                 "borrowingrequests",
                 "{{borrowingrequestid}}",
                 "deliver"
+              ],
+              "query": [
+                {
+                  "key": "otp",
+                  "value": ""
+                }
               ]
             }
           },
@@ -681,7 +686,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=10&Page=1",
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=30&Page=1",
               "host": [
                 "{{baseurl}}"
               ],
@@ -693,7 +698,7 @@
               "query": [
                 {
                   "key": "PageSize",
-                  "value": "10"
+                  "value": "30"
                 },
                 {
                   "key": "SearchTerm",
@@ -897,7 +902,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10",
               "host": [
                 "{{baseurl}}"
               ],
@@ -913,8 +918,7 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "10",
-                  "disabled": true
+                  "value": "10"
                 },
                 {
                   "key": "SearchTerm",
@@ -1101,6 +1105,68 @@
               }
             }
           ]
+        },
+        {
+          "id": "d80c49ae-7871-489c-b701-1ae964212dad",
+          "name": "Send Otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/otp",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "{{borrowingrequestid}}",
+                "otp"
+              ]
+            }
+          }
+        },
+        {
+          "id": "668b5341-1632-4a15-833e-9ac3f55e7ccb",
+          "name": "Verify",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/otp/verify",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "{{borrowingrequestid}}",
+                "otp",
+                "verify"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "\"123456\"",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -1285,7 +1351,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
