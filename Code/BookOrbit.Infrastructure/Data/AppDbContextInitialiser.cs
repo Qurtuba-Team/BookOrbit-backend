@@ -235,12 +235,14 @@ public class AppDbContextInitialiser(
             if (rng.NextDouble() < 0.2)
             {
                 createdBook.MarkAsRejected();
+                await context.SaveChangesAsync();
                 continue;//if rejectded we don't create copies for this book
             }
 
             if (rng.NextDouble() < 0.6)
             {
                 createdBook.MarkAsAvailable();
+                await context.SaveChangesAsync();
 
                 var copiesCount = rng.Next(1, 10);
 
@@ -249,7 +251,7 @@ public class AppDbContextInitialiser(
                     var ownerId = owners[rng.Next(owners.Count)];
                     var condition = GetRandomBookCopyCondition(rng);
 
-                    await CreateBookCopyIfNotExistsAsync(ownerId, createdBook.Id, condition);
+                    await CreateBookCopyAsync(ownerId, createdBook.Id, condition);
                 }
             }
         }
@@ -282,7 +284,7 @@ public class AppDbContextInitialiser(
             var bookId = availableBooks[rng.Next(availableBooks.Count)];
             var condition = GetRandomBookCopyCondition(rng);
 
-            await CreateBookCopyIfNotExistsAsync(ownerId, bookId, condition);
+            await CreateBookCopyAsync(ownerId, bookId, condition);
         }
     }
 
@@ -877,12 +879,8 @@ public class AppDbContextInitialiser(
         return bookResult.Value;
     }
 
-    private async Task CreateBookCopyIfNotExistsAsync(Guid ownerId, Guid bookId, BookCopyCondition condition)
+    private async Task CreateBookCopyAsync(Guid ownerId, Guid bookId, BookCopyCondition condition)
     {
-        var exists = await context.BookCopies.AnyAsync(bc => bc.OwnerId == ownerId && bc.BookId == bookId);
-        if (exists)
-            return;
-
         var copyResult = BookCopy.Create(Guid.NewGuid(), ownerId, bookId, condition);
 
         if (copyResult.IsFailure)
