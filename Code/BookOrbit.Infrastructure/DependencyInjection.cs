@@ -1,10 +1,12 @@
-﻿
+
 
 
 
 using BookOrbit.Infrastructure.BackgroundJobs;
+using BookOrbit.Infrastructure.Chatbot;
 
 namespace BookOrbit.Infrastructure;
+
 static public class DependencyInjection
 {
     static public IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
@@ -14,9 +16,10 @@ static public class DependencyInjection
             .AddIdentity()
             .AddInfrastructureServices()
             .AddPolicies()
+            .AddChatbot(configuration)
             .AddDbContext();
-
     }
+
     static private IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");

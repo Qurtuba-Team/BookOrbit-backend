@@ -1,4 +1,4 @@
-﻿global using BookOrbit.Application.Common.Behaviours;
+global using BookOrbit.Application.Common.Behaviours;
 global using BookOrbit.Application.Common.Constants;
 global using BookOrbit.Application.Common.Errors;
 global using BookOrbit.Application.Common.Exceptions;
@@ -32,6 +32,9 @@ global using BookOrbit.Application.Features.PointTransactions.Queries.GetPointTr
 global using BookOrbit.Application.Features.Students;
 global using BookOrbit.Application.Features.Students.Dtos;
 global using BookOrbit.Application.Features.Students.Queries.GetStudents;
+global using BookOrbit.Application.Features.Chatbot;
+global using BookOrbit.Application.Features.Chatbot.Dtos;
+global using BookOrbit.Application.Common.Models;
 global using BookOrbit.Domain.BookCopies;
 global using BookOrbit.Domain.BookCopies.Enums;
 global using BookOrbit.Domain.Books;
