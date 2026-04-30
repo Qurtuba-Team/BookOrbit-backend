@@ -71,3 +71,5 @@ global using System.Linq.Expressions;
 global using System.Reflection;
 global using System.Security.Claims;
 global using System.Text.Json.Serialization;
+global using BookOrbit.Application.Common.OTPs;
+global using BookOrbit.Domain.Otps;

@@ -1,4 +1,6 @@
-﻿namespace BookOrbit.Api.Controllers.BorrowingRequests;
+﻿using BookOrbit.Application.Common.OTPs.VerifyBookDeliveryConfirmationOtp;
+
+namespace BookOrbit.Api.Controllers.BorrowingRequests;
 
 [Route("api/v{version:apiVersion}/borrowingrequests")]
 [ApiVersion("1.0")]
@@ -7,6 +9,17 @@ public class BorrowingRequestController(
     ISender sender,
     ICurrentUser currentUser) : ApiController
 {
+    [HttpPost("{borrowingRequestId:guid}/otp/verify")]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
+    public async Task<ActionResult> VerifyBookDeliveryOtp([FromRoute] Guid borrowingRequestId, [FromBody] string otpCode, CancellationToken ct)
+    {
+        var command = new VerifyBookDeliveryConfirmationOtpCommand(borrowingRequestId, otpCode);
+        var result = await sender.Send(command, ct);
+        return result.Match(
+            _ => NoContent(),
+            e => Problem(e, HttpContext));
+    }
+
     [HttpPost("{borrowingRequestId:guid}/otp")]
     [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
     [ProducesResponseType(typeof(OtpDto), StatusCodes.Status200OK)]

@@ -23,7 +23,7 @@ public class SendBookDeliveryConfirmationOtpCommandHandler (
             return BorrowingRequestApplicationErrors.NotFoundById;
         }
 
-        var otpGeneratingResult = await otpService.GenerateOtp(studentEmailResult!.Email, command.BorrowingRequestId, ct);
+        var otpGeneratingResult = await otpService.GenerateBorrowingRequestOtp(command.BorrowingRequestId, ct);
 
         if (otpGeneratingResult.IsFailure)
         {
