@@ -8,4 +8,3 @@ public enum LendingListRecordState
     Expired,
     Closed
 }
-

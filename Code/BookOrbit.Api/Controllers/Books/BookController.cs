@@ -18,7 +18,7 @@ public class BookController(
     [ProducesDefaultResponseType]
     [EndpointSummary("Retrieve a list of book categories")]
     [EndpointDescription("Retrieve all book categories form the system")]
-    [EndpointName("CreateBook")]
+    [EndpointName("GetBookCategories")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
 

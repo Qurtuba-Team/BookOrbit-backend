@@ -5,4 +5,5 @@ public interface IEmailFormatService
     Result<string> ResetPasswordEmailFormat(string link);
     Result<string> BookCopyRequestedEmailFormat(string bookTitle);
     Result<string> BorrowingRequestAcceptedEmailFormat(string bookTitle);
+    Result<string> BookDeliveryConfirmationEmailFormat(string otp);
 }

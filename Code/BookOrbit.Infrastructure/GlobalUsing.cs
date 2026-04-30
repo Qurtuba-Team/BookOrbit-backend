@@ -65,3 +65,6 @@ global using System.Security.Cryptography;
 global using System.Text;
 global using Microsoft.Data.SqlClient;
 global using Microsoft.Extensions.Hosting;
+global using BookOrbit.Application.Features.BorrowingRequests;
+global using BookOrbit.Application.Features.Students;
+

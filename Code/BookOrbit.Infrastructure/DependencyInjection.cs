@@ -92,6 +92,7 @@ static public class DependencyInjection
         services.AddTransient<IEmailFormatService, EmailFormatService>();
         services.AddTransient<IBookImageService, BookImageService>();
         services.AddTransient<IStudentImageService, StudentImageService>();
+        services.AddTransient<IOtpService,OtpService>();
 
         return services;
     }

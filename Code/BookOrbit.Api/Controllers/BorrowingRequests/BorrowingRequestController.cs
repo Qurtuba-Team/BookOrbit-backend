@@ -1,4 +1,5 @@
-﻿
+﻿using BookOrbit.Application.Common.OTPs.VerifyBookDeliveryConfirmationOtp;
+
 namespace BookOrbit.Api.Controllers.BorrowingRequests;
 
 [Route("api/v{version:apiVersion}/borrowingrequests")]
@@ -8,6 +9,42 @@ public class BorrowingRequestController(
     ISender sender,
     ICurrentUser currentUser) : ApiController
 {
+    [HttpPost("{borrowingRequestId:guid}/otp/verify")]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
+    public async Task<ActionResult> VerifyBookDeliveryOtp([FromRoute] Guid borrowingRequestId, [FromBody] string otpCode, CancellationToken ct)
+    {
+        var command = new VerifyBookDeliveryConfirmationOtpCommand(borrowingRequestId, otpCode);
+        var result = await sender.Send(command, ct);
+        return result.Match(
+            _ => NoContent(),
+            e => Problem(e, HttpContext));
+    }
+
+    [HttpPost("{borrowingRequestId:guid}/otp")]
+    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
+    [ProducesResponseType(typeof(OtpDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Send an otp code to confirm delivery")]
+    [EndpointDescription("Send an otp code to confirm delivery")]
+    [EndpointName("SendBookDeliveryOtp")]
+    [MapToApiVersion("1.0")]
+    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<OtpDto>> SendBookDeliveryOtp([FromRoute] Guid borrowingRequestId, CancellationToken ct)
+    {
+        var command = new SendBookDeliveryConfirmationOtpCommand(borrowingRequestId);
+
+        var result = await sender.Send(command, ct);
+
+        return result.Match(
+            r => Ok(),
+            e => Problem(e, HttpContext));
+    }
+
     [HttpGet("{borrowingRequestId:guid}", Name = "GetBorrowingRequestById")]
     [Authorize(Policy = PoliciesNames.BorrowingRequestRelatedStudentPolicy)]
     [ProducesResponseType(typeof(BorrowingRequestDto), StatusCodes.Status200OK)]
@@ -185,7 +222,7 @@ public class BorrowingRequestController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> RejectBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
-       var result = await sender.Send(new RejectBorrowingRequestCommand(borrowingRequestId), ct);
+        var result = await sender.Send(new RejectBorrowingRequestCommand(borrowingRequestId), ct);
 
         return result.Match(
             _ => NoContent(),

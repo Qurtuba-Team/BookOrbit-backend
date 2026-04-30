@@ -57,6 +57,37 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             transaction.borrowingTransaction.Id,
             transaction.borrowingTransaction.State);
 
+        var student = await context.Students.FirstOrDefaultAsync(s=>s.Id == transaction.borrowingTransaction.BorrowerStudentId, ct);
+
+        if(student is null)
+        {
+            logger.LogWarning(
+                "Student {StudentId} not found for borrowing transaction {BorrowingTransactionId}.",
+                transaction.borrowingTransaction.BorrowerStudentId,
+                transaction.borrowingTransaction.Id);
+            return StudentApplicationErrors.NotFoundById;
+        }
+
+        var pointAdditionResult = student.AddPoints(Point.Create(2).Value);
+
+        if (pointAdditionResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to add points to student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
+                student.Id,
+                transaction.borrowingTransaction.Id,
+                pointAdditionResult.Errors);
+            return pointAdditionResult.Errors;
+        }
+
+        var pointTransactionResult = PointTransaction.Create(
+            Guid.NewGuid(),
+            student.Id,
+            null,
+            2,
+            PointTransactionReason.Returning);
+
+        context.PointTransactions.Add(pointTransactionResult.Value);
         context.BorrowingTransactionEvents.Add(logCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
