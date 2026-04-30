@@ -42,7 +42,7 @@ public class StudentQueryController(
 
 
     [HttpGet("{studentId:guid}", Name = "GetStudentById")]
-    [Authorize(Policy = PoliciesNames.AdminOnlyPolicy)]
+    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
     [ProducesResponseType(typeof(StudentDtoWithContactInfo), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
