@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Domain.Otps;
+
 namespace BookOrbit.Application.Common.Interfaces;
 
 public interface IAppDbContext
@@ -13,6 +15,7 @@ public interface IAppDbContext
     public DbSet<BorrowingReview> BorrowingReviews { get; }
     public DbSet<BorrowingTransactionEvent> BorrowingTransactionEvents { get; }
     public DbSet<PointTransaction> PointTransactions { get; }
+    public DbSet<Otp> Otps { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 

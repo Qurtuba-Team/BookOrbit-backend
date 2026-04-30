@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Domain.Books.ValueObjects;
+
 namespace BookOrbit.Infrastructure.Services;
 public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailFormatService
 {
@@ -6,7 +8,7 @@ public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailForm
     public const string ConfirmEmailFormatFilePath = @"Common/EmailTemplates/ConfirmEmailFormat.html";
     public const string ResetPasswordEmailFormatFilePath = @"Common/EmailTemplates/ResetPasswordEmailFormat.html";
     public const string BorrowingRequestAcceptedEmailFormatFilePath = @"Common/EmailTemplates/BorrowingRequestAcceptedEmailFormat.html";
-
+    public const string BookDeliveryConfirmationEmailFormatFilePath = @"Common/EmailTemplates/BookDeliveryConfirmationEmailFormat.html";
     private Result<string> GetEmailFormat(string filePath, string placeholder, string value)
     {
         try
@@ -41,5 +43,10 @@ public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailForm
     public Result<string> BorrowingRequestAcceptedEmailFormat(string bookTitle)
     {
         return GetEmailFormat(BorrowingRequestAcceptedEmailFormatFilePath, "{{bookTitle}}", bookTitle);
+    }
+
+    public Result<string> BookDeliveryConfirmationEmailFormat(string otp)
+    {
+        return GetEmailFormat(BookDeliveryConfirmationEmailFormatFilePath, "{{otp}}", otp);
     }
 }
