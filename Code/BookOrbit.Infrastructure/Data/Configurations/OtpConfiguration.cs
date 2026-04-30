@@ -27,7 +27,7 @@ public class OtpConfiguration : IEntityTypeConfiguration<Otp>
 
         builder.Property(otp=>otp.Type)
             .HasConversion<string>()
-            .HasMaxLength(20)
+            .HasMaxLength(50)
             .IsRequired();
 
         builder.HasIndex(otp => otp.Code);
