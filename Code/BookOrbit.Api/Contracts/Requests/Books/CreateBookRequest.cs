@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Api.Contracts.Requests.Books;
+namespace BookOrbit.Api.Contracts.Requests.Books;
 public record CreateBookRequest
 {
     public string Title { get; set; } = string.Empty;

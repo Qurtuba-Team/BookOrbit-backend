@@ -1,4 +1,4 @@
-﻿
+
 
 
 
@@ -93,6 +93,8 @@ static public class DependencyInjection
         services.AddTransient<IBookImageService, BookImageService>();
         services.AddTransient<IStudentImageService, StudentImageService>();
         services.AddTransient<IOtpService,OtpService>();
+        services.AddHttpClient<IBookCoverRetrievalService, BookCoverRetrievalService>()
+                .AddStandardResilienceHandler();
 
         return services;
     }

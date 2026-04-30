@@ -22,11 +22,13 @@ public class BookCommandsSubcutaneousTests
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
         var routeService = new FakeRouteService();
+        var coverRetrievalService = new FakeBookCoverRetrievalService();
         var handler = new CreateBookCommandHandler(
             NullLogger<CreateBookCommandHandler>.Instance,
             context,
             cache,
-            routeService);
+            routeService,
+            coverRetrievalService);
 
         var command = new CreateBookCommand(
             Title: "Test Driven Development",
@@ -48,6 +50,71 @@ public class BookCommandsSubcutaneousTests
         context.Books.Should().HaveCount(1);
         context.Books.Single().Title.Value.Should().Be(command.Title);
     }
+
+    [Fact]
+    public async Task CreateBookCommand_WithoutCover_ShouldAutoRetrieveCover()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var routeService = new FakeRouteService();
+        var coverRetrievalService = new FakeBookCoverRetrievalService();
+        var handler = new CreateBookCommandHandler(
+            NullLogger<CreateBookCommandHandler>.Instance,
+            context,
+            cache,
+            routeService,
+            coverRetrievalService);
+
+        var command = new CreateBookCommand(
+            Title: "Clean Code",
+            ISBN: "9780132350884",
+            Publisher: "Prentice Hall",
+            Category: BookCategory.Science,
+            Author: "Robert C. Martin",
+            CoverImageFileName: null);
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        coverRetrievalService.CallCount.Should().Be(1);
+        result.Value.BookCoverImageUrl.Should().NotBeNullOrWhiteSpace();
+    }
+
+    [Fact]
+    public async Task CreateBookCommand_WithCover_ShouldSkipRetrievalService()
+    {
+        // Arrange
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var routeService = new FakeRouteService();
+        var coverRetrievalService = new FakeBookCoverRetrievalService();
+        var handler = new CreateBookCommandHandler(
+            NullLogger<CreateBookCommandHandler>.Instance,
+            context,
+            cache,
+            routeService,
+            coverRetrievalService);
+
+        var command = new CreateBookCommand(
+            Title: "The Pragmatic Programmer",
+            ISBN: "9780135957059",
+            Publisher: "Addison-Wesley Professional",
+            Category: BookCategory.Science,
+            Author: "David Thomas",
+            CoverImageFileName: "pragmatic.png");
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert
+        result.IsSuccess.Should().BeTrue();
+        coverRetrievalService.CallCount.Should().Be(0);
+        result.Value.BookCoverImageUrl.Should().Be("http://localhost/images/pragmatic.png");
+    }
+
 
     [Fact]
     public async Task UpdateBookCommand_ShouldUpdateBookDetails()

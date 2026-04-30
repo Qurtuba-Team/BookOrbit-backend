@@ -1,4 +1,4 @@
-﻿
+
 namespace BookOrbit.Infrastructure.Services;
 public class RouteService(
     IOptionsSnapshot<Urls> settings) : IRouteService
@@ -17,8 +17,11 @@ public class RouteService(
 
     public string GetBookCoverImageRoute(string fileName)
     {
+        if (Uri.IsWellFormedUriString(fileName, UriKind.Absolute))
+            return fileName;
+
         string baseUrl = GetBookCoverImageRoute();
-                return $"{baseUrl}/{fileName}";
+        return $"{baseUrl}/{fileName}";
     }
 
     public string GetEmailConfirmationRoute(string email, string token)

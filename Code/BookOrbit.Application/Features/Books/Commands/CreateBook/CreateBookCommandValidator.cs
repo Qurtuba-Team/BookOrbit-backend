@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
+namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
 public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
 {
     public CreateBookCommandValidator()
@@ -23,8 +23,5 @@ public class CreateBookCommandValidator : AbstractValidator<CreateBookCommand>
             .Cascade(CascadeMode.Stop)
             .BookAuthorRules();
 
-        RuleFor(x => x.CoverImageFileName)
-            .Cascade(CascadeMode.Stop)
-            .BookCoverImageFileNameRules();
     }
 }

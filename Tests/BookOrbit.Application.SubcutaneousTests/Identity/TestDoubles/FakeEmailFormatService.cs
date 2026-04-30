@@ -19,4 +19,7 @@ internal sealed class FakeEmailFormatService : IEmailFormatService
 
     public Result<string> BorrowingRequestAcceptedEmailFormat(string bookTitle)
         => "borrowing-accepted";
+
+    public Result<string> BookDeliveryConfirmationEmailFormat(string otp)
+        => "book-delivery-confirmation";
 }

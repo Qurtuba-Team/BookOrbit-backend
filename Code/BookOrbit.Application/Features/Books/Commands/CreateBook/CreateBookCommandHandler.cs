@@ -1,10 +1,11 @@
-﻿
+
 namespace BookOrbit.Application.Features.Books.Commands.CreateBook;
 public class CreateBookCommandHandler(
     ILogger<CreateBookCommandHandler> logger,
     IAppDbContext context,
     HybridCache cache,
-    IRouteService routeService) : IRequestHandler<CreateBookCommand, Result<BookDto>>
+    IRouteService routeService,
+    IBookCoverRetrievalService bookCoverRetrievalService) : IRequestHandler<CreateBookCommand, Result<BookDto>>
 {
     public async Task<Result<BookDto>> Handle(CreateBookCommand command, CancellationToken ct)
     {
@@ -46,6 +47,13 @@ public class CreateBookCommandHandler(
         }
 
 
+        var coverImageFileName = !string.IsNullOrWhiteSpace(command.CoverImageFileName)
+            ? command.CoverImageFileName
+            : await bookCoverRetrievalService.GetCoverUrlAsync(
+                isbn: isbnCreationResult.Value.Value,
+                title: titleCreationResult.Value.Value,
+                ct: ct);
+
         var createdBookResult = Book.Create(
             id:Guid.NewGuid(),
             title: titleCreationResult.Value,
@@ -53,7 +61,7 @@ public class CreateBookCommandHandler(
             publisher: publisherCreationResult.Value,
             category:command.Category,
             author: authorCreationResult.Value,
-            coverImageFileName:command.CoverImageFileName);
+            coverImageFileName: coverImageFileName);
 
 
         if (createdBookResult.IsFailure)
