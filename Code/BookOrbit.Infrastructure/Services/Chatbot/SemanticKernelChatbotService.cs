@@ -3,9 +3,11 @@ using BookOrbit.Application.Common.Models;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using Microsoft.SemanticKernel.Connectors.Google;
 using BookOrbit.Infrastructure.Settings;
 using Microsoft.Extensions.Logging;
+
+#pragma warning disable SKEXP0070 // Google AI connector is experimental in SK 1.30.0
 
 namespace BookOrbit.Infrastructure.Services.Chatbot;
 
@@ -41,7 +43,7 @@ public class SemanticKernelChatbotService(
 
         chatHistory.AddUserMessage(userMessage);
 
-        var executionSettings = new OpenAIPromptExecutionSettings
+        var executionSettings = new GeminiPromptExecutionSettings
         {
             // Auto-invoke: SK calls our KernelPlugin functions automatically
             // when the LLM requests them via function calling.

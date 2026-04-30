@@ -15,6 +15,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" />
 		<PackageReference Include="Microsoft.SemanticKernel" />
+		<PackageReference Include="Microsoft.SemanticKernel.Connectors.Google" />
 		<PackageReference Include="Serilog.AspNetCore" />
 		<PackageReference Include="Serilog.Sinks.Seq" />
 	</ItemGroup>

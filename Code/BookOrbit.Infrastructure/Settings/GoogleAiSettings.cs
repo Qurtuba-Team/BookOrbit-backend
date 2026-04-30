@@ -1,6 +1,6 @@
 namespace BookOrbit.Infrastructure.Settings;
 
-public class OpenAiSettings
+public class GoogleAiSettings
 {
     public string ApiKey { get; set; } = string.Empty;
 }

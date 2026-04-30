@@ -5,23 +5,25 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 
+#pragma warning disable SKEXP0070 // Google AI connector is experimental in SK 1.30.0
+
 namespace BookOrbit.Infrastructure.Chatbot;
 
 public static class ChatbotDependencyInjection
 {
     private const string ChatbotSettingsSectionName = "ChatbotSettings";
-    private const string OpenAiSettingsSectionName = "OpenAiSettings";
+    private const string GoogleAiSettingsSectionName = "GoogleAiSettings";
 
     public static IServiceCollection AddChatbot(
         this IServiceCollection services,
         IConfiguration configuration)
     {
         services.Configure<ChatbotSettings>(configuration.GetSection(ChatbotSettingsSectionName));
-        services.Configure<OpenAiSettings>(configuration.GetSection(OpenAiSettingsSectionName));
+        services.Configure<GoogleAiSettings>(configuration.GetSection(GoogleAiSettingsSectionName));
 
-        var openAiSettings = configuration
-            .GetSection(OpenAiSettingsSectionName)
-            .Get<OpenAiSettings>() ?? new OpenAiSettings();
+        var googleAiSettings = configuration
+            .GetSection(GoogleAiSettingsSectionName)
+            .Get<GoogleAiSettings>() ?? new GoogleAiSettings();
 
         var chatbotSettings = configuration
             .GetSection(ChatbotSettingsSectionName)
@@ -31,15 +33,15 @@ public static class ChatbotDependencyInjection
         // (ICurrentUser, ISender) resolve from the correct per-request scope.
         services.AddScoped<BookOrbitKernelPlugin>();
 
-        // Register Semantic Kernel with OpenAI chat completion.
+        // Register Semantic Kernel with Google Gemini chat completion.
         // The Kernel is registered as Scoped so it is recreated per request.
         services.AddScoped<Kernel>(sp =>
         {
             var builder = Kernel.CreateBuilder();
 
-            builder.AddOpenAIChatCompletion(
+            builder.AddGoogleAIGeminiChatCompletion(
                 modelId: chatbotSettings.ModelId,
-                apiKey: openAiSettings.ApiKey);
+                apiKey: googleAiSettings.ApiKey);
 
             var kernel = builder.Build();
 
