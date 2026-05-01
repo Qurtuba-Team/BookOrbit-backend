@@ -42,6 +42,7 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
+        result.Errors.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
         result.Value.Title.Should().Be(command.Title);
         result.Value.ISBN.Should().Be(command.ISBN);
@@ -78,6 +79,7 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
+        result.Errors.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(1);
         result.Value.BookCoverImageUrl.Should().NotBeNullOrWhiteSpace();
@@ -110,7 +112,8 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.IsSuccess.Should().BeTrue(because: "Errors: " + string.Join(", ", result.Errors.Select(e => e.Code)));
+        result.Errors.Should().BeEmpty();
+        result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(0);
         result.Value.BookCoverImageUrl.Should().Be("http://localhost/images/pragmatic.png");
     }
@@ -276,6 +279,7 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert — command must still succeed even when retrieval returns the default.
+        result.Errors.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(1, because: "retrieval is invoked when CoverImageFileName is null");
         // The route service wraps whatever the retrieval service returned.
@@ -314,6 +318,7 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert — URL returned by the retrieval service must appear in the DTO.
+        result.Errors.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(1);
         result.Value.BookCoverImageUrl.Should().Contain(retrievedUrl,
