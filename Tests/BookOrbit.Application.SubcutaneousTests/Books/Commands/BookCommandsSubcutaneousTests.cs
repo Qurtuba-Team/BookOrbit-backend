@@ -110,6 +110,11 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
+        if (result.IsFailure)
+        {
+            var errors = string.Join("\n", result.Errors.Select(e => $"{e.Code}: {e.Message}"));
+            System.IO.File.WriteAllText(@"C:\Temp\book_errors.txt", errors);
+        }
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(0);
         result.Value.BookCoverImageUrl.Should().Be("http://localhost/images/pragmatic.png");
