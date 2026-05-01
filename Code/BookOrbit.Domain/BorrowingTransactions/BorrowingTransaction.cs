@@ -1,6 +1,3 @@
-
-using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
-
 namespace BookOrbit.Domain.BorrowingTransactions;
 
 public class BorrowingTransaction : AuditableEntity
@@ -127,6 +124,9 @@ public class BorrowingTransaction : AuditableEntity
             return result;
                 
         ActualReturnDate = returnDate;
+
+        AddDomainEvent(new BorrowingTransactionBookCopyReturnedEvent(BorrowerStudentId, Id, BookCopyId, State));
+
         return Result.Updated;
     }
 

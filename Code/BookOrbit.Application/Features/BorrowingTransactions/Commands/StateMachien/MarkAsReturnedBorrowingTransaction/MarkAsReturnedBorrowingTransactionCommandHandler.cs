@@ -52,43 +52,6 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return updateBookCopyResult.Errors;
         }
 
-
-        var student = await context.Students.FirstOrDefaultAsync(s=>s.Id == transaction.borrowingTransaction.BorrowerStudentId, ct);
-
-        if(student is null)
-        {
-            logger.LogWarning(
-                "Student {StudentId} not found for borrowing transaction {BorrowingTransactionId}.",
-                transaction.borrowingTransaction.BorrowerStudentId,
-                transaction.borrowingTransaction.Id);
-            return StudentApplicationErrors.NotFoundById;
-        }
-
-        var pointsToAddCreationResult = Point.Create(Point.ReturningBookReward);
-
-        if(pointsToAddCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create points for student {StudentId}. Errors: {Errors}",
-                student.Id,
-                pointsToAddCreationResult.Errors);
-            return pointsToAddCreationResult.Errors;
-        }
-
-        
-        var pointAdditionResult = student.AddPoints(pointsToAddCreationResult.Value, PointTransactionReason.Returning);
-
-        if (pointAdditionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to add points to student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
-                student.Id,
-                transaction.borrowingTransaction.Id,
-                pointAdditionResult.Errors);
-            return pointAdditionResult.Errors;
-        }
-
-
         await context.SaveChangesAsync(ct);
         await hybridCache.RemoveByTagAsync(BorrowingTransactionCachingConstants.BorrowingTransactionTag, ct);
 
