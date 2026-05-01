@@ -1,3 +1,4 @@
+using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Domain.Students;
 
@@ -136,18 +137,27 @@ public class Student : AuditableEntity
         return result;
     }
 
-    public Result<Updated> DeductPoints(Point pointsToDeduct)
+    public Result<Updated> DeductPoints(Point pointsToDeduct, PointTransactionReason? reason = null, Guid? borrowingReviewId = null)
     {
-        if(pointsToDeduct > Points)
-            return StudentErrors.InsufficientPoints;
-
         Points -= pointsToDeduct;
+
+        if (reason.HasValue)
+        {
+            AddDomainEvent(new StudentPointsChangedEvent(Id, pointsToDeduct.Value, reason.Value, borrowingReviewId));
+        }
+
         return Result.Updated;
     }
 
-    public Result<Updated> AddPoints(Point pointsToAdd)
+    public Result<Updated> AddPoints(Point pointsToAdd, PointTransactionReason? reason = null, Guid? borrowingReviewId = null)
     {
         Points += pointsToAdd;
+
+        if (reason.HasValue)
+        {
+            AddDomainEvent(new StudentPointsChangedEvent(Id, pointsToAdd.Value, reason.Value, borrowingReviewId));
+        }
+
         return Result.Updated;
     }
 

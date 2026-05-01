@@ -79,7 +79,7 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return pointsToAddCreationResult.Errors;
         }
 
-        var pointAdditionResult = student.AddPoints(pointsToAddCreationResult.Value);
+        var pointAdditionResult = student.AddPoints(pointsToAddCreationResult.Value, PointTransactionReason.Returning);
 
         if (pointAdditionResult.IsFailure)
         {
@@ -91,14 +91,6 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return pointAdditionResult.Errors;
         }
 
-        var pointTransactionResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            student.Id,
-            null,
-            pointsToAddCreationResult.Value.Value,
-            PointTransactionReason.Returning);
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
         context.BorrowingTransactionEvents.Add(logCreationResult.Value);
 
         await context.SaveChangesAsync(ct);

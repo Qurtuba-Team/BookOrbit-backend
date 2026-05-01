@@ -79,28 +79,9 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
             return pointsToDeductCreationResult.Errors;
         }
 
-        student.DeductPoints(pointsToDeductCreationResult.Value);
-
-        var pointLogCreationResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            student.Id,
-            null,
-            pointsToDeductCreationResult.Value.Value,
-            PointTransactionReason.Penalty);
-
-        if (pointLogCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
-                student.Id,
-                transactionData.BorrowingTransaction.Id,
-                pointLogCreationResult.Errors);
-            return pointLogCreationResult.Errors;
-        }
-
+        student.DeductPoints(pointsToDeductCreationResult.Value, PointTransactionReason.Penalty);
 
         context.BorrowingTransactionEvents.Add(logCreationResult.Value);
-        context.PointTransactions.Add(pointLogCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
 

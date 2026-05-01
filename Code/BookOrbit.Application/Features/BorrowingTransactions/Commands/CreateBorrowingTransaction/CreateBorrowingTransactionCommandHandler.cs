@@ -129,26 +129,8 @@ public class CreateBorrowingTransactionCommandHandler(
             return pointToAddCreationResult.Errors;
         }
 
-        var pointAdditionResult = student!.AddPoints(pointToAddCreationResult.Value);
+        var pointAdditionResult = student!.AddPoints(pointToAddCreationResult.Value, PointTransactionReason.BookBorrowedFrom);
 
-        var pointLogCreationResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            student.Id,
-            null,
-            pointToAddCreationResult.Value.Value,
-            PointTransactionReason.BookBorrowedFrom);
-
-        if(pointLogCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
-                student.Id,
-                transactionResult.Value.Id,
-                pointLogCreationResult.Errors);
-            return pointLogCreationResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointLogCreationResult.Value);
         context.BorrowingTransactionEvents.Add(logCreationResult.Value);
         context.BorrowingTransactions.Add(transactionResult.Value);
 

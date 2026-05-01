@@ -44,7 +44,7 @@ public class RejectBorrowingRequestCommandHandler(
             return pointCreationResult.Errors;
         }
 
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointCreationResult.Value);
+        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointCreationResult.Value, PointTransactionReason.Refund);
 
         if (addingPointResult.IsFailure)
         {
@@ -64,24 +64,6 @@ public class RejectBorrowingRequestCommandHandler(
                 lendingRecordMarkingResult.Errors);
             return lendingRecordMarkingResult.Errors;
         }
-
-        var pointTransactionResult = PointTransaction.Create(
-        Guid.NewGuid(),
-        borrowingRequestData.BorrowingStudent.Id,
-        null,
-        borrowingRequestData.Cost,
-        PointTransactionReason.Refund);
-
-        if (pointTransactionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent.Id,
-                pointTransactionResult.Errors);
-            return pointTransactionResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

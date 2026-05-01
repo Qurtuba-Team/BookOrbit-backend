@@ -44,7 +44,7 @@ public class ExpireBorrowingRequestCommandHandler(
         }
 
         //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointToAddCreationResult.Value);
+        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointToAddCreationResult.Value, PointTransactionReason.Refund);
 
         if (addingPointResult.IsFailure)
         {
@@ -65,24 +65,6 @@ public class ExpireBorrowingRequestCommandHandler(
                 lendingRecordMarkingResult.Errors);
             return lendingRecordMarkingResult.Errors;
         }
-
-        var pointTransactionResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            borrowingRequestData.BorrowingStudent.Id,
-            null,
-            borrowingRequestData.Cost,
-            PointTransactionReason.Refund);
-
-        if(pointTransactionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for refunding borrowing request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingRequest.Id,
-                pointTransactionResult.Errors);
-            return pointTransactionResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

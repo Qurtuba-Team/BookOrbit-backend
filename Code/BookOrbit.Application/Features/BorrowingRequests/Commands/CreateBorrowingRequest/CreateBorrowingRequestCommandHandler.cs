@@ -87,7 +87,7 @@ public class CreateBorrowingRequestCommandHandler(
             return pointsToDeductResult.Errors;
         }
 
-        var deductingPointsResult = student.DeductPoints(pointsToDeductResult.Value);
+        var deductingPointsResult = student.DeductPoints(pointsToDeductResult.Value, PointTransactionReason.Borrowing);
         if (deductingPointsResult.IsFailure)
         {
             logger.LogWarning(
@@ -96,24 +96,6 @@ public class CreateBorrowingRequestCommandHandler(
                 deductingPointsResult.Errors);
             return deductingPointsResult.Errors;
         }   
-
-        var pointTransactionResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            command.BorrowingStudentId,
-            null,
-            lendingRecord.Cost,
-            PointTransactionReason.Borrowing);
-
-        if(pointTransactionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for student {StudentId}. Errors: {Errors}",
-                command.BorrowingStudentId,
-                pointTransactionResult.Errors);
-            return pointTransactionResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
 
         borrowingRequestResult.Value.AddDomainEvent(new BorrowingRequestCreatedEvent(borrowingRequestResult.Value.Id, borrowingRequestResult.Value.LendingRecordId));
 
