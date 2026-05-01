@@ -68,8 +68,9 @@ public class ImagesController
     [ProducesDefaultResponseType]
     [EndpointSummary("Retrieve a book cover image.")]
     [EndpointDescription("Returns the cover image for the specified book. " +
-                         "When the stored cover is an externally retrieved URL (e.g. Open Library or Google Books) " +
-                         "the response is a redirect to that URL. For locally uploaded images the raw file bytes are returned.")]
+                         "If the cover was auto-retrieved from an external provider (Open Library / Google Books) " +
+                         "the response is a 302 redirect to that URL. " +
+                         "Otherwise the locally stored image file is returned directly.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBookImage")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
@@ -81,14 +82,14 @@ public class ImagesController
         if (fileNameResult.IsFailure)
             return Problem(fileNameResult.Errors, HttpContext);
 
-        // ── External cover URL (auto-retrieved from Open Library / Google Books) ─
-        // The stored value is a fully-qualified https:// URL, not a local file name.
-        // Redirect the client directly to the external source so we never attempt
-        // to read it from the local file system (which would always return null).
+        // ── External URL (auto-retrieved cover) ────────────────────────────────
+        // When the stored value is an absolute URI the image lives on an external
+        // CDN (Open Library, Google Books).  Redirect the client directly there
+        // instead of proxying through the local file system, which would fail.
         if (Uri.IsWellFormedUriString(fileNameResult.Value, UriKind.Absolute))
             return Redirect(fileNameResult.Value);
 
-        // ── Local file (uploaded or default cover) ─────────────────────────────
+        // ── Local image (uploaded cover or default placeholder) ────────────────
         var extension = Path.GetExtension(fileNameResult.Value).ToLower();
 
         var image = await bookImageService.GetImage(fileNameResult.Value);

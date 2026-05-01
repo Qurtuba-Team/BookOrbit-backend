@@ -232,7 +232,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -400,7 +400,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     [Fact]
@@ -426,7 +426,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     [Fact]
@@ -452,7 +452,7 @@ public class BookCoverRetrievalServiceTests
         // Must not throw — malformed JSON is caught and logged as a warning.
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     [Fact]
@@ -465,7 +465,7 @@ public class BookCoverRetrievalServiceTests
         // Empty title → Google Books is skipped entirely.
         var result = await service.GetCoverUrlAsync(ValidIsbn, string.Empty);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -511,7 +511,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -592,7 +592,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("DefaultBookCoverImage.png");
+        result.Should().Be("default-cover.png");
     }
 
     // ─────────────────────────────────────────────────────────────
