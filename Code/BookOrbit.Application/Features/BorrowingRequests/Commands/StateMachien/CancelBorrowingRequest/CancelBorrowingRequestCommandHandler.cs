@@ -32,59 +32,6 @@ public class CancelBorrowingRequestCommandHandler(
         if (cancelResult.IsFailure)
             return cancelResult.Errors;
 
-        var pointCreationResult = Point.Create(borrowingRequestData.Cost);
-
-        if(pointCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create points for refunding borrowing request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingRequest.Id,
-                pointCreationResult.Errors);
-            return pointCreationResult.Errors;
-        }
-
-        //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointCreationResult.Value);
-
-        if (addingPointResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to add points for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent.Id,
-                addingPointResult.Errors);
-            return addingPointResult.Errors;
-        }
-
-        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsAvailable();
-
-        if (lendingRecordMarkingResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to mark lending record as available for borrowing request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingRequest.Id,
-                lendingRecordMarkingResult.Errors);
-            return lendingRecordMarkingResult.Errors;
-        }
-
-        var pointTransactionResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            borrowingRequestData.BorrowingStudent.Id,
-            null,
-            pointCreationResult.Value.Value,
-            PointTransactionReason.Refund
-        );
-
-        if (pointTransactionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for refunding borrowing request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingRequest.Id,
-                pointTransactionResult.Errors);
-            return pointTransactionResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
-
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

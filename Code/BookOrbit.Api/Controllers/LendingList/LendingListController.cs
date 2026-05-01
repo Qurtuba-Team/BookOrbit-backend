@@ -20,7 +20,6 @@ public class LendingListController(
     [EndpointDescription("Returns the detailed lending list record for the specified identifier when the record exists.")]
     [EndpointName("GetLendingListRecordById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<LendingListRecordDto>> GetLendingListRecordById([FromRoute] Guid lendingListRecordId, CancellationToken ct)
     {
@@ -43,7 +42,6 @@ public class LendingListController(
     [EndpointDescription("Returns a paginated collection of lending list records and supports searching, filtering, and sorting by [createdat,updatedat,cost,borrowingduration,expirationdate,state] so users can review lending activity efficiently.")]
     [EndpointName("GetLendingListRecords")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<LendingListRecordListItemDto>>> GetLendingListRecords([FromQuery] LendingListPagedFilter request,CancellationToken ct)
     {
@@ -113,7 +111,6 @@ public class LendingListController(
     [EndpointDescription("Returns the contact information for the specified lending list record identifier when the record exists.")]
     [EndpointName("GetStudentContactInformationByLendingListId")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<StudentContactInformationDto>> GetStudentContactInformationById([FromRoute] Guid lendingListRecordId, CancellationToken ct)
     {

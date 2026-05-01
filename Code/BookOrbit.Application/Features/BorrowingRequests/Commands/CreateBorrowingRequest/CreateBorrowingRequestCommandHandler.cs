@@ -76,7 +76,18 @@ public class CreateBorrowingRequestCommandHandler(
         }
 
         //Take The Points (temp)
-        var deductingPointsResult = student.DeductPoints(Point.Create(lendingRecord.Cost).Value);
+        var pointsToDeductResult = Point.Create(lendingRecord.Cost);
+
+        if(pointsToDeductResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Invalid points to deduct for student {StudentId}. Errors: {Errors}",
+                command.BorrowingStudentId,
+                pointsToDeductResult.Errors);
+            return pointsToDeductResult.Errors;
+        }
+
+        var deductingPointsResult = student.DeductPoints(pointsToDeductResult.Value, PointTransactionReason.Borrowing);
         if (deductingPointsResult.IsFailure)
         {
             logger.LogWarning(
@@ -86,27 +97,8 @@ public class CreateBorrowingRequestCommandHandler(
             return deductingPointsResult.Errors;
         }   
 
-        var pointTransactionResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            command.BorrowingStudentId,
-            null,
-            lendingRecord.Cost,
-            PointTransactionReason.Borrowing);
-
-        if(pointTransactionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for student {StudentId}. Errors: {Errors}",
-                command.BorrowingStudentId,
-                pointTransactionResult.Errors);
-            return pointTransactionResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
-
-        borrowingRequestResult.Value.AddDomainEvent(new BorrowingRequestCreatedEvent(borrowingRequestResult.Value.Id, borrowingRequestResult.Value.LendingRecordId));
-
         context.BorrowingRequests.Add(borrowingRequestResult.Value);
+
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);
 

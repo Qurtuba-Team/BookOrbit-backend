@@ -24,4 +24,9 @@ internal sealed class FakeEmailFormatService : IEmailFormatService
     {
         return $"book-delivery-confirmation-{otp}";
     }
+
+    public Result<string> BookReturningConfirmationEmailFormat(string otp)
+    {
+        return $"book-returning-confirmation-{otp}";
+    }
 }

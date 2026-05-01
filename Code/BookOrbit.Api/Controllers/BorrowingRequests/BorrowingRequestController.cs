@@ -43,7 +43,6 @@ public class BorrowingRequestController(
     [EndpointDescription("Returns the borrowing request details for the specified identifier when the request exists.")]
     [EndpointName("GetBorrowingRequestById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingRequestDto>> GetBorrowingRequestById([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
@@ -66,7 +65,6 @@ public class BorrowingRequestController(
     [EndpointDescription("Returns a paginated collection of borrowing requests and supports searching, filtering, and sorting by [createdat,updatedat,expirationdate,state,borrowername,booktitle] so clients can review borrowing activity efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBorrowingRequests")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingRequestListItemDto>>> GetBorrowingRequests([FromQuery] BorrowingRequestPagedFilterRequest request, CancellationToken ct)
     {
@@ -98,7 +96,6 @@ public class BorrowingRequestController(
     [EndpointDescription("Returns a paginated collection of incoming borrowing requests for the current student and supports searching, filtering, and sorting by [createdat,updatedat,expirationdate,state,borrowername,booktitle].")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetIncomingBorrowingRequests")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingRequestListItemDto>>> GetIncomingBorrowingRequests([FromQuery] BorrowingRequestPagedFilterRequest request, CancellationToken ct)
     {
@@ -138,7 +135,6 @@ public class BorrowingRequestController(
     [EndpointDescription("Returns a paginated collection of outgoing borrowing requests for the current student and supports searching, filtering, and sorting by [createdat,updatedat,expirationdate,state,borrowername,booktitle].")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetOutgoingBorrowingRequests")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingRequestListItemDto>>> GetOutgoingBorrowingRequests([FromQuery] BorrowingRequestPagedFilterRequest request, CancellationToken ct)
     {

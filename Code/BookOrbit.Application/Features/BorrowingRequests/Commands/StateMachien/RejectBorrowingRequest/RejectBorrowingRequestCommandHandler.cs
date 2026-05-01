@@ -32,45 +32,6 @@ public class RejectBorrowingRequestCommandHandler(
         if (rejectResult.IsFailure)
             return rejectResult.Errors;
 
-        //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(Point.Create(borrowingRequestData.Cost).Value);
-
-        if (addingPointResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to add points for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent.Id,
-                addingPointResult.Errors);
-            return addingPointResult.Errors;
-        }
-
-        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsAvailable();
-        if (lendingRecordMarkingResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to mark lending record {LendingRecordId} as available. Errors: {Errors}",
-                borrowingRequestData.LendingRecord.Id,
-                lendingRecordMarkingResult.Errors);
-            return lendingRecordMarkingResult.Errors;
-        }
-
-        var pointTransactionResult = PointTransaction.Create(
-        Guid.NewGuid(),
-        borrowingRequestData.BorrowingStudent.Id,
-        null,
-        borrowingRequestData.Cost,
-        PointTransactionReason.Refund);
-
-        if (pointTransactionResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point transaction for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent.Id,
-                pointTransactionResult.Errors);
-            return pointTransactionResult.Errors;
-        }
-
-        context.PointTransactions.Add(pointTransactionResult.Value);
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

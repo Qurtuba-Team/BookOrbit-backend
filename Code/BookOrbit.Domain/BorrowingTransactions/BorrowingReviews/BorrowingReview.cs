@@ -1,3 +1,4 @@
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.DomainEvents;
 
 namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 
@@ -54,13 +55,17 @@ public class BorrowingReview : AuditableEntity
             return BorrowingReviewErrors.RatingRequired;
 
 
-        return new BorrowingReview(
+        var review = new BorrowingReview(
             id,
             reviewerStudentId,
             reviewedStudentId,
             borrowingTransactionId,
             description,
             rating);
+
+        review.AddDomainEvent(new BorrowingReviewCreatedEvent(review.Id, review.ReviewedStudentId, review.Rating.Value));
+
+        return review;
     }
 }
 
