@@ -112,6 +112,7 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
+        System.IO.File.WriteAllText(@"C:\Temp\error_log.txt", "IsSuccess: " + result.IsSuccess + "\nErrors: " + string.Join(", ", result.Errors.Select(e => e.Code)));
         result.Errors.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(0);
