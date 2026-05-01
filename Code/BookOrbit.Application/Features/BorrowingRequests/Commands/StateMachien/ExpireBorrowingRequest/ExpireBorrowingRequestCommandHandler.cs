@@ -32,40 +32,6 @@ public class ExpireBorrowingRequestCommandHandler(
         if (expireResult.IsFailure)
             return expireResult.Errors;
 
-        var pointToAddCreationResult = Point.Create(borrowingRequestData.Cost);
-
-        if(pointToAddCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create point value for refunding borrowing request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingRequest.Id,
-                pointToAddCreationResult.Errors);
-            return pointToAddCreationResult.Errors;
-        }
-
-        //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointToAddCreationResult.Value, PointTransactionReason.Refund);
-
-        if (addingPointResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to add points for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent.Id,
-                addingPointResult.Errors);
-            return addingPointResult.Errors;
-        }
-
-        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsAvailable();
-
-        if (lendingRecordMarkingResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to mark lending record as available for borrowing request {BorrowingRequestId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingRequest.Id,
-                lendingRecordMarkingResult.Errors);
-            return lendingRecordMarkingResult.Errors;
-        }
-
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);
 

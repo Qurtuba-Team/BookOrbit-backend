@@ -32,38 +32,6 @@ public class RejectBorrowingRequestCommandHandler(
         if (rejectResult.IsFailure)
             return rejectResult.Errors;
 
-        //retrive the points to the student that has been deducted when the borrowing request was created
-        var pointCreationResult = Point.Create(borrowingRequestData.Cost);
-
-        if(pointCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create points for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent!.Id,
-                pointCreationResult.Errors);
-            return pointCreationResult.Errors;
-        }
-
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointCreationResult.Value, PointTransactionReason.Refund);
-
-        if (addingPointResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to add points for student {StudentId}. Errors: {Errors}",
-                borrowingRequestData.BorrowingStudent.Id,
-                addingPointResult.Errors);
-            return addingPointResult.Errors;
-        }
-
-        var lendingRecordMarkingResult = borrowingRequestData.LendingRecord!.MarkAsAvailable();
-        if (lendingRecordMarkingResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to mark lending record {LendingRecordId} as available. Errors: {Errors}",
-                borrowingRequestData.LendingRecord.Id,
-                lendingRecordMarkingResult.Errors);
-            return lendingRecordMarkingResult.Errors;
-        }
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

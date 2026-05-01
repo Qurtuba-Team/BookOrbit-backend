@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Domain.BorrowingRequests.DomainEvents;
+
 namespace BookOrbit.Domain.BorrowingRequests;
 
 public class BorrowingRequest : ExpirableEntity
@@ -89,12 +91,33 @@ public class BorrowingRequest : ExpirableEntity
         return result;
     }
 
-    public Result<Updated> MarkAsRejected() =>
-        UpdateState(BorrowingRequestState.Rejected);
+    public Result<Updated> MarkAsRejected()
+    {
+        var result = UpdateState(BorrowingRequestState.Rejected);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+        }
+        return result;
+    }
 
-    public Result<Updated> MarkAsCancelled() =>
-        UpdateState(BorrowingRequestState.Cancelled);
+    public Result<Updated> MarkAsCancelled()
+    {
+        var result = UpdateState(BorrowingRequestState.Cancelled);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+        }
+        return result;
+    }
 
-    public Result<Updated> MarkAsExpired() =>
-        UpdateState(BorrowingRequestState.Expired);
+    public Result<Updated> MarkAsExpired()
+    {
+        var result = UpdateState(BorrowingRequestState.Expired);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+        }
+        return result;
+    }
 }
