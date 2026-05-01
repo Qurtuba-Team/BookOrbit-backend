@@ -73,8 +73,6 @@ public class CreateStudentCommandHandler(
             return createdStudentResult.Errors;
         }
 
-        createdStudentResult.Value.AddDomainEvent(new StudentCreatedEvent(createdStudentResult.Value.Id, createdStudentResult.Value.UniversityMail));
-
         try
         {
             context.Students.Add(createdStudentResult.Value);

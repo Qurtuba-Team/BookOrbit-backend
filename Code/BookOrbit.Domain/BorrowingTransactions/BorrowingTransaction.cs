@@ -1,4 +1,3 @@
-
 namespace BookOrbit.Domain.BorrowingTransactions;
 
 public class BorrowingTransaction : AuditableEntity
@@ -69,13 +68,17 @@ public class BorrowingTransaction : AuditableEntity
             return BorrowingTransactionErrors.LenderAndBorrowerCannotBeTheSame;
 
 
-        return new BorrowingTransaction(
+        var transaction = new BorrowingTransaction(
         id,
         borrowingRequestId,
         lenderStudentId,
         borrowerStudentId,
         bookCopyId,
         expectedReturnDate);
+        
+        transaction.AddDomainEvent(new BorrowingTransactionStateChangedEvent(transaction.Id, transaction.State));
+        
+        return transaction;
     }
 
     private bool CanTransitionToState(BorrowingTransactionState newState)
@@ -96,6 +99,8 @@ public class BorrowingTransaction : AuditableEntity
             return BorrowingTransactionErrors.InvalidStateTransition(State, newState);
 
         State = newState;
+        
+        AddDomainEvent(new BorrowingTransactionStateChangedEvent(Id, State));
 
         return Result.Updated;
     }
@@ -119,6 +124,9 @@ public class BorrowingTransaction : AuditableEntity
             return result;
                 
         ActualReturnDate = returnDate;
+
+        AddDomainEvent(new BorrowingTransactionBookCopyReturnedEvent(BorrowerStudentId, Id, BookCopyId, State));
+
         return Result.Updated;
     }
 

@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Domain.BorrowingRequests.DomainEvents;
+
 namespace BookOrbit.Domain.BorrowingRequests;
 
 public class BorrowingRequest : ExpirableEntity
@@ -52,6 +54,8 @@ public class BorrowingRequest : ExpirableEntity
             lendingRecordId,
             expirationDateUtc);
 
+        borrowingRequest.AddDomainEvent(new BookOrbit.Domain.BorrowingRequests.DomainEvents.BorrowingRequestCreatedEvent(borrowingRequest.Id, borrowingRequest.LendingRecordId));
+
         return borrowingRequest;
     }
 
@@ -77,15 +81,43 @@ public class BorrowingRequest : ExpirableEntity
         return Result.Updated;
     }
 
-    public Result<Updated> MarkAsApproved() =>
-        UpdateState(BorrowingRequestState.Accepted);
+    public Result<Updated> MarkAsApproved()
+    {
+        var result = UpdateState(BorrowingRequestState.Accepted);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestAcceptedEvent(BorrowingStudentId, Id));
+        }
+        return result;
+    }
 
-    public Result<Updated> MarkAsRejected() =>
-        UpdateState(BorrowingRequestState.Rejected);
+    public Result<Updated> MarkAsRejected()
+    {
+        var result = UpdateState(BorrowingRequestState.Rejected);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+        }
+        return result;
+    }
 
-    public Result<Updated> MarkAsCancelled() =>
-        UpdateState(BorrowingRequestState.Cancelled);
+    public Result<Updated> MarkAsCancelled()
+    {
+        var result = UpdateState(BorrowingRequestState.Cancelled);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+        }
+        return result;
+    }
 
-    public Result<Updated> MarkAsExpired() =>
-        UpdateState(BorrowingRequestState.Expired);
+    public Result<Updated> MarkAsExpired()
+    {
+        var result = UpdateState(BorrowingRequestState.Expired);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+        }
+        return result;
+    }
 }

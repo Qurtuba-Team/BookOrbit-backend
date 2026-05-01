@@ -18,7 +18,6 @@ public class BorrowingTransactionEventController(
     [EndpointDescription("Returns the borrowing transaction event details for the specified identifier when the event exists.")]
     [EndpointName("GetBorrowingTransactionEventById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingTransactionEventDto>> GetBorrowingTransactionEventById([FromRoute] Guid borrowingTransactionEventId, CancellationToken ct)
     {
@@ -41,7 +40,6 @@ public class BorrowingTransactionEventController(
     [EndpointDescription("Returns a paginated collection of borrowing transaction events and supports filtering and sorting by [createdat,updatedat,state] so administrators can review the event history efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBorrowingTransactionEvents")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingTransactionEventListItemDto>>> GetBorrowingTransactionEvents([FromQuery] BorrowingTransactionEventPagedFilterRequest request, CancellationToken ct)
     {

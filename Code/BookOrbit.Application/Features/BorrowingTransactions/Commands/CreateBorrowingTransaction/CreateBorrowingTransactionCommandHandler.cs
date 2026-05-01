@@ -93,22 +93,7 @@ public class CreateBorrowingTransactionCommandHandler(
             return lendingRecordBorrowingResult.Errors;
         }
 
-        var logCreationResult = BorrowingTransactionEvent.Create(
-            Guid.NewGuid(),
-            transactionResult.Value.Id,
-            transactionResult.Value.State);
-
-        if(logCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create borrowing transaction event for transaction {BorrowingTransactionId}. Errors: {Errors}",
-                transactionResult.Value.Id,
-                logCreationResult.Errors);
-            return logCreationResult.Errors;
-        }
-
-        var student = await context.Students.FirstOrDefaultAsync(
-            s => s.Id == lendingRecord.OwnerId);
+        var student = await context.Students.FirstOrDefaultAsync(s => s.Id == lendingRecord.OwnerId, cancellationToken: ct);
 
         if(student is null)
         {
@@ -119,27 +104,19 @@ public class CreateBorrowingTransactionCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var pointAdditionResult = student!.AddPoints(Point.Create(2).Value);
+        var pointToAddCreationResult = Point.Create(Point.DeliveringBookReward);
 
-        var pointLogCreationResult = PointTransaction.Create(
-            Guid.NewGuid(),
-            student.Id,
-            null,
-            2,
-            PointTransactionReason.BookBorrowedFrom);
-
-        if(pointLogCreationResult.IsFailure)
+        if(pointToAddCreationResult.IsFailure)
         {
             logger.LogWarning(
-                "Failed to create point transaction for student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
+                "Failed to create points for student {StudentId}. Errors: {Errors}",
                 student.Id,
-                transactionResult.Value.Id,
-                pointLogCreationResult.Errors);
-            return pointLogCreationResult.Errors;
+                pointToAddCreationResult.Errors);
+            return pointToAddCreationResult.Errors;
         }
 
-        context.PointTransactions.Add(pointLogCreationResult.Value);
-        context.BorrowingTransactionEvents.Add(logCreationResult.Value);
+        var pointAdditionResult = student!.AddPoints(pointToAddCreationResult.Value, PointTransactionReason.BookBorrowedFrom);
+
         context.BorrowingTransactions.Add(transactionResult.Value);
 
         await context.SaveChangesAsync(ct);

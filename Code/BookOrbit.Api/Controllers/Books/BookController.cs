@@ -233,7 +233,6 @@ public class BookController(
     [EndpointDescription("Returns the detailed catalog information for the specified book when a matching record exists.")]
     [EndpointName("GetBookById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookDto>> GetBookById([FromRoute] Guid bookId, CancellationToken ct)
     {
@@ -258,7 +257,6 @@ public class BookController(
     [EndpointDescription("Returns a paginated collection of books and supports searching, category filtering, status filtering, and sorting by [createdat,updatedat,title,publisher,author] so clients can browse the catalog efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBooks")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookDto>> GetBooks([FromQuery] BookPagedFilterRequest request, CancellationToken ct)
     {

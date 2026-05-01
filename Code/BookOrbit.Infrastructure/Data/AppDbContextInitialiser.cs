@@ -367,7 +367,7 @@ public class AppDbContextInitialiser(
                 Guid.NewGuid(),
                 bookCopy.Id,
                 borrowingDurationInDays: 14,
-                cost: new Point(LendingListRecord.DefaultCostInPoints),
+                cost: new Point(Point.LendingRecordDefaultCost),
                 expirationDateUtc: now.AddDays(LendingListRecord.DefaultExpirationDurationInDays),
                 currentTime: now);
 

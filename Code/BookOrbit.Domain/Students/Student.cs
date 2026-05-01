@@ -1,3 +1,4 @@
+using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Domain.Students;
 
@@ -36,7 +37,7 @@ public class Student : AuditableEntity
         PhoneNumber = phoneNumber;
         TelegramUserId = telegramUserId;
         State = StudentState.Pending;
-        Points = new Point(1);
+        Points = new Point(Point.StudentInitialPoint);
     }
 
 
@@ -67,7 +68,7 @@ public class Student : AuditableEntity
         if (string.IsNullOrWhiteSpace(personalPhotoFileName))
             return StudentErrors.PersonalImageRequired;
 
-        return new Student(
+        var student = new Student(
             id,
             name,
             universityMail,
@@ -75,6 +76,10 @@ public class Student : AuditableEntity
             userId,
             phoneNumber,
             telegramUserId);
+            
+        student.AddDomainEvent(new BookOrbit.Domain.Students.DomainEvents.StudentCreatedEvent(student.Id, student.UniversityMail));
+
+        return student;
     }
 
 
@@ -136,18 +141,27 @@ public class Student : AuditableEntity
         return result;
     }
 
-    public Result<Updated> DeductPoints(Point pointsToDeduct)
+    public Result<Updated> DeductPoints(Point pointsToDeduct, PointTransactionReason? reason = null, Guid? borrowingReviewId = null)
     {
-        if(pointsToDeduct > Points)
-            return StudentErrors.InsufficientPoints;
-
         Points -= pointsToDeduct;
+
+        if (reason.HasValue)
+        {
+            AddDomainEvent(new StudentPointsChangedEvent(Id, pointsToDeduct.Value, reason.Value, borrowingReviewId));
+        }
+
         return Result.Updated;
     }
 
-    public Result<Updated> AddPoints(Point pointsToAdd)
+    public Result<Updated> AddPoints(Point pointsToAdd, PointTransactionReason? reason = null, Guid? borrowingReviewId = null)
     {
         Points += pointsToAdd;
+
+        if (reason.HasValue)
+        {
+            AddDomainEvent(new StudentPointsChangedEvent(Id, pointsToAdd.Value, reason.Value, borrowingReviewId));
+        }
+
         return Result.Updated;
     }
 

@@ -22,7 +22,6 @@ public class BorrowingTransactionController(
     [EndpointDescription("Returns the borrowing transaction details for the specified identifier when the transaction exists.")]
     [EndpointName("GetBorrowingTransactionById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingTransactionDto>> GetBorrowingTransactionById([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
     {
@@ -45,7 +44,6 @@ public class BorrowingTransactionController(
     [EndpointDescription("Returns a paginated collection of borrowing transactions and supports searching, filtering, and sorting by [createdat,updatedat,expectedreturndate,actualreturndate,state,borrowername,lendername,booktitle] so administrators can review borrowing activity efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBorrowingTransactions")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingTransactionListItemDto>>> GetBorrowingTransactions([FromQuery] BorrowingTransactionPagedFilterRequest request, CancellationToken ct)
     {
@@ -78,7 +76,6 @@ public class BorrowingTransactionController(
     [EndpointDescription("Returns a paginated collection of borrowing transactions and supports searching, filtering, and sorting by [createdat,updatedat,expectedreturndate,actualreturndate,state,borrowername,lendername,booktitle] so administrators can review borrowing activity efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetIncommingBorrowingTransactions")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingTransactionListItemDto>>> GetIncommingBorrowingTransactions([FromQuery] BorrowingTransactionPagedFilterRequest request, CancellationToken ct)
     {
@@ -120,7 +117,6 @@ public class BorrowingTransactionController(
     [EndpointDescription("Returns a paginated collection of borrowing transactions and supports searching, filtering, and sorting by [createdat,updatedat,expectedreturndate,actualreturndate,state,borrowername,lendername,booktitle] so administrators can review borrowing activity efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetOutgoingBorrowingTransactions")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingTransactionListItemDto>>> GetOutgoingBorrowingTransactions([FromQuery] BorrowingTransactionPagedFilterRequest request, CancellationToken ct)
     {
