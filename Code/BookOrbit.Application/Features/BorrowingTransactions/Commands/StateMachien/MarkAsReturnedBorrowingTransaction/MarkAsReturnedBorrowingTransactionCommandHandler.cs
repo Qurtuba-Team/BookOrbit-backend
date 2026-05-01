@@ -75,6 +75,7 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return pointsToAddCreationResult.Errors;
         }
 
+        
         var pointAdditionResult = student.AddPoints(pointsToAddCreationResult.Value, PointTransactionReason.Returning);
 
         if (pointAdditionResult.IsFailure)

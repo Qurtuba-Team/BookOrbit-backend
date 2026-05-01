@@ -1,15 +1,4 @@
 namespace BookOrbit.Application.Features.BorrowingReviews.EventHandlers;
-
-using MediatR;
-using Microsoft.Extensions.Logging;
-using BookOrbit.Application.Common.Interfaces;
-using BookOrbit.Domain.Students;
-using BookOrbit.Domain.PointTransactions.ValueObjects;
-using BookOrbit.Domain.PointTransactions.Enums;
-using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.DomainEvents;
-using BookOrbit.Application.Features.Students;
-using Microsoft.EntityFrameworkCore;
-
 public class BorrowingReviewCreatedEventHandler(
     IAppDbContext context,
     ILogger<BorrowingReviewCreatedEventHandler> logger) : INotificationHandler<BorrowingReviewCreatedEvent>
@@ -42,17 +31,17 @@ public class BorrowingReviewCreatedEventHandler(
                 reason = PointTransactionReason.BadReview;
                 break;
             case 3:
-                pointsValue = Point.ThreeStarsReviewReward;
+                pointsValue = Math.Abs(Point.ThreeStarsReviewReward);
                 isReward = true;
                 reason = PointTransactionReason.GoodReview;
                 break;
             case 4:
-                pointsValue = Point.FourStarsReviewReward;
+                pointsValue = Math.Abs(Point.FourStarsReviewReward);
                 isReward = true;
                 reason = PointTransactionReason.GoodReview;
                 break;
             case 5:
-                pointsValue = Point.FiveStarsReviewReward;
+                pointsValue = Math.Abs(Point.FiveStarsReviewReward);
                 isReward = true;
                 reason = PointTransactionReason.GoodReview;
                 break;
@@ -61,7 +50,7 @@ public class BorrowingReviewCreatedEventHandler(
                 return;
         }
 
-        if (pointsValue > 0)
+        if (pointsValue > 0) // if its 0 ignore
         {
             var pointResult = Point.Create(pointsValue);
             if (pointResult.IsFailure)
@@ -79,17 +68,6 @@ public class BorrowingReviewCreatedEventHandler(
                 student.DeductPoints(pointResult.Value, reason, notification.BorrowingReviewId);
             }
         }
-
-        // Three stars might be 0, so if pointsValue == 0, we don't necessarily need to add/deduct 0 points,
-        // but if we want to record the transaction, maybe we should. Wait, if pointsValue == 0, Point.Create(0) 
-        // will return success because 0 is valid. 
-        if (pointsValue == 0)
-        {
-            // Just return or log if we don't want to create a 0 point transaction
-            logger.LogInformation("No points added or deducted for 3-star rating. ReviewId: {ReviewId}", notification.BorrowingReviewId);
-        }
-
-        await context.SaveChangesAsync(cancellationToken);
 
         logger.LogInformation("Successfully processed points for borrowing review {BorrowingReviewId}. IsReward: {IsReward}, Points: {Points}", 
             notification.BorrowingReviewId, isReward, pointsValue);

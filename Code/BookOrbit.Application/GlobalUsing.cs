@@ -42,6 +42,7 @@ global using BookOrbit.Domain.BorrowingRequests.DomainEvents;
 global using BookOrbit.Domain.BorrowingRequests.Enums;
 global using BookOrbit.Domain.BorrowingTransactions;
 global using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
+global using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.DomainEvents;
 global using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
 global using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 global using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
@@ -76,4 +77,3 @@ global using System.Security.Claims;
 global using System.Text.Json.Serialization;
 global using System.Threading;
 global using System.Threading.Tasks;
-

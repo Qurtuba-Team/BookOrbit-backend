@@ -1,3 +1,4 @@
+namespace BookOrbit.Application.Features.BorrowingRequests.EventHandlers;
 public class BorrowingRequestTerminatedEventHandler(
     IAppDbContext context,
     ILogger<BorrowingRequestTerminatedEventHandler> logger) : INotificationHandler<BorrowingRequestTerminatedEvent>
@@ -27,7 +28,7 @@ public class BorrowingRequestTerminatedEventHandler(
 
         // Mark listing as available
         lendingRecord.MarkAsAvailable();
-        
+
         logger.LogInformation(
             "Refunded points and marked lending record {LendingRecordId} available due to termination of borrowing request {BorrowingRequestId}.",
             notification.LendingRecordId,

@@ -98,6 +98,7 @@ public class CreateBorrowingRequestCommandHandler(
         }   
 
         context.BorrowingRequests.Add(borrowingRequestResult.Value);
+
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);
 

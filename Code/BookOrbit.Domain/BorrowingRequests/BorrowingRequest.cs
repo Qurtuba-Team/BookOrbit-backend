@@ -86,7 +86,7 @@ public class BorrowingRequest : ExpirableEntity
         var result = UpdateState(BorrowingRequestState.Accepted);
         if (result.IsSuccess)
         {
-            AddDomainEvent(new BookOrbit.Domain.BorrowingRequests.DomainEvents.BorrowingRequestAcceptedEvent(BorrowingStudentId, Id));
+            AddDomainEvent(new BorrowingRequestAcceptedEvent(BorrowingStudentId, Id));
         }
         return result;
     }
