@@ -25,6 +25,9 @@ public class OtpConfiguration : IEntityTypeConfiguration<Otp>
         builder.Property(otp => otp.TargetId)
             .IsRequired();
 
+        builder.Property(otp=>otp.IsUsed)
+            .IsRequired();
+
         builder.Property(otp=>otp.Type)
             .HasConversion<string>()
             .HasMaxLength(50)

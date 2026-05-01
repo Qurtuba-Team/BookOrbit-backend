@@ -1,10 +1,4 @@
-﻿
-
-
-
-using BookOrbit.Infrastructure.BackgroundJobs;
-
-namespace BookOrbit.Infrastructure;
+﻿namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
     static public IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
@@ -92,7 +86,8 @@ static public class DependencyInjection
         services.AddTransient<IEmailFormatService, EmailFormatService>();
         services.AddTransient<IBookImageService, BookImageService>();
         services.AddTransient<IStudentImageService, StudentImageService>();
-        services.AddTransient<IOtpService,OtpService>();
+        services.AddTransient<IBorrowingTransactionOtpService, BorrowingTransactionOtpService>();
+        services.AddTransient<IBorrowingRequestOtpService, BorrowingRequestOtpService>();
 
         return services;
     }

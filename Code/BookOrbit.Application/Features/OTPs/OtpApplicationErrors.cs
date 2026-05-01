@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Application.Common.OTPs;
+﻿namespace BookOrbit.Application.Features.OTPs;
 public static class OtpApplicationErrors
 {
     public static readonly Error OtpNotFound= ApplicationCommonErrors.NotFoundProp("OtpNotFound", "Otp Not Found", "No OTP found for the given request.");

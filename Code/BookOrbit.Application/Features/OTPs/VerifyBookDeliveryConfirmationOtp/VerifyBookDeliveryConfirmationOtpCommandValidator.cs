@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Application.Common.OTPs.VerifyBookDeliveryConfirmationOtp;
+﻿namespace BookOrbit.Application.Features.OTPs.VerifyBookDeliveryConfirmationOtp;
 public class VerifyBookDeliveryConfirmationOtpCommandValidator : AbstractValidator<VerifyBookDeliveryConfirmationOtpCommand>
 {
     public VerifyBookDeliveryConfirmationOtpCommandValidator()

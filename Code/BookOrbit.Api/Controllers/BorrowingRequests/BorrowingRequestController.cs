@@ -1,6 +1,4 @@
-﻿using BookOrbit.Application.Common.OTPs.VerifyBookDeliveryConfirmationOtp;
-
-namespace BookOrbit.Api.Controllers.BorrowingRequests;
+﻿namespace BookOrbit.Api.Controllers.BorrowingRequests;
 
 [Route("api/v{version:apiVersion}/borrowingrequests")]
 [ApiVersion("1.0")]
@@ -11,10 +9,23 @@ public class BorrowingRequestController(
 {
     [HttpPost("{borrowingRequestId:guid}/otp/verify")]
     [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Verify an otp code to confirm delivery")]
+    [EndpointDescription("Verify an otp code to confirm delivery")]
+    [EndpointName("VerifyBookDeliveryOtp")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
     public async Task<ActionResult> VerifyBookDeliveryOtp([FromRoute] Guid borrowingRequestId, [FromBody] string otpCode, CancellationToken ct)
     {
         var command = new VerifyBookDeliveryConfirmationOtpCommand(borrowingRequestId, otpCode);
+
         var result = await sender.Send(command, ct);
+
         return result.Match(
             _ => NoContent(),
             e => Problem(e, HttpContext));
@@ -32,7 +43,6 @@ public class BorrowingRequestController(
     [EndpointDescription("Send an otp code to confirm delivery")]
     [EndpointName("SendBookDeliveryOtp")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<OtpDto>> SendBookDeliveryOtp([FromRoute] Guid borrowingRequestId, CancellationToken ct)
     {
@@ -41,7 +51,7 @@ public class BorrowingRequestController(
         var result = await sender.Send(command, ct);
 
         return result.Match(
-            r => Ok(),
+            _ => Ok(),
             e => Problem(e, HttpContext));
     }
 

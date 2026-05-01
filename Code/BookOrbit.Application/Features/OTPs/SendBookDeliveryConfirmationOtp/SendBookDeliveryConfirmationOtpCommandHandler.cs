@@ -1,10 +1,11 @@
-﻿namespace BookOrbit.Application.Common.OTPs.SendOtp;
+﻿namespace BookOrbit.Application.Features.OTPs.SendBookDeliveryConfirmationOtp;
 public class SendBookDeliveryConfirmationOtpCommandHandler (
     ILogger<SendBookDeliveryConfirmationOtpCommandHandler> logger,
-    IOtpService otpService,
+    IBorrowingRequestOtpService otpService,
     IEmailFormatService emailFormatService,
     IEmailService emailService,
-    IAppDbContext context): IRequestHandler<SendBookDeliveryConfirmationOtpCommand, Result<Success>>
+    IAppDbContext context,
+    TimeProvider timeProvider): IRequestHandler<SendBookDeliveryConfirmationOtpCommand, Result<Success>>
 {
     public async Task<Result<Success>> Handle(SendBookDeliveryConfirmationOtpCommand command, CancellationToken ct)
     {
@@ -15,7 +16,7 @@ public class SendBookDeliveryConfirmationOtpCommandHandler (
                 br.Id,
                 Email = br.BorrowingStudent!.UniversityMail.Value
             })
-            .FirstOrDefaultAsync(br=>br.Id == command.BorrowingRequestId);
+            .FirstOrDefaultAsync(br =>br.Id == command.BorrowingRequestId, cancellationToken: ct);
 
         if(studentEmailResult is null)
         {
@@ -23,7 +24,7 @@ public class SendBookDeliveryConfirmationOtpCommandHandler (
             return BorrowingRequestApplicationErrors.NotFoundById;
         }
 
-        var otpGeneratingResult = await otpService.GenerateBorrowingRequestOtp(command.BorrowingRequestId, ct);
+        var otpGeneratingResult = await otpService.GenerateOtp(command.BorrowingRequestId, timeProvider.GetUtcNow(), ct);
 
         if (otpGeneratingResult.IsFailure)
         {
