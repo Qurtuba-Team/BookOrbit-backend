@@ -76,7 +76,18 @@ public class CreateBorrowingRequestCommandHandler(
         }
 
         //Take The Points (temp)
-        var deductingPointsResult = student.DeductPoints(Point.Create(lendingRecord.Cost).Value);
+        var pointsToDeductResult = Point.Create(lendingRecord.Cost);
+
+        if(pointsToDeductResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Invalid points to deduct for student {StudentId}. Errors: {Errors}",
+                command.BorrowingStudentId,
+                pointsToDeductResult.Errors);
+            return pointsToDeductResult.Errors;
+        }
+
+        var deductingPointsResult = student.DeductPoints(pointsToDeductResult.Value);
         if (deductingPointsResult.IsFailure)
         {
             logger.LogWarning(

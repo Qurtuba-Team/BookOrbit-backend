@@ -68,7 +68,18 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var pointAdditionResult = student.AddPoints(Point.Create(2).Value);
+        var pointsToAddCreationResult = Point.Create(Point.ReturningBookReward);
+
+        if(pointsToAddCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create points for student {StudentId}. Errors: {Errors}",
+                student.Id,
+                pointsToAddCreationResult.Errors);
+            return pointsToAddCreationResult.Errors;
+        }
+
+        var pointAdditionResult = student.AddPoints(pointsToAddCreationResult.Value);
 
         if (pointAdditionResult.IsFailure)
         {
@@ -84,7 +95,7 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             Guid.NewGuid(),
             student.Id,
             null,
-            2,
+            pointsToAddCreationResult.Value.Value,
             PointTransactionReason.Returning);
 
         context.PointTransactions.Add(pointTransactionResult.Value);

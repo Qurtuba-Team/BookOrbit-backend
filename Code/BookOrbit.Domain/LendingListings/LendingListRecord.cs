@@ -19,8 +19,6 @@ public class LendingListRecord : ExpirableEntity
 
     public const int DefaultExpirationDurationInDays = 30;
 
-    public const int DefaultCostInPoints = 1;
-
     private LendingListRecord() { }
 
     private LendingListRecord(

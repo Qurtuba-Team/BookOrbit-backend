@@ -36,7 +36,7 @@ public class Student : AuditableEntity
         PhoneNumber = phoneNumber;
         TelegramUserId = telegramUserId;
         State = StudentState.Pending;
-        Points = new Point(1);
+        Points = new Point(Point.StudentInitialPoint);
     }
 
 

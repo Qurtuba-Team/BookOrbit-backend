@@ -107,8 +107,7 @@ public class CreateBorrowingTransactionCommandHandler(
             return logCreationResult.Errors;
         }
 
-        var student = await context.Students.FirstOrDefaultAsync(
-            s => s.Id == lendingRecord.OwnerId);
+        var student = await context.Students.FirstOrDefaultAsync(s => s.Id == lendingRecord.OwnerId, cancellationToken: ct);
 
         if(student is null)
         {
@@ -119,13 +118,24 @@ public class CreateBorrowingTransactionCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var pointAdditionResult = student!.AddPoints(Point.Create(2).Value);
+        var pointToAddCreationResult = Point.Create(Point.DeliveringBookReward);
+
+        if(pointToAddCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create points for student {StudentId}. Errors: {Errors}",
+                student.Id,
+                pointToAddCreationResult.Errors);
+            return pointToAddCreationResult.Errors;
+        }
+
+        var pointAdditionResult = student!.AddPoints(pointToAddCreationResult.Value);
 
         var pointLogCreationResult = PointTransaction.Create(
             Guid.NewGuid(),
             student.Id,
             null,
-            2,
+            pointToAddCreationResult.Value.Value,
             PointTransactionReason.BookBorrowedFrom);
 
         if(pointLogCreationResult.IsFailure)

@@ -1,4 +1,7 @@
 ﻿
+using BookOrbit.Application.Features.BorrowingRequests.Dtos;
+using BookOrbit.Domain.Students;
+
 namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsLostBorrowingTransaction;
 public class MarkAsLostBorrowingTransactionCommandHandler(
     IAppDbContext context,
@@ -54,7 +57,50 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
             transactionData.BorrowingTransaction.Id,
             transactionData.BorrowingTransaction.State);
 
+        var student = await context.Students.FirstOrDefaultAsync(s => s.Id == transactionData.BorrowingTransaction.BorrowerStudentId, cancellationToken: ct);
+
+        if (student is null)
+        {
+            logger.LogWarning(
+                "Student {StudentId} not found for borrowing transaction {LendingRecordId}.",
+                transactionData.BorrowingTransaction.BorrowerStudentId,
+                transactionData.BorrowingTransaction.Id);
+            return StudentApplicationErrors.NotFoundById;
+        }
+
+        var pointsToDeductCreationResult = Point.Create(Point.LostBookPenalty);
+
+        if(pointsToDeductCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+    "Failed to create points for student {StudentId}. Errors: {Errors}",
+    student.Id,
+    pointsToDeductCreationResult.Errors);
+            return pointsToDeductCreationResult.Errors;
+        }
+
+        student.DeductPoints(pointsToDeductCreationResult.Value);
+
+        var pointLogCreationResult = PointTransaction.Create(
+            Guid.NewGuid(),
+            student.Id,
+            null,
+            pointsToDeductCreationResult.Value.Value,
+            PointTransactionReason.Penalty);
+
+        if (pointLogCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create point transaction for student {StudentId} for borrowing transaction {BorrowingTransactionId}. Errors: {Errors}",
+                student.Id,
+                transactionData.BorrowingTransaction.Id,
+                pointLogCreationResult.Errors);
+            return pointLogCreationResult.Errors;
+        }
+
+
         context.BorrowingTransactionEvents.Add(logCreationResult.Value);
+        context.PointTransactions.Add(pointLogCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
 

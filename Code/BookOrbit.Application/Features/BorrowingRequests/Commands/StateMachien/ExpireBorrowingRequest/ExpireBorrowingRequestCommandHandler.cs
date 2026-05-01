@@ -32,8 +32,19 @@ public class ExpireBorrowingRequestCommandHandler(
         if (expireResult.IsFailure)
             return expireResult.Errors;
 
+        var pointToAddCreationResult = Point.Create(borrowingRequestData.Cost);
+
+        if(pointToAddCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create point value for refunding borrowing request {BorrowingRequestId}. Errors: {Errors}",
+                borrowingRequestData.BorrowingRequest.Id,
+                pointToAddCreationResult.Errors);
+            return pointToAddCreationResult.Errors;
+        }
+
         //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(Point.Create(borrowingRequestData.Cost).Value);
+        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointToAddCreationResult.Value);
 
         if (addingPointResult.IsFailure)
         {

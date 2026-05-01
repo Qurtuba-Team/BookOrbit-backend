@@ -33,7 +33,18 @@ public class RejectBorrowingRequestCommandHandler(
             return rejectResult.Errors;
 
         //retrive the points to the student that has been deducted when the borrowing request was created
-        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(Point.Create(borrowingRequestData.Cost).Value);
+        var pointCreationResult = Point.Create(borrowingRequestData.Cost);
+
+        if(pointCreationResult.IsFailure)
+        {
+            logger.LogWarning(
+                "Failed to create points for student {StudentId}. Errors: {Errors}",
+                borrowingRequestData.BorrowingStudent!.Id,
+                pointCreationResult.Errors);
+            return pointCreationResult.Errors;
+        }
+
+        var addingPointResult = borrowingRequestData.BorrowingStudent!.AddPoints(pointCreationResult.Value);
 
         if (addingPointResult.IsFailure)
         {
