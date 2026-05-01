@@ -7,10 +7,11 @@ public class Notification : AuditableEntity
     public bool IsRead { get; private set; }
     public NotificationType Type { get; }
 
-    private Notification(Guid studentId,
+    private Notification(Guid Id,
+                        Guid studentId,
                         string title,
                         string message,
-                        NotificationType type)
+                        NotificationType type):base(Id)
     {
         StudentId = studentId;
         Title = title;
@@ -19,7 +20,9 @@ public class Notification : AuditableEntity
         Type = type;
     }
 
-    public static Result<Notification> Create(Guid studentId,
+    public static Result<Notification> Create(
+                                               Guid Id,
+                                               Guid studentId,
                                                string title,
                                                string message,
                                                NotificationType type)
@@ -36,7 +39,7 @@ public class Notification : AuditableEntity
         if(!Enum.IsDefined(type))
             return NotificationErrors.InvalidNotificationType;
 
-        return new Notification(studentId, title, message, type);
+        return new Notification(Id,studentId, title, message, type);
     }
 
     public void MarkAsRead()

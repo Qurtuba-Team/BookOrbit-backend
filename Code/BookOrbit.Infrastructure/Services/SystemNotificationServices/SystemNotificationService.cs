@@ -3,7 +3,8 @@
 namespace BookOrbit.Infrastructure.Services.SystemNotificationServices;
 public class SystemNotificationService(
     ILogger<SystemNotificationService> logger,
-    IAppDbContext context) : ISystemNotificationService
+    IAppDbContext context,
+    HybridCache cache) : ISystemNotificationService
 {
     public async Task SendNotificationAsync(Guid studentId, string title, string message, NotificationType type, CancellationToken cancellationToken = default)
     {
@@ -15,7 +16,7 @@ public class SystemNotificationService(
             return;
         }
 
-        var notificationCreationResult = Notification.Create(studentId, title, message, type);
+        var notificationCreationResult = Notification.Create(Guid.NewGuid(),studentId, title, message, type);
 
         if(notificationCreationResult.IsFailure)
         {
@@ -24,6 +25,7 @@ public class SystemNotificationService(
         }
 
         context.Notification.Add(notificationCreationResult.Value);
-        await context.SaveChangesAsync(cancellationToken);
+        //Save Changes in caller
+        await cache.RemoveByTagAsync(NotificationCachingConstants.NotificationTag, cancellationToken);
     }
 }
