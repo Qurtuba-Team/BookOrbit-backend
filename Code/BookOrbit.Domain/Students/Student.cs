@@ -77,7 +77,7 @@ public class Student : AuditableEntity
             phoneNumber,
             telegramUserId);
             
-        student.AddDomainEvent(new BookOrbit.Domain.Students.DomainEvents.StudentCreatedEvent(student.Id, student.UniversityMail));
+        student.AddDomainEvent(new StudentCreatedEvent(student.Id, student.UniversityMail));
 
         return student;
     }
