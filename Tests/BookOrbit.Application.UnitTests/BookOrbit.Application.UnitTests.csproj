@@ -16,7 +16,7 @@
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="FakeItEasy" Version="9.0.1" />
     <PackageReference Include="FluentAssertions" Version="8.9.0" />
-    <PackageReference Include="FluentValidation.TestHelper" Version="12.1.1" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.4.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
