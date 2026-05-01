@@ -255,7 +255,7 @@ public class BookCommandsSubcutaneousTests
         var routeService = new FakeRouteService();
         var coverRetrievalService = new FakeBookCoverRetrievalService
         {
-            ReturnValue = "default-cover.png"
+            ReturnValue = "DefaultBookCoverImage.png"
         };
         var handler = new CreateBookCommandHandler(
             NullLogger<CreateBookCommandHandler>.Instance,
@@ -279,7 +279,7 @@ public class BookCommandsSubcutaneousTests
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(1, because: "retrieval is invoked when CoverImageFileName is null");
         // The route service wraps whatever the retrieval service returned.
-        result.Value.BookCoverImageUrl.Should().Contain("default-cover.png");
+        result.Value.BookCoverImageUrl.Should().Contain("DefaultBookCoverImage.png");
     }
 
     [Fact]

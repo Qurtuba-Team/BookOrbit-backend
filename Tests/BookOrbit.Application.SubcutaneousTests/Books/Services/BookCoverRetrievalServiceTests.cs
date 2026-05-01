@@ -232,7 +232,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -400,7 +400,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     [Fact]
@@ -426,7 +426,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     [Fact]
@@ -452,7 +452,7 @@ public class BookCoverRetrievalServiceTests
         // Must not throw — malformed JSON is caught and logged as a warning.
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     [Fact]
@@ -465,7 +465,7 @@ public class BookCoverRetrievalServiceTests
         // Empty title → Google Books is skipped entirely.
         var result = await service.GetCoverUrlAsync(ValidIsbn, string.Empty);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -511,7 +511,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -539,7 +539,7 @@ public class BookCoverRetrievalServiceTests
             NullLogger<BookCoverRetrievalService>.Instance);
 
         // OperationCanceledException (base of TaskCanceledException) must propagate —
-        // it must NOT be silently swallowed and converted to "default-cover.png".
+        // it must NOT be silently swallowed and converted to "DefaultBookCoverImage.png".
         Func<Task> act = () => service.GetCoverUrlAsync(ValidIsbn, ValidTitle, cts.Token);
 
         await act.Should().ThrowAsync<OperationCanceledException>();
@@ -592,7 +592,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png");
+        result.Should().Be("DefaultBookCoverImage.png");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -634,7 +634,7 @@ public class BookCoverRetrievalServiceTests
 
         var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
 
-        result.Should().Be("default-cover.png",
+        result.Should().Be("DefaultBookCoverImage.png",
             because: "a JSON-null thumbnail must be treated the same as a missing thumbnail");
     }
 

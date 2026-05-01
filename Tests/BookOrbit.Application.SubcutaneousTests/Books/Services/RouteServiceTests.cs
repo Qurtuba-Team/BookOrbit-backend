@@ -34,13 +34,15 @@ public class RouteServiceTests
     // ─────────────────────────────────────────────────────────────
 
     [Fact]
-    public void GetBookCoverImageRoute_NoArgs_ReturnsBaseUrlWithUploadsPath()
+    public void GetBookCoverImageRoute_NoArgs_ReturnsApiControllerPath()
     {
         var service = CreateService("https://api.example.com");
 
         var result = service.GetBookCoverImageRoute();
 
-        result.Should().Be("https://api.example.com/uploads/books");
+        // Route must go through the [Authorize]-protected ImagesController,
+        // not the wwwroot static-file path.
+        result.Should().Be("https://api.example.com/api/v1/images/books");
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -48,23 +50,23 @@ public class RouteServiceTests
     // ─────────────────────────────────────────────────────────────
 
     [Fact]
-    public void GetBookCoverImageRoute_LocalFileName_ReturnsFullLocalUrl()
+    public void GetBookCoverImageRoute_LocalFileName_ReturnsFullApiControllerUrl()
     {
         var service = CreateService("https://api.example.com");
 
         var result = service.GetBookCoverImageRoute("cover.png");
 
-        result.Should().Be("https://api.example.com/uploads/books/cover.png");
+        result.Should().Be("https://api.example.com/api/v1/images/books/cover.png");
     }
 
     [Fact]
-    public void GetBookCoverImageRoute_DefaultFallbackFileName_ReturnsFullLocalUrl()
+    public void GetBookCoverImageRoute_DefaultFallbackFileName_ReturnsFullApiControllerUrl()
     {
         var service = CreateService("https://api.example.com");
 
-        var result = service.GetBookCoverImageRoute("default-cover.png");
+        var result = service.GetBookCoverImageRoute("DefaultBookCoverImage.png");
 
-        result.Should().Be("https://api.example.com/uploads/books/default-cover.png");
+        result.Should().Be("https://api.example.com/api/v1/images/books/DefaultBookCoverImage.png");
     }
 
     // ─────────────────────────────────────────────────────────────
