@@ -25,3 +25,4 @@ global using System.ComponentModel;
 global using System.Text.Json.Serialization;
 global using System.Text.RegularExpressions;
 global using BookOrbit.Domain.Otps.Enums;
+global using BookOrbit.Domain.Notifications.Enums;
