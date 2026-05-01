@@ -12,6 +12,7 @@ using BookOrbit.Domain.Books.Enums;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
+using System.Linq;
 
 public class BookCommandsSubcutaneousTests
 {
@@ -72,7 +73,7 @@ public class BookCommandsSubcutaneousTests
             ISBN: "9780132350884",
             Publisher: "Prentice Hall",
             Category: BookCategory.Science,
-            Author: "Robert C. Martin",
+            Author: "Robert Martin",
             CoverImageFileName: null);
 
         // Act
@@ -103,7 +104,7 @@ public class BookCommandsSubcutaneousTests
         var command = new CreateBookCommand(
             Title: "The Pragmatic Programmer",
             ISBN: "9780135957059",
-            Publisher: "Addison-Wesley Professional",
+            Publisher: "Addison Wesley Professional",
             Category: BookCategory.Science,
             Author: "David Thomas",
             CoverImageFileName: "pragmatic.png");
@@ -112,7 +113,6 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        System.IO.File.WriteAllText(@"C:\Temp\error_log.txt", "IsSuccess: " + result.IsSuccess + "\nErrors: " + string.Join(", ", result.Errors.Select(e => e.Code)));
         result.Errors.Should().BeEmpty();
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(0);
@@ -269,7 +269,7 @@ public class BookCommandsSubcutaneousTests
             coverRetrievalService);
 
         var command = new CreateBookCommand(
-            Title: "Domain-Driven Design",
+            Title: "Domain Driven Design",
             ISBN: "9780321125217",
             Publisher: "Addison Wesley Professional",
             Category: BookCategory.Science,
