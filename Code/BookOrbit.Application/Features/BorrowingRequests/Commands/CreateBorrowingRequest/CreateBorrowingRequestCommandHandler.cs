@@ -97,8 +97,6 @@ public class CreateBorrowingRequestCommandHandler(
             return deductingPointsResult.Errors;
         }   
 
-        borrowingRequestResult.Value.AddDomainEvent(new BorrowingRequestCreatedEvent(borrowingRequestResult.Value.Id, borrowingRequestResult.Value.LendingRecordId));
-
         context.BorrowingRequests.Add(borrowingRequestResult.Value);
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

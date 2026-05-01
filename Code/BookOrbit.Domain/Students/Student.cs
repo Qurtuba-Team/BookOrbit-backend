@@ -68,7 +68,7 @@ public class Student : AuditableEntity
         if (string.IsNullOrWhiteSpace(personalPhotoFileName))
             return StudentErrors.PersonalImageRequired;
 
-        return new Student(
+        var student = new Student(
             id,
             name,
             universityMail,
@@ -76,6 +76,10 @@ public class Student : AuditableEntity
             userId,
             phoneNumber,
             telegramUserId);
+            
+        student.AddDomainEvent(new BookOrbit.Domain.Students.DomainEvents.StudentCreatedEvent(student.Id, student.UniversityMail));
+
+        return student;
     }
 
 

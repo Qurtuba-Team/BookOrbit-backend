@@ -50,9 +50,6 @@ public class AcceptBorrowingRequestCommandHandler(
             return lendingRecordMarkingResult.Errors;
 
 
-        borrowingRequestData.BorrowingRequest.AddDomainEvent(new BorrowingRequestAcceptedEvent(borrowingRequestData.BorrowingRequest.BorrowingStudentId,borrowingRequestData.BorrowingRequest.Id));
-
-
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);
 

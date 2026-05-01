@@ -52,6 +52,8 @@ public class BorrowingRequest : ExpirableEntity
             lendingRecordId,
             expirationDateUtc);
 
+        borrowingRequest.AddDomainEvent(new BookOrbit.Domain.BorrowingRequests.DomainEvents.BorrowingRequestCreatedEvent(borrowingRequest.Id, borrowingRequest.LendingRecordId));
+
         return borrowingRequest;
     }
 
@@ -77,8 +79,15 @@ public class BorrowingRequest : ExpirableEntity
         return Result.Updated;
     }
 
-    public Result<Updated> MarkAsApproved() =>
-        UpdateState(BorrowingRequestState.Accepted);
+    public Result<Updated> MarkAsApproved()
+    {
+        var result = UpdateState(BorrowingRequestState.Accepted);
+        if (result.IsSuccess)
+        {
+            AddDomainEvent(new BookOrbit.Domain.BorrowingRequests.DomainEvents.BorrowingRequestAcceptedEvent(BorrowingStudentId, Id));
+        }
+        return result;
+    }
 
     public Result<Updated> MarkAsRejected() =>
         UpdateState(BorrowingRequestState.Rejected);
