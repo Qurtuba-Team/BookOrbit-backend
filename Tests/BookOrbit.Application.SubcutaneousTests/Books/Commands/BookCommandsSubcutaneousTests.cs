@@ -113,7 +113,7 @@ public class BookCommandsSubcutaneousTests
         if (result.IsFailure)
         {
             var errors = string.Join("\n", result.Errors.Select(e => $"{e.Code}: {e.Message}"));
-            System.IO.File.WriteAllText(@"C:\Temp\book_errors.txt", errors);
+            System.IO.File.WriteAllText(@"D:\data\qurtuba\BookOrbit-backend\book_errors.txt", errors);
         }
         result.IsSuccess.Should().BeTrue();
         coverRetrievalService.CallCount.Should().Be(0);
