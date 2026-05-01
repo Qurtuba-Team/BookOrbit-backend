@@ -7,30 +7,6 @@ public class BorrowingRequestController(
     ISender sender,
     ICurrentUser currentUser) : ApiController
 {
-    [HttpPost("{borrowingRequestId:guid}/otp/verify")]
-    [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
-    [ProducesDefaultResponseType]
-    [EndpointSummary("Verify an otp code to confirm delivery")]
-    [EndpointDescription("Verify an otp code to confirm delivery")]
-    [EndpointName("VerifyBookDeliveryOtp")]
-    [MapToApiVersion("1.0")]
-    [EnableRateLimiting(ApiConstants.SensitiveRateLimitingPolicyName)]
-    public async Task<ActionResult> VerifyBookDeliveryOtp([FromRoute] Guid borrowingRequestId, [FromBody] string otpCode, CancellationToken ct)
-    {
-        var command = new VerifyBookDeliveryConfirmationOtpCommand(borrowingRequestId, otpCode);
-
-        var result = await sender.Send(command, ct);
-
-        return result.Match(
-            _ => NoContent(),
-            e => Problem(e, HttpContext));
-    }
-
     [HttpPost("{borrowingRequestId:guid}/otp")]
     [Authorize(Policy = PoliciesNames.BorrowingRequestLendingStudentPolicy)]
     [ProducesResponseType(typeof(OtpDto), StatusCodes.Status200OK)]
@@ -276,8 +252,15 @@ public class BorrowingRequestController(
     [EndpointName("CreateBorrowingTransaction")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BorrowingTransactionDto>> CreateBorrowingTransaction([FromRoute] Guid borrowingRequestId, CancellationToken ct)
+    public async Task<ActionResult<BorrowingTransactionDto>> CreateBorrowingTransaction([FromRoute] Guid borrowingRequestId, [FromBody] OtpRequest otp,CancellationToken ct)
     {
+        var otpVerificationResult = await sender.Send(new VerifyBookDeliveryConfirmationOtpCommand(borrowingRequestId, otp.OtpCode), ct);
+
+        if (otpVerificationResult.IsFailure)
+        {
+            return Problem(otpVerificationResult.Errors, HttpContext);
+        }
+
         var result = await sender.Send(new CreateBorrowingTransactionCommand(borrowingRequestId), ct);
         return result.Match(
             Ok,

@@ -9,6 +9,7 @@ public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailForm
     public const string ResetPasswordEmailFormatFilePath = @"Common/EmailTemplates/ResetPasswordEmailFormat.html";
     public const string BorrowingRequestAcceptedEmailFormatFilePath = @"Common/EmailTemplates/BorrowingRequestAcceptedEmailFormat.html";
     public const string BookDeliveryConfirmationEmailFormatFilePath = @"Common/EmailTemplates/BookDeliveryConfirmationEmailFormat.html";
+    public const string BookReturningConfirmationEmailFormatFilePath = @"Common/EmailTemplates/BookReturningConfirmationEmailFormat.html";
     private Result<string> GetEmailFormat(string filePath, string placeholder, string value)
     {
         try
@@ -48,5 +49,10 @@ public class EmailFormatService(ILogger<EmailFormatService> logger) : IEmailForm
     public Result<string> BookDeliveryConfirmationEmailFormat(string otp)
     {
         return GetEmailFormat(BookDeliveryConfirmationEmailFormatFilePath, "{{otp}}", otp);
+    }
+
+    public Result<string> BookReturningConfirmationEmailFormat(string otp)
+    {
+        return GetEmailFormat(BookReturningConfirmationEmailFormatFilePath, "{{otp}}", otp);
     }
 }

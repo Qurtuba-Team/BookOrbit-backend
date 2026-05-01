@@ -1,4 +1,7 @@
-﻿namespace BookOrbit.Api.Controllers.BorrowingTransactions;
+﻿using BookOrbit.Application.Features.OTPs.SendBookReturningConfirmationOtp;
+using BookOrbit.Application.Features.OTPs.VerifyBookReturningConfirmationOtp;
+
+namespace BookOrbit.Api.Controllers.BorrowingTransactions;
 
 [Route("api/v{version:apiVersion}/borrowingtransactions")]
 [ApiVersion("1.0")]
@@ -163,8 +166,15 @@ public class BorrowingTransactionController(
     [EndpointName("MarkBorrowingTransactionAsReturned")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> MarkBorrowingTransactionAsReturned([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
+    public async Task<ActionResult> MarkBorrowingTransactionAsReturned([FromRoute] Guid borrowingTransactionId, [FromBody] OtpRequest request, CancellationToken ct)
     {
+        var otpVerificationResult = await sender.Send(new VerifyBookReturningConfirmationOtpCommand(borrowingTransactionId, request.OtpCode), ct);
+
+        if (otpVerificationResult.IsFailure)
+        {
+            return Problem(otpVerificationResult.Errors, HttpContext);
+        }
+
         var result = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(borrowingTransactionId), ct);
 
         return result.Match(
@@ -192,6 +202,30 @@ public class BorrowingTransactionController(
 
         return result.Match(
             _ => NoContent(),
+            e => Problem(e, HttpContext));
+    }
+
+    [HttpPost("{borrowingTransactionId:guid}/otp")]
+    [Authorize(Policy = PoliciesNames.BorrowingTransactionBorrowingStudentPolicy)]
+    [ProducesResponseType(typeof(OtpDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
+    [EndpointSummary("Send an otp code to confirm returning.")]
+    [EndpointDescription("Send an otp code to confirm returning.")]
+    [EndpointName("SendBookReturningOtp")]
+    [MapToApiVersion("1.0")]
+    [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
+    public async Task<ActionResult<OtpDto>> SendBookReturningOtp([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
+    {
+        var command = new SendBookReturningConfirmationOtpCommand(borrowingTransactionId);
+
+        var result = await sender.Send(command, ct);
+
+        return result.Match(
+            _ => Ok(),
             e => Problem(e, HttpContext));
     }
 }

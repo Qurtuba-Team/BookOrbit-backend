@@ -30,6 +30,9 @@
 	  <None Update="Common\EmailTemplates\BookDeliveryConfirmationEmailFormat.html">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Update="Common\EmailTemplates\BookReturningConfirmationEmailFormat.html">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="Common\EmailTemplates\BorrowingRequestAcceptedEmailFormat.html">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>

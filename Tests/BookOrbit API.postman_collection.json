@@ -323,6 +323,235 @@
       "name": "BorrowingTransaction",
       "item": [
         {
+          "id": "1372825c-80f6-4e75-ba87-afdbcef71654",
+          "name": "Get All",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=30&Page=1",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "30"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowerStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "LenderStudentId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "026d80db-768b-4735-bc31-014d1851f3f5",
+          "name": "Get All Out",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/out?PageSize=10&Page=1&States=Borrowed",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "me",
+                "out"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "LenderStudentId",
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "Borrowed"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "019192bd-4c77-49cd-b513-7d5a0535c885",
+          "name": "Get All IN",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/in?PageSize=10&Page=1&States=Borrowed",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingtransactions",
+                "me",
+                "in"
+              ],
+              "query": [
+                {
+                  "key": "PageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowerStudentId",
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
+                  "disabled": true
+                },
+                {
+                  "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "BorrowingRequestId",
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
+                  "disabled": true
+                },
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "States",
+                  "value": "overdue",
+                  "disabled": true
+                },
+                {
+                  "key": "States",
+                  "value": "Borrowed"
+                }
+              ]
+            }
+          }
+        },
+        {
           "id": "58e87d36-5cd2-469d-bf5a-d1724fc15c99",
           "name": "Mark As Lost",
           "request": {
@@ -371,6 +600,15 @@
                 "{{borrowingtransactionid}}",
                 "return"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"OtpCode\":\"662681\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         },
@@ -490,7 +728,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/deliver?otp=",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/deliver",
               "host": [
                 "{{baseurl}}"
               ],
@@ -500,13 +738,16 @@
                 "borrowingrequests",
                 "{{borrowingrequestid}}",
                 "deliver"
-              ],
-              "query": [
-                {
-                  "key": "otp",
-                  "value": ""
-                }
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"OtpCode\":\"535307\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           },
           "event": [
@@ -523,10 +764,10 @@
           ]
         },
         {
-          "id": "019192bd-4c77-49cd-b513-7d5a0535c885",
-          "name": "Get All IN",
+          "id": "d27a57e4-b076-4e1c-b1b9-6a6217e67d48",
+          "name": "Send Return Otp",
           "request": {
-            "method": "GET",
+            "method": "POST",
             "header": [
               {
                 "key": "authorization",
@@ -534,7 +775,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/in?PageSize=10&Page=1",
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/otp",
               "host": [
                 "{{baseurl}}"
               ],
@@ -542,213 +783,8 @@
                 "api",
                 "v1",
                 "borrowingtransactions",
-                "me",
-                "in"
-              ],
-              "query": [
-                {
-                  "key": "PageSize",
-                  "value": "10"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "BorrowerStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
-                },
-                {
-                  "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
-                },
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "States",
-                  "value": "overdue",
-                  "disabled": true
-                },
-                {
-                  "key": "States",
-                  "value": "",
-                  "disabled": true
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "026d80db-768b-4735-bc31-014d1851f3f5",
-          "name": "Get All Out",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/out?PageSize=10&Page=1",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "borrowingtransactions",
-                "me",
-                "out"
-              ],
-              "query": [
-                {
-                  "key": "PageSize",
-                  "value": "10"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "LenderStudentId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
-                },
-                {
-                  "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
-                },
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "States",
-                  "value": "overdue",
-                  "disabled": true
-                },
-                {
-                  "key": "States",
-                  "value": "",
-                  "disabled": true
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "1372825c-80f6-4e75-ba87-afdbcef71654",
-          "name": "Get All",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=30&Page=1",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "borrowingtransactions"
-              ],
-              "query": [
-                {
-                  "key": "PageSize",
-                  "value": "30"
-                },
-                {
-                  "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "BorrowerStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
-                },
-                {
-                  "key": "LenderStudentId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
-                },
-                {
-                  "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
-                },
-                {
-                  "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
-                },
-                {
-                  "key": "Page",
-                  "value": "1"
-                },
-                {
-                  "key": "States",
-                  "value": "overdue",
-                  "disabled": true
-                },
-                {
-                  "key": "States",
-                  "value": "",
-                  "disabled": true
-                }
+                "{{borrowingtransactionid}}",
+                "otp"
               ]
             }
           }
@@ -759,6 +795,32 @@
       "id": "224f9eed-3527-4226-bdf0-9a0058a3aeb9",
       "name": "BorrowingRequests",
       "item": [
+        {
+          "id": "d80c49ae-7871-489c-b701-1ae964212dad",
+          "name": "Send Deliver Otp",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/otp",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "borrowingrequests",
+                "{{borrowingrequestid}}",
+                "otp"
+              ]
+            }
+          }
+        },
         {
           "id": "7c5e8a48-1a5f-457a-82fa-7122e4d41fe5",
           "name": "Get Out Going Requests",
@@ -837,7 +899,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests/me/in?Page=1&PageSize=10&States=accepted",
+              "raw": "{{baseurl}}/api/v1/borrowingrequests/me/in?Page=1&PageSize=12&States=accepted",
               "host": [
                 "{{baseurl}}"
               ],
@@ -855,7 +917,7 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "10"
+                  "value": "12"
                 },
                 {
                   "key": "SearchTerm",
@@ -1105,68 +1167,6 @@
               }
             }
           ]
-        },
-        {
-          "id": "d80c49ae-7871-489c-b701-1ae964212dad",
-          "name": "Send Otp",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/otp",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "borrowingrequests",
-                "{{borrowingrequestid}}",
-                "otp"
-              ]
-            }
-          }
-        },
-        {
-          "id": "668b5341-1632-4a15-833e-9ac3f55e7ccb",
-          "name": "Verify",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/otp/verify",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "borrowingrequests",
-                "{{borrowingrequestid}}",
-                "otp",
-                "verify"
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "\"123456\"",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
         }
       ]
     },
@@ -1351,7 +1351,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
+              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -1482,6 +1482,31 @@
       "id": "ba93a48a-b396-4453-9070-d42cee908578",
       "name": "Books",
       "item": [
+        {
+          "id": "16ff5a03-4336-4a9d-a38f-f29f560cd763",
+          "name": "Book Categories",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/books/categories",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "books",
+                "categories"
+              ]
+            }
+          }
+        },
         {
           "id": "c0292d67-699c-4707-b138-c86afeb41b84",
           "name": "Reject",
@@ -1898,31 +1923,6 @@
               }
             }
           ]
-        },
-        {
-          "id": "16ff5a03-4336-4a9d-a38f-f29f560cd763",
-          "name": "Book Categories",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/books/categories",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "books",
-                "categories"
-              ]
-            }
-          }
         }
       ]
     },

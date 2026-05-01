@@ -1,5 +1,4 @@
-﻿
-namespace BookOrbit.Api.Controllers.LendingList;
+﻿namespace BookOrbit.Api.Controllers.LendingList;
 
 [Route("api/v{version:apiVersion}/lendinglist")]
 [ApiVersion("1.0")]
@@ -79,7 +78,7 @@ public class LendingListController(
     [EndpointName("CreateBorrowingRequest")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BorrowingRequestDto>> CreateBorrowingRequest([FromRoute] Guid lendingListRecordId, CancellationToken ct)
+    public async Task<ActionResult<BorrowingRequestDto>> CreateBorrowingRequest([FromRoute] Guid lendingListRecordId,CancellationToken ct)
     {
         var studentFound = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
 

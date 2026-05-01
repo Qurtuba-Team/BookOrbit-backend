@@ -45,10 +45,10 @@ public abstract class OtpServiceBase(ILogger logger) : IOtpServiceBase
         var otpData = await GetLatestOtp(targetId, ct);
 
         if (otpData is null)
-            return OtpApplicationErrors.OtpNotFound;
+            return OtpApplicationErrors.OtpInvalid;
 
         if (IsExpired(otpData, currentTime))
-            return OtpApplicationErrors.OtpExpired;
+            return OtpApplicationErrors.OtpInvalid;
 
         if (!IsValid(otpData, otp))
             return OtpApplicationErrors.OtpInvalid;

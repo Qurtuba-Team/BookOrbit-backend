@@ -6,4 +6,5 @@ public interface IEmailFormatService
     Result<string> BookCopyRequestedEmailFormat(string bookTitle);
     Result<string> BorrowingRequestAcceptedEmailFormat(string bookTitle);
     Result<string> BookDeliveryConfirmationEmailFormat(string otp);
+    Result<string> BookReturningConfirmationEmailFormat(string otp);
 }
