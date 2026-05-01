@@ -1,4 +1,5 @@
-﻿namespace BookOrbit.Infrastructure;
+﻿
+namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
     static public IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
@@ -88,7 +89,7 @@ static public class DependencyInjection
         services.AddTransient<IStudentImageService, StudentImageService>();
         services.AddTransient<IBorrowingTransactionOtpService, BorrowingTransactionOtpService>();
         services.AddTransient<IBorrowingRequestOtpService, BorrowingRequestOtpService>();
-
+        services.AddTransient<ISystemNotificationService, SystemNotificationService>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)

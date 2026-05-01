@@ -26,6 +26,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator medi
 
     public DbSet<Otp> Otps => Set<Otp>();
 
+    public DbSet<Notification> Notification => Set<Notification>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

@@ -1,4 +1,5 @@
 ﻿
+using BookOrbit.Domain.Notifications;
 using BookOrbit.Domain.Otps;
 
 namespace BookOrbit.Application.Common.Interfaces;
@@ -16,6 +17,7 @@ public interface IAppDbContext
     public DbSet<BorrowingTransactionEvent> BorrowingTransactionEvents { get; }
     public DbSet<PointTransaction> PointTransactions { get; }
     public DbSet<Otp> Otps { get; }
+    public DbSet<Notification> Notification { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 

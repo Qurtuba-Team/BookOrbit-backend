@@ -1351,7 +1351,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"student4@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -3145,6 +3145,98 @@
                 "v1",
                 "lendinglist",
                 "{{lendinglistrecordid}}"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "8c48e596-7a97-4a4f-9570-8f8763ea27c8",
+      "name": "Notifications",
+      "item": [
+        {
+          "id": "c3a244d8-dc1d-4842-89fc-212c47d4edb7",
+          "name": "GetNotitfications",
+          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/notifications?Page=1&PageSize=15",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ],
+              "query": [
+                {
+                  "key": "Page",
+                  "value": "1"
+                },
+                {
+                  "key": "PageSize",
+                  "value": "15"
+                },
+                {
+                  "key": "SearchTerm",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortColumn",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "SortDirection",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "IsRead",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "Types",
+                  "value": "",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "128af644-f42a-4bef-9edd-a9e084fdc559",
+          "name": "Get By Id",
+          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/notifications/{{notificationId}}",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "{{notificationId}}"
               ]
             }
           }
