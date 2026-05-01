@@ -50,3 +50,4 @@ global using BookOrbit.Application.Features.Onboarding.Commands.CompleteOnboardi
 global using BookOrbit.Application.Features.Recommendations.Commands.RecordInteraction;
 global using BookOrbit.Application.Features.Recommendations.Queries.GetRecommendations;
 global using BookOrbit.Application.Features.Recommendations.Queries.GetTrendingBooks;
+global using BookOrbit.Application.Common.Constants;

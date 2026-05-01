@@ -1,4 +1,5 @@
 using BookOrbit.Application.Common.Enums;
+using BookOrbit.Application.Common.Constants;
 using BookOrbit.Application.Features.Recommendations.Queries.GetRecommendations;
 using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Students.Enums;
@@ -11,18 +12,12 @@ public class RecommendationService(
     UserManager<AppUser> userManager,
     ILogger<RecommendationService> logger) : IRecommendationService
 {
-    private const string RecommendationsCacheKeyPrefix = "recommendations:";
-    private const string TrendingCacheKey = "recommendations:trending";
     private const int MinRecommendations = 5;
+
     private static readonly HybridCacheEntryOptions CacheOptions = new()
     {
-        Expiration = TimeSpan.FromHours(6),
-        LocalCacheExpiration = TimeSpan.FromHours(6)
-    };
-    private static readonly HybridCacheEntryOptions TrendingCacheOptions = new()
-    {
-        Expiration = TimeSpan.FromHours(24),
-        LocalCacheExpiration = TimeSpan.FromHours(24)
+        Expiration = TimeSpan.FromMinutes(RecommendationsCachingConstants.RecommendationsExpirationInMinutes),
+        LocalCacheExpiration = TimeSpan.FromMinutes(RecommendationsCachingConstants.RecommendationsExpirationInMinutes)
     };
 
     // Maps InterestType → one or more BookCategory flags
@@ -61,9 +56,10 @@ public class RecommendationService(
         [Faculty.Other]           = BookCategory.None,
     };
 
+    /// <inheritdoc />
     public async Task<Result<List<RecommendationDto>>> GetRecommendationsAsync(string userId, CancellationToken ct)
     {
-        var cacheKey = $"{RecommendationsCacheKeyPrefix}{userId}";
+        var cacheKey = RecommendationsCachingConstants.UserRecommendationsKey(userId);
 
         var result = await cache.GetOrCreateAsync(
             cacheKey,
@@ -74,52 +70,16 @@ public class RecommendationService(
         return result ?? [];
     }
 
-    public async Task<Result<List<RecommendationDto>>> GetTrendingBooksAsync(CancellationToken ct)
-    {
-        var result = await cache.GetOrCreateAsync(
-            TrendingCacheKey,
-            async cancel =>
-            {
-                var trending = await context.Books
-                    .Select(b => new
-                    {
-                        Book = b,
-                        AvgRating = context.UserBookInteractions
-                            .Where(i => i.BookId == b.Id && i.Rating.HasValue)
-                            .Select(i => (double?)i.Rating)
-                            .Average() ?? 0.0,
-                        RatingsCount = context.UserBookInteractions
-                            .Count(i => i.BookId == b.Id && i.Rating.HasValue)
-                    })
-                    .OrderByDescending(x => x.AvgRating)
-                    .ThenByDescending(x => x.RatingsCount)
-                    .Take(20)
-                    .ToListAsync(cancel);
-
-                return trending.Select(x => new RecommendationDto(
-                    BookId: x.Book.Id,
-                    Title: x.Book.Title.Value,
-                    Author: x.Book.Author.Value,
-                    Genre: x.Book.Category.ToString(),
-                    Level: string.Empty,
-                    ReasonLabel: "Trending",
-                    Score: x.AvgRating))
-                    .ToList();
-            },
-            TrendingCacheOptions,
-            cancellationToken: ct);
-
-        return result ?? [];
-    }
-
     // ─────────────────────────────────────────────────────────────────────────
+
     private async Task<List<RecommendationDto>> BuildRecommendationsAsync(string userId, CancellationToken ct)
     {
         var user = await userManager.FindByIdAsync(userId);
 
         if (user is null)
         {
-            logger.LogWarning("BuildRecommendations: user {UserId} not found — returning trending fallback.", userId);
+            logger.LogWarning(
+                "BuildRecommendations: user {UserId} not found — returning trending fallback.", userId);
             return await BuildTrendingFallbackAsync(MinRecommendations, ct);
         }
 
@@ -150,13 +110,14 @@ public class RecommendationService(
         if (user.Faculty.HasValue && FacultyBoostMap.TryGetValue(user.Faculty.Value, out var fb))
             facultyBoost = fb;
 
-        // Books already rated or read by user
+        // Books already rated or read by user (exclude from recommendations)
         var excludedBookIds = await context.UserBookInteractions
             .Where(i => i.UserId == userId && (i.Rating.HasValue || i.IsRead))
             .Select(i => i.BookId)
             .ToListAsync(ct);
 
-        // Load all books (EF can't do bitwise flags in SQL easily for flags enum — load + filter in memory)
+        // Load all non-excluded books.
+        // Bitwise flags enum cannot be translated to SQL — filter in memory.
         var allBooks = await context.Books
             .Where(b => !excludedBookIds.Contains(b.Id))
             .ToListAsync(ct);
@@ -167,13 +128,11 @@ public class RecommendationService(
             {
                 double score = 0;
 
-                // Genre match
                 if (desiredCategories != BookCategory.None && (b.Category & desiredCategories) != BookCategory.None)
-                    score += 3.0;
+                    score += 3.0;   // genre match
 
-                // Faculty boost
                 if (facultyBoost != BookCategory.None && (b.Category & facultyBoost) != BookCategory.None)
-                    score += 1.5;
+                    score += 1.5;   // faculty boost
 
                 return new { Book = b, Score = score };
             })
@@ -183,22 +142,22 @@ public class RecommendationService(
         var recommendations = scored
             .Take(MinRecommendations)
             .Select(x => new RecommendationDto(
-                BookId: x.Book.Id,
-                Title: x.Book.Title.Value,
-                Author: x.Book.Author.Value,
-                Genre: x.Book.Category.ToString(),
-                Level: difficultyLabel,
+                BookId:      x.Book.Id,
+                Title:       x.Book.Title.Value,
+                Author:      x.Book.Author.Value,
+                Genre:       x.Book.Category.ToString(),
+                Level:       difficultyLabel,
                 ReasonLabel: x.Score > 0 ? "Based on your interests" : "Popular",
-                Score: x.Score))
+                Score:       x.Score))
             .ToList();
 
         // Popularity fallback if not enough results
         if (recommendations.Count < MinRecommendations)
         {
-            var needed = MinRecommendations - recommendations.Count;
+            var needed          = MinRecommendations - recommendations.Count;
             var alreadyIncluded = recommendations.Select(r => r.BookId).ToHashSet();
 
-            var fallback = await BuildTrendingFallbackAsync(needed * 2, ct);
+            var fallback   = await BuildTrendingFallbackAsync(needed * 2, ct);
             var additional = fallback
                 .Where(f => !alreadyIncluded.Contains(f.BookId) && !excludedBookIds.Contains(f.BookId))
                 .Take(needed)
@@ -216,37 +175,35 @@ public class RecommendationService(
         var trending = await context.Books
             .Select(b => new
             {
-                Book = b,
+                Book      = b,
                 AvgRating = context.UserBookInteractions
-                    .Where(i => i.BookId == b.Id && i.Rating.HasValue)
-                    .Select(i => (double?)i.Rating)
-                    .Average() ?? 0.0
+                                .Where(i => i.BookId == b.Id && i.Rating.HasValue)
+                                .Select(i => (double?)i.Rating)
+                                .Average() ?? 0.0
             })
             .OrderByDescending(x => x.AvgRating)
             .Take(count)
             .ToListAsync(ct);
 
-        return trending.Select(x => new RecommendationDto(
-            BookId: x.Book.Id,
-            Title: x.Book.Title.Value,
-            Author: x.Book.Author.Value,
-            Genre: x.Book.Category.ToString(),
-            Level: string.Empty,
-            ReasonLabel: "Trending",
-            Score: x.AvgRating))
+        return trending
+            .Select(x => new RecommendationDto(
+                BookId:      x.Book.Id,
+                Title:       x.Book.Title.Value,
+                Author:      x.Book.Author.Value,
+                Genre:       x.Book.Category.ToString(),
+                Level:       string.Empty,
+                ReasonLabel: "Trending",
+                Score:       x.AvgRating))
             .ToList();
     }
 
-    private static string GetDifficultyLabel(AcademicYear? year)
+    private static string GetDifficultyLabel(AcademicYear? year) => year switch
     {
-        return year switch
-        {
-            AcademicYear.Year1 => "Beginner",
-            AcademicYear.Year2 => "Intermediate",
-            AcademicYear.Year3 => "Intermediate",
-            AcademicYear.Year4 => "Advanced",
-            AcademicYear.Postgraduate => "Advanced",
-            _ => string.Empty
-        };
-    }
+        AcademicYear.Year1        => "Beginner",
+        AcademicYear.Year2        => "Intermediate",
+        AcademicYear.Year3        => "Intermediate",
+        AcademicYear.Year4        => "Advanced",
+        AcademicYear.Postgraduate => "Advanced",
+        _                         => string.Empty
+    };
 }
