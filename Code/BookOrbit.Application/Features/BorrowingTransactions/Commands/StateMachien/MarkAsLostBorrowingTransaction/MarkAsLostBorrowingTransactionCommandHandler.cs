@@ -52,11 +52,6 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
             return updateBookCopyResult.Errors;
         }
 
-        var logCreationResult = BorrowingTransactionEvent.Create(
-            Guid.NewGuid(),
-            transactionData.BorrowingTransaction.Id,
-            transactionData.BorrowingTransaction.State);
-
         var student = await context.Students.FirstOrDefaultAsync(s => s.Id == transactionData.BorrowingTransaction.BorrowerStudentId, cancellationToken: ct);
 
         if (student is null)
@@ -80,8 +75,6 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
         }
 
         student.DeductPoints(pointsToDeductCreationResult.Value, PointTransactionReason.Penalty);
-
-        context.BorrowingTransactionEvents.Add(logCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
 

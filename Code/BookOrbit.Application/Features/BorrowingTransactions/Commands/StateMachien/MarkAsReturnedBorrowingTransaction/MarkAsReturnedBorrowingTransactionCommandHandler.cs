@@ -52,10 +52,6 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return updateBookCopyResult.Errors;
         }
 
-        var logCreationResult = BorrowingTransactionEvent.Create(
-            Guid.NewGuid(),
-            transaction.borrowingTransaction.Id,
-            transaction.borrowingTransaction.State);
 
         var student = await context.Students.FirstOrDefaultAsync(s=>s.Id == transaction.borrowingTransaction.BorrowerStudentId, ct);
 
@@ -91,7 +87,6 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
             return pointAdditionResult.Errors;
         }
 
-        context.BorrowingTransactionEvents.Add(logCreationResult.Value);
 
         await context.SaveChangesAsync(ct);
         await hybridCache.RemoveByTagAsync(BorrowingTransactionCachingConstants.BorrowingTransactionTag, ct);

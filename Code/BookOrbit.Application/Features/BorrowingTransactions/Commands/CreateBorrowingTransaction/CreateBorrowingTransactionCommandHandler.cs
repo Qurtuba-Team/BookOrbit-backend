@@ -93,20 +93,6 @@ public class CreateBorrowingTransactionCommandHandler(
             return lendingRecordBorrowingResult.Errors;
         }
 
-        var logCreationResult = BorrowingTransactionEvent.Create(
-            Guid.NewGuid(),
-            transactionResult.Value.Id,
-            transactionResult.Value.State);
-
-        if(logCreationResult.IsFailure)
-        {
-            logger.LogWarning(
-                "Failed to create borrowing transaction event for transaction {BorrowingTransactionId}. Errors: {Errors}",
-                transactionResult.Value.Id,
-                logCreationResult.Errors);
-            return logCreationResult.Errors;
-        }
-
         var student = await context.Students.FirstOrDefaultAsync(s => s.Id == lendingRecord.OwnerId, cancellationToken: ct);
 
         if(student is null)
@@ -131,7 +117,6 @@ public class CreateBorrowingTransactionCommandHandler(
 
         var pointAdditionResult = student!.AddPoints(pointToAddCreationResult.Value, PointTransactionReason.BookBorrowedFrom);
 
-        context.BorrowingTransactionEvents.Add(logCreationResult.Value);
         context.BorrowingTransactions.Add(transactionResult.Value);
 
         await context.SaveChangesAsync(ct);
