@@ -34,7 +34,6 @@ global using BookOrbit.Application.Features.Students.Dtos;
 global using BookOrbit.Application.Features.Students.Queries.GetStudents;
 global using BookOrbit.Application.Features.Chatbot;
 global using BookOrbit.Application.Features.Chatbot.Dtos;
-global using BookOrbit.Application.Common.Models;
 global using BookOrbit.Domain.BookCopies;
 global using BookOrbit.Domain.BookCopies.Enums;
 global using BookOrbit.Domain.Books;

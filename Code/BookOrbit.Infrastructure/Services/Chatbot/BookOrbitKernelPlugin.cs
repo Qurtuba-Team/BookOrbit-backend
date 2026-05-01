@@ -36,13 +36,19 @@ public class BookOrbitKernelPlugin(ISender sender, ICurrentUser currentUser)
 
         var result = await sender.Send(query, cancellationToken);
 
-        if (result.IsFailure || result.Value.Items.Count == 0)
+        if (result.IsFailure)
             return "No books were found matching your search.";
 
-        var lines = result.Value.Items
+        var books = result.Value!;
+        var items = books.Items;
+
+        if (items is null || items.Count == 0)
+            return "No books were found matching your search.";
+
+        var lines = items
             .Select(b => $"• \"{b.Title}\" by {b.Author} (ISBN: {b.ISBN}) — {b.Category}");
 
-        return $"Found {result.Value.TotalCount} book(s). Showing first {result.Value.Items.Count}:\n" +
+        return $"Found {books.TotalCount} book(s). Showing first {items.Count}:\n" +
                string.Join("\n", lines);
     }
 
