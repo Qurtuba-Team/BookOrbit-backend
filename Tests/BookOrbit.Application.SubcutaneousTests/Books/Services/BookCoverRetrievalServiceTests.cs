@@ -544,4 +544,112 @@ public class BookCoverRetrievalServiceTests
 
         await act.Should().ThrowAsync<OperationCanceledException>();
     }
+    // ─────────────────────────────────────────────────────────────
+    //  Resilience: Per-call Timeouts
+    // ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task GetCoverUrlAsync_OpenLibraryTimesOut_FallsBackToGoogleBooks()
+    {
+        // First call (Open Library) blocks until TaskCanceledException is thrown,
+        // simulating a per-call timeout.  Second call (Google Books) succeeds.
+        int callIndex = 0;
+        var handler = A.Fake<HttpMessageHandler>();
+
+        A.CallTo(handler)
+            .Where(call => call.Method.Name == "SendAsync")
+            .WithReturnType<Task<HttpResponseMessage>>()
+            .ReturnsLazily(() =>
+            {
+                if (callIndex++ == 0)
+                    // Simulate the per-call CTS firing (OperationCanceledException subtype).
+                    throw new TaskCanceledException("Open Library per-call timeout");
+
+                return Task.FromResult(Ok(GoogleBooksJson));
+            });
+
+        var service = new BookCoverRetrievalService(new HttpClient(handler), CreatePassThroughCache(),
+            NullLogger<BookCoverRetrievalService>.Instance);
+
+        var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
+
+        result.Should().Contain("books.google.com");
+    }
+
+    [Fact]
+    public async Task GetCoverUrlAsync_BothProvidersTimeout_ReturnsDefaultCover()
+    {
+        // Both providers throw TaskCanceledException (per-call timeout simulation).
+        var handler = A.Fake<HttpMessageHandler>();
+
+        A.CallTo(handler)
+            .Where(call => call.Method.Name == "SendAsync")
+            .WithReturnType<Task<HttpResponseMessage>>()
+            .Throws<TaskCanceledException>();
+
+        var service = new BookCoverRetrievalService(new HttpClient(handler), CreatePassThroughCache(),
+            NullLogger<BookCoverRetrievalService>.Instance);
+
+        var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
+
+        result.Should().Be("default-cover.png");
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  Edge Cases — Google Books (null thumbnail)
+    // ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public async Task GetCoverUrlAsync_GoogleBooksReturnsNullThumbnailString_ReturnsDefaultCover()
+    {
+        // The JSON `thumbnail` property is present but has a JSON null value.
+        const string nullThumbnailJson = """
+            {
+              "items": [
+                {
+                  "volumeInfo": {
+                    "imageLinks": {
+                      "thumbnail": null
+                    }
+                  }
+                }
+              ]
+            }
+            """;
+
+        int callIndex = 0;
+        var handler = A.Fake<HttpMessageHandler>();
+
+        A.CallTo(handler)
+            .Where(call => call.Method.Name == "SendAsync")
+            .WithReturnType<Task<HttpResponseMessage>>()
+            .ReturnsLazily(() =>
+            {
+                var response = callIndex++ == 0 ? NotFound() : Ok(nullThumbnailJson);
+                return Task.FromResult(response);
+            });
+
+        var service = new BookCoverRetrievalService(new HttpClient(handler), CreatePassThroughCache(),
+            NullLogger<BookCoverRetrievalService>.Instance);
+
+        var result = await service.GetCoverUrlAsync(ValidIsbn, ValidTitle);
+
+        result.Should().Be("default-cover.png",
+            because: "a JSON-null thumbnail must be treated the same as a missing thumbnail");
+    }
+
+    // ─────────────────────────────────────────────────────────────
+    //  Cache key — driven by BookCoverCachingConstants
+    // ─────────────────────────────────────────────────────────────
+
+    [Fact]
+    public void BuildCacheKey_PrefixMatchesConstant()
+    {
+        // The cache key prefix must come from the shared constant, not a
+        // magic string buried inside the service.
+        var key = BookCoverRetrievalService.BuildCacheKey(ValidIsbn, ValidTitle);
+
+        key.Should().StartWith(BookCoverCachingConstants.CacheKeyPrefix,
+            because: "the key prefix must be driven by BookCoverCachingConstants.CacheKeyPrefix");
+    }
 }

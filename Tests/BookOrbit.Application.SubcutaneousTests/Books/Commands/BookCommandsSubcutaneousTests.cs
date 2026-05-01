@@ -246,4 +246,77 @@ public class BookCommandsSubcutaneousTests
         result.IsFailure.Should().BeTrue();
         result.Errors.Should().Contain(e => e.Code == "Book.IsUsedByBookCopies");
     }
+    [Fact]
+    public async Task CreateBookCommand_WithoutCover_RetrievalServiceFails_UsesDefaultCover()
+    {
+        // Arrange — retrieval service always returns the default cover placeholder.
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var routeService = new FakeRouteService();
+        var coverRetrievalService = new FakeBookCoverRetrievalService
+        {
+            ReturnValue = "default-cover.png"
+        };
+        var handler = new CreateBookCommandHandler(
+            NullLogger<CreateBookCommandHandler>.Instance,
+            context,
+            cache,
+            routeService,
+            coverRetrievalService);
+
+        var command = new CreateBookCommand(
+            Title: "Domain-Driven Design",
+            ISBN: "9780321125217",
+            Publisher: "Addison Wesley Professional",
+            Category: BookCategory.Science,
+            Author: "Eric Evans",
+            CoverImageFileName: null); // no cover → auto-retrieval triggered
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert — command must still succeed even when retrieval returns the default.
+        result.IsSuccess.Should().BeTrue();
+        coverRetrievalService.CallCount.Should().Be(1, because: "retrieval is invoked when CoverImageFileName is null");
+        // The route service wraps whatever the retrieval service returned.
+        result.Value.BookCoverImageUrl.Should().Contain("default-cover.png");
+    }
+
+    [Fact]
+    public async Task CreateBookCommand_WithoutCover_RetrievalServiceReturnsUrl_UrlReachesDto()
+    {
+        // Arrange — retrieval service returns a real-looking https:// URL.
+        const string retrievedUrl = "https://covers.openlibrary.org/b/isbn/9780321125217-L.jpg";
+
+        using var context = StudentTestFactory.CreateDbContext();
+        var cache = StudentTestFactory.CreateHybridCache();
+        var routeService = new FakeRouteService();
+        var coverRetrievalService = new FakeBookCoverRetrievalService
+        {
+            ReturnValue = retrievedUrl
+        };
+        var handler = new CreateBookCommandHandler(
+            NullLogger<CreateBookCommandHandler>.Instance,
+            context,
+            cache,
+            routeService,
+            coverRetrievalService);
+
+        var command = new CreateBookCommand(
+            Title: "Refactoring",
+            ISBN: "9780201485677",
+            Publisher: "Addison Wesley Professional",
+            Category: BookCategory.Science,
+            Author: "Martin Fowler",
+            CoverImageFileName: null); // no cover → auto-retrieval triggered
+
+        // Act
+        var result = await handler.Handle(command, CancellationToken.None);
+
+        // Assert — URL returned by the retrieval service must appear in the DTO.
+        result.IsSuccess.Should().BeTrue();
+        coverRetrievalService.CallCount.Should().Be(1);
+        result.Value.BookCoverImageUrl.Should().Contain(retrievedUrl,
+            because: "the URL returned by the retrieval service must be stored and surfaced in the BookDto");
+    }
 }

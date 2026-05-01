@@ -38,27 +38,36 @@ public class BookController(
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
     [ProducesDefaultResponseType]
     [EndpointSummary("Create a new book record.")]
-    [EndpointDescription("Creates a new book in the catalog using the submitted metadata and cover image so it can be referenced by book copy and listing endpoints.")]
+    [EndpointDescription("Creates a new book in the catalog using the submitted metadata and an optional cover image. " +
+                         "When no cover image is supplied the system automatically retrieves one from Open Library " +
+                         "(primary) or Google Books (fallback).")]
     [EndpointName("CreateBook")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookDto>> CreateBook([FromForm] CreateBookRequest request, CancellationToken ct)
     {
-        using var stream = request.CoverImage.OpenReadStream();
+        // ── Cover image upload (optional) ───────────────────────────────────────
+        // When the caller does not supply a cover image we pass null as the
+        // CoverImageFileName, which tells CreateBookCommandHandler to invoke
+        // IBookCoverRetrievalService and auto-fetch a cover from external APIs.
+        string? uploadedImageFileName = null;
 
-        //Upload Image, Get New Image Name 
-        var ImageUploadResult = await bookImageService.UploadImage(
-            stream,
-             request.CoverImage.FileName);
+        if (request.CoverImage is not null)
+        {
+            using var stream = request.CoverImage.OpenReadStream();
 
-        if (ImageUploadResult.IsFailure)
-            return Problem(ImageUploadResult.Errors, HttpContext);
+            var imageUploadResult = await bookImageService.UploadImage(
+                stream,
+                request.CoverImage.FileName);
+
+            if (imageUploadResult.IsFailure)
+                return Problem(imageUploadResult.Errors, HttpContext);
+
+            uploadedImageFileName = imageUploadResult.Value;
+        }
 
         BookCategory? category = FlagEnumHelper.Map(request.Categories);
-
-        //If null , use none
         category ??= BookCategory.None;
-
 
         var command = new CreateBookCommand(
             request.Title,
@@ -66,11 +75,14 @@ public class BookController(
             request.Publisher,
             category.Value,
             request.Author,
-            ImageUploadResult.Value);
+            CoverImageFileName: uploadedImageFileName); // null → triggers auto-retrieval
 
         var result = await sender.Send(command, ct);
-        if (result.IsFailure)
-            bookImageService.DeleteImage(ImageUploadResult.Value);
+
+        // Clean up the uploaded file only when the command itself fails and
+        // we actually uploaded something (avoid deleting a non-existent file).
+        if (result.IsFailure && uploadedImageFileName is not null)
+            bookImageService.DeleteImage(uploadedImageFileName);
 
         return result.Match(
            bookDto => CreatedAtRoute(

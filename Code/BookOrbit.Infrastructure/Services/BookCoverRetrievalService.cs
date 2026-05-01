@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using BookOrbit.Application.Common.Constants;
 using BookOrbit.Application.Common.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -12,7 +13,13 @@ public class BookCoverRetrievalService(
     ILogger<BookCoverRetrievalService> logger) : IBookCoverRetrievalService
 {
     private const string DefaultCoverImage = "default-cover.png";
-    private static readonly TimeSpan CacheExpiration = TimeSpan.FromHours(24);
+
+    // Per-call timeout applied to each individual HTTP request to an external
+    // provider.  This is independent of (and shorter than) any HttpClient-level
+    // timeout so that a slow provider does not block the entire book-creation
+    // request.  It is linked with the caller's CancellationToken so whichever
+    // side cancels first wins.
+    private static readonly TimeSpan PerCallHttpTimeout = TimeSpan.FromSeconds(10);
 
     public async Task<string> GetCoverUrlAsync(string isbn, string title, CancellationToken ct = default)
     {
@@ -23,7 +30,7 @@ public class BookCoverRetrievalService(
         return await cache.GetOrCreateAsync(
             key: cacheKey,
             factory: token => ResolveAsync(isbn, title, token),
-            expiration: CacheExpiration,
+            expiration: BookCoverCachingConstants.CacheExpiration,
             tags: [BookCoverCachingConstants.BookCoverTag],
             cancellationToken: ct);
     }
@@ -36,8 +43,29 @@ public class BookCoverRetrievalService(
     {
         string raw = $"isbn|{isbn.ToLowerInvariant()}|title|{title.ToLowerInvariant()}";
         byte[] hashBytes = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
-        return $"book-cover:{Convert.ToHexString(hashBytes).ToLowerInvariant()}";
+        return $"{BookCoverCachingConstants.CacheKeyPrefix}{Convert.ToHexString(hashBytes).ToLowerInvariant()}";
     }
+
+    // ── URL Builders ────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Returns the Open Library cover URL for the given (already-cleaned) ISBN.
+    /// <c>?default=false</c> makes Open Library return 404 when no cover exists
+    /// rather than a 1×1 px placeholder image.
+    /// </summary>
+    private static string BuildOpenLibraryUrl(string cleanIsbn)
+        => $"https://covers.openlibrary.org/b/isbn/{cleanIsbn}-L.jpg?default=false";
+
+    /// <summary>
+    /// Returns the Google Books Volumes API URL for an <c>intitle:</c> search.
+    /// </summary>
+    private static string BuildGoogleBooksQueryUrl(string title)
+    {
+        string query = Uri.EscapeDataString($"intitle:{title}");
+        return $"https://www.googleapis.com/books/v1/volumes?q={query}";
+    }
+
+    // ── Resolution pipeline ─────────────────────────────────────────────────
 
     private async ValueTask<string> ResolveAsync(string isbn, string title, CancellationToken ct)
     {
@@ -78,6 +106,8 @@ public class BookCoverRetrievalService(
         return DefaultCoverImage;
     }
 
+    // ── Provider: Open Library ──────────────────────────────────────────────
+
     private async Task<string?> TryGetFromOpenLibraryAsync(string isbn, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(isbn))
@@ -85,17 +115,28 @@ public class BookCoverRetrievalService(
 
         // Remove hyphens to normalise ISBN format.
         string cleanIsbn = isbn.Replace("-", string.Empty);
-
-        // ?default=false makes Open Library return 404 when no cover exists,
-        // rather than serving a 1×1 pixel placeholder image.
-        string url = $"https://covers.openlibrary.org/b/isbn/{cleanIsbn}-L.jpg?default=false";
+        string url = BuildOpenLibraryUrl(cleanIsbn);
 
         try
         {
+            // Create a per-call timeout that is also linked to the caller's token.
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            linkedCts.CancelAfter(PerCallHttpTimeout);
+
             // Dispose the response to return the connection to the pool promptly.
-            using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+            using var response = await httpClient.GetAsync(
+                url, HttpCompletionOption.ResponseHeadersRead, linkedCts.Token);
+
             if (response.IsSuccessStatusCode)
                 return url;
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            // Our own per-call timeout fired — treat as a provider failure and
+            // fall through to the Google Books fallback rather than propagating.
+            logger.LogWarning(
+                "Open Library timed out after {Timeout}s for ISBN {Isbn}",
+                PerCallHttpTimeout.TotalSeconds, isbn);
         }
         catch (HttpRequestException ex)
         {
@@ -106,22 +147,29 @@ public class BookCoverRetrievalService(
         return null;
     }
 
+    // ── Provider: Google Books ──────────────────────────────────────────────
+
     private async Task<string?> TryGetFromGoogleBooksAsync(string title, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(title))
             return null;
 
-        string query = Uri.EscapeDataString($"intitle:{title}");
-        string url = $"https://www.googleapis.com/books/v1/volumes?q={query}";
+        string url = BuildGoogleBooksQueryUrl(title);
 
         try
         {
-            using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+            // Create a per-call timeout that is also linked to the caller's token.
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            linkedCts.CancelAfter(PerCallHttpTimeout);
+
+            using var response = await httpClient.GetAsync(
+                url, HttpCompletionOption.ResponseHeadersRead, linkedCts.Token);
+
             if (!response.IsSuccessStatusCode)
                 return null;
 
-            var contentStream = await response.Content.ReadAsStreamAsync(ct);
-            using var document = await JsonDocument.ParseAsync(contentStream, cancellationToken: ct);
+            var contentStream = await response.Content.ReadAsStreamAsync(linkedCts.Token);
+            using var document = await JsonDocument.ParseAsync(contentStream, cancellationToken: linkedCts.Token);
 
             if (document.RootElement.TryGetProperty("items", out var items) && items.GetArrayLength() > 0)
             {
@@ -131,12 +179,20 @@ public class BookCoverRetrievalService(
                     imageLinks.TryGetProperty("thumbnail", out var thumbnail))
                 {
                     // Google Books serves http:// thumbnails — upgrade to https:// for security.
+                    // thumbnail.GetString() can itself be null for a JSON null value.
                     var thumbnailUrl = thumbnail.GetString();
                     return thumbnailUrl is not null
                         ? thumbnailUrl.Replace("http://", "https://", StringComparison.OrdinalIgnoreCase)
                         : null;
                 }
             }
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            // Our own per-call timeout fired — log and fall through to default cover.
+            logger.LogWarning(
+                "Google Books timed out after {Timeout}s for Title {Title}",
+                PerCallHttpTimeout.TotalSeconds, title);
         }
         catch (JsonException ex)
         {
