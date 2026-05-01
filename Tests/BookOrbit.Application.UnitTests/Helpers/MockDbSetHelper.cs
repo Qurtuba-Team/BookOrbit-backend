@@ -53,14 +53,22 @@ public static class MockDbSetHelper
         public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken = default)
         {
             var resultType = typeof(TResult).GetGenericArguments().First();
+
+            // Use GetMethods() + filter to avoid AmbiguousMatchException between
+            // Execute(Expression) and Execute<TResult>(Expression).
             var executeMethod = typeof(IQueryProvider)
-                .GetMethod(nameof(IQueryProvider.Execute))!
+                .GetMethods()
+                .First(m => m.Name == nameof(IQueryProvider.Execute)
+                         && m.IsGenericMethod)
                 .MakeGenericMethod(resultType);
 
             var result = executeMethod.Invoke(inner, [expression]);
-            return (TResult)typeof(Task).GetMethod(nameof(Task.FromResult))!
-                                        .MakeGenericMethod(resultType)
-                                        .Invoke(null, [result])!;
+
+            return (TResult)typeof(Task)
+                .GetMethods()
+                .First(m => m.Name == nameof(Task.FromResult) && m.IsGenericMethod)
+                .MakeGenericMethod(resultType)
+                .Invoke(null, [result])!;
         }
     }
 
