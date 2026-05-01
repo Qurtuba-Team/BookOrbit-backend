@@ -1,19 +1,21 @@
+using BookOrbit.Application.Common.Interfaces.SystemNotificationService;
+using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.DomainEvents;
+
 namespace BookOrbit.Application.Features.BorrowingReviews.EventHandlers;
 public class BorrowingReviewCreatedEventHandler(
     IAppDbContext context,
-    ILogger<BorrowingReviewCreatedEventHandler> logger) : INotificationHandler<BorrowingReviewCreatedEvent>
+    ILogger<BorrowingReviewCreatedEventHandler> logger,
+    ISystemNotificationService systemNotificationService) : INotificationHandler<BorrowingReviewCreatedEvent>
 {
-    public async Task Handle(BorrowingReviewCreatedEvent notification, CancellationToken cancellationToken)
+    private async Task Notify(Guid ReviewdStudentId, int ratingValue, CancellationToken ct)
     {
-        var student = await context.Students
-            .FirstOrDefaultAsync(s => s.Id == notification.ReviewedStudentId, cancellationToken);
+        string title = $"You have been rated {ratingValue} stars";
+        string message = $"You have been rated  {ratingValue}  stars";
 
-        if (student is null)
-        {
-            logger.LogWarning("Student {StudentId} not found to process borrowing review points.", notification.ReviewedStudentId);
-            return;
-        }
-
+        await systemNotificationService.SendNotificationAsync(ReviewdStudentId, title, message, NotificationType.Normal, ct);
+    }
+    private Task ManageStudentsPoints(BorrowingReviewCreatedEvent notification, Student student)
+    {
         int pointsValue = 0;
         bool isReward = false;
         PointTransactionReason reason = PointTransactionReason.GoodReview;
@@ -47,7 +49,7 @@ public class BorrowingReviewCreatedEventHandler(
                 break;
             default:
                 logger.LogWarning("Invalid rating value {RatingValue} for borrowing review points.", notification.RatingValue);
-                return;
+                return Task.CompletedTask;
         }
 
         if (pointsValue > 0) // if its 0 ignore
@@ -56,7 +58,7 @@ public class BorrowingReviewCreatedEventHandler(
             if (pointResult.IsFailure)
             {
                 logger.LogWarning("Failed to create point object. Errors: {Errors}", pointResult.Errors);
-                return;
+                return Task.CompletedTask;
             }
 
             if (isReward)
@@ -69,7 +71,23 @@ public class BorrowingReviewCreatedEventHandler(
             }
         }
 
-        logger.LogInformation("Successfully processed points for borrowing review {BorrowingReviewId}. IsReward: {IsReward}, Points: {Points}", 
+        logger.LogInformation("Successfully processed points for borrowing review {BorrowingReviewId}. IsReward: {IsReward}, Points: {Points}",
             notification.BorrowingReviewId, isReward, pointsValue);
+
+        return Task.CompletedTask;
+    }
+    public async Task Handle(BorrowingReviewCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        var student = await context.Students
+            .FirstOrDefaultAsync(s => s.Id == notification.ReviewedStudentId, cancellationToken);
+
+        if (student is null)
+        {
+            logger.LogWarning("Student {StudentId} not found to process borrowing review points.", notification.ReviewedStudentId);
+            return;
+        }
+
+        await ManageStudentsPoints(notification, student);
+        await Notify(notification.ReviewedStudentId, notification.RatingValue, cancellationToken);
     }
 }
