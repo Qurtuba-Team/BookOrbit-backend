@@ -16,7 +16,10 @@
     <PackageReference Include="coverlet.collector" Version="6.0.2" />
     <PackageReference Include="FakeItEasy" Version="9.0.1" />
     <PackageReference Include="FluentAssertions" Version="8.9.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.4" />
+    <PackageReference Include="FluentValidation.TestHelper" Version="12.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.14" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="xunit" Version="2.9.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
@@ -27,10 +30,10 @@
     <Using Include="FluentAssertions" />
     <Using Include="FakeItEasy" />
     <Using Include="BookOrbit.Application.Common.Interfaces" />
+    <Using Include="BookOrbit.Application.Common.Constants" />
     <Using Include="BookOrbit.Application.Features.Recommendations.Commands.RecordInteraction" />
     <Using Include="BookOrbit.Application.Features.Recommendations.Queries.GetRecommendations" />
     <Using Include="BookOrbit.Application.Features.Recommendations.Queries.GetTrendingBooks" />
-    <Using Include="BookOrbit.Application.Common.Constants" />
     <Using Include="BookOrbit.Domain.Books" />
     <Using Include="BookOrbit.Domain.Books.Enums" />
     <Using Include="BookOrbit.Domain.Books.ValueObjects" />
