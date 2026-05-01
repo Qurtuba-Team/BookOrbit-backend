@@ -12,7 +12,7 @@ public class BookCoverRetrievalService(
     IAppCache cache,
     ILogger<BookCoverRetrievalService> logger) : IBookCoverRetrievalService
 {
-    private const string DefaultCoverImage = "default-cover.png";
+    private const string DefaultCoverImage = "DefaultBookCoverImage.png";
 
     // Per-call timeout applied to each individual HTTP request to an external
     // provider.  This is independent of (and shorter than) any HttpClient-level

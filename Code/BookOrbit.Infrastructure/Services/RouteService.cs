@@ -8,20 +8,24 @@ public class RouteService(
 
     public string GetBookCoverImageRoute()
     {
-        string baseUrl = _settings.BaseUrl;
-        string routeRelativeUrl = "uploads/books"; //Could be better , but for now it's fine since we are only using it for book cover images and we know the route is "uploads/books"
-        var baseUri = new Uri(baseUrl); 
-        var fullUri = new Uri(baseUri, routeRelativeUrl); 
-        return fullUri.ToString(); 
+        // Return the versioned API endpoint base path.
+        // All book-cover image requests must flow through ImagesController
+        // so that the [Authorize] pipeline is always enforced.
+        string baseUrl = _settings.BaseUrl.TrimEnd('/');
+        return $"{baseUrl}/api/v1/images/books";
     }
 
     public string GetBookCoverImageRoute(string fileName)
     {
+        // External cover URLs (auto-retrieved from Open Library / Google Books)
+        // are stored as-is — pass them straight back so the caller can use them
+        // directly without wrapping in an API route.
         if (Uri.IsWellFormedUriString(fileName, UriKind.Absolute))
             return fileName;
 
-        string baseUrl = GetBookCoverImageRoute();
-        return $"{baseUrl}/{fileName}";
+        // Local uploads and the default cover image are served through the
+        // authenticated ImagesController route.
+        return $"{GetBookCoverImageRoute()}/{fileName}";
     }
 
     public string GetEmailConfirmationRoute(string email, string token)

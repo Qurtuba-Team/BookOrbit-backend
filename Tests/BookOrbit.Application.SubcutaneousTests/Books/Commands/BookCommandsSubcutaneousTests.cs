@@ -255,7 +255,7 @@ public class BookCommandsSubcutaneousTests
         var routeService = new FakeRouteService();
         var coverRetrievalService = new FakeBookCoverRetrievalService
         {
-            ReturnValue = "default-cover.png"
+            ReturnValue = "DefaultBookCoverImage.png"
         };
         var handler = new CreateBookCommandHandler(
             NullLogger<CreateBookCommandHandler>.Instance,
