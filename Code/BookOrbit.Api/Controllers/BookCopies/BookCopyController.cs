@@ -138,7 +138,6 @@ public class BookCopyController(
     [EndpointDescription("Returns the detailed information for the specified book copy, including the related book details, when the record exists.")]
     [EndpointName("GetBookCopyById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookCopyDtoWithBookDetails>> GetBookCopyById([FromRoute] Guid bookCopyId, CancellationToken ct)
     {
@@ -162,7 +161,6 @@ public class BookCopyController(
     [EndpointDescription("Returns a paginated collection of book copies that belong to the specified book and supports filtering, searching, and sorting By [createdat,ownername,booktitle,updatedat]  for easier inventory review.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBookCopiesByBookId")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookCopyListItemDto>> GetBookCopiesByBookId([FromRoute] Guid bookId, [FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
     {
@@ -194,7 +192,6 @@ public class BookCopyController(
     [EndpointDescription("Returns a paginated collection of book copies owned by the specified student and supports filtering, searching, and sorting By [createdat,ownername,booktitle,updatedat]  for easier account review.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBookCopiesByStudentId")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookCopyListItemDto>> GetBookCopiesByStudentId([FromRoute] Guid studentId, [FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
     {
@@ -227,7 +224,6 @@ public class BookCopyController(
     [EndpointDescription("Returns a paginated collection of all book copies and supports filtering, searching, and sorting so students can review available copies efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBookCopies")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BookCopyListItemDto>> GetBookCopies([FromQuery] BookCopyPagedFilterRequest request, CancellationToken ct)
     {

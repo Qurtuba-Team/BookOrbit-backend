@@ -19,7 +19,6 @@ public class StudentQueryController(
     [EndpointDescription("Returns a paginated collection of students and supports filtering, free-text searching, and sorting by [joindate,state,name,updatedat,createdat] asc / descso administrators can review student records efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetStudents")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<StudentListItemDto>>> GetStudents([FromQuery] StudentPagedFilterRequest request, CancellationToken ct)
     {
@@ -53,7 +52,6 @@ public class StudentQueryController(
     [EndpointDescription("Returns the full student details for the specified student identifier when the student record exists.")]
     [EndpointName("GetStudentById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<StudentDtoWithContactInfo>> GetStudentById([FromRoute] Guid studentId, CancellationToken ct)
     {
@@ -79,7 +77,6 @@ public class StudentQueryController(
     [EndpointDescription("Returns the public profile details for the specified student identifier when the student record exists.")]
     [EndpointName("GetStudentPublicProfileById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<StudentDto>> GetStudentPublicProfileById([FromRoute] Guid studentId, CancellationToken ct)
     {

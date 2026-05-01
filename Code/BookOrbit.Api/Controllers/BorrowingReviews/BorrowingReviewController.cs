@@ -52,7 +52,6 @@ public class BorrowingReviewController(
     [EndpointDescription("Returns the borrowing review details for the specified identifier when the review exists.")]
     [EndpointName("GetBorrowingReviewById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<BorrowingReviewDto>> GetBorrowingReviewById([FromRoute] Guid borrowingReviewId, CancellationToken ct)
     {
@@ -75,7 +74,6 @@ public class BorrowingReviewController(
     [EndpointDescription("Returns a paginated collection of borrowing reviews and supports searching, filtering, and sorting by [createdat,updatedat,rating] so administrators can review borrowing feedback efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetBorrowingReviews")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<BorrowingReviewListItemDto>>> GetBorrowingReviews([FromQuery] BorrowingReviewPagedFilterRequest request, CancellationToken ct)
     {

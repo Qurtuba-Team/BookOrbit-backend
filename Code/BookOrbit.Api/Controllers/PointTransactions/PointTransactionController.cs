@@ -19,7 +19,6 @@ public class PointTransactionController(
     [EndpointDescription("Returns the point transaction details for the specified identifier when the transaction exists.")]
     [EndpointName("GetPointTransactionById")]
     [MapToApiVersion("1.0")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PointTransactionDto>> GetPointTransactionById([FromRoute] Guid pointTransactionId, CancellationToken ct)
     {
@@ -42,7 +41,6 @@ public class PointTransactionController(
     [EndpointDescription("Returns a paginated collection of point transactions and supports searching, filtering, and sorting by [createdat,updatedat,points,reason,studentname] so administrators can review point activity efficiently.")]
     [MapToApiVersion("1.0")]
     [EndpointName("GetPointTransactions")]
-    [OutputCache(PolicyName = ApiConstants.DefaultOutputCachePolicyName)]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<PaginatedList<PointTransactionListItemDto>>> GetPointTransactions([FromQuery] PointTransactionPagedFilterRequest request, CancellationToken ct)
     {
