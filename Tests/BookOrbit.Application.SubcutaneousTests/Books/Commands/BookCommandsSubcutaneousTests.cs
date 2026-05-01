@@ -110,12 +110,7 @@ public class BookCommandsSubcutaneousTests
         var result = await handler.Handle(command, CancellationToken.None);
 
         // Assert
-        if (result.IsFailure)
-        {
-            var errors = string.Join("\n", result.Errors.Select(e => $"{e.Code}: {e.Message}"));
-            System.IO.File.WriteAllText(@"D:\data\qurtuba\BookOrbit-backend\book_errors.txt", errors);
-        }
-        result.IsSuccess.Should().BeTrue();
+        result.IsSuccess.Should().BeTrue(because: "Errors: " + string.Join(", ", result.Errors.Select(e => e.Code)));
         coverRetrievalService.CallCount.Should().Be(0);
         result.Value.BookCoverImageUrl.Should().Be("http://localhost/images/pragmatic.png");
     }
