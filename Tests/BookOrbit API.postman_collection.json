@@ -7,7 +7,7 @@
   "item": [
     {
       "id": "0020064e-cb31-4c41-a9c1-daffb50734a4",
-      "name": "Borrowing Request Reviews",
+      "name": "Borrowing Reviews",
       "item": [
         {
           "id": "0656c277-b6a6-4ff0-ba1f-2788105062f2",
@@ -21,20 +21,21 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/{{borrowingtransactionid}}/review",
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/review",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
+                "borrowingtransactions",
                 "{{borrowingtransactionid}}",
                 "review"
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"reviewerStudentId\":\"\",\"reviewedStudentId\":\"\",\"borrowingTransactionId\":\"\",\"description\":\"\",\"rating\":\"\"}",
+              "raw": "{\"description\":\"he was good\",\"rating\":5}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -439,7 +440,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/out?PageSize=10&Page=1&States=Borrowed",
+              "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/out?PageSize=10&SortColumn=actualReturnDate&SortDirection=desc&Page=1&States=Returned",
               "host": [
                 "{{baseurl}}"
               ],
@@ -462,13 +463,11 @@
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": "actualReturnDate"
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": "desc"
                 },
                 {
                   "key": "LenderStudentId",
@@ -496,7 +495,7 @@
                 },
                 {
                   "key": "States",
-                  "value": "Borrowed"
+                  "value": "Returned"
                 }
               ]
             }
@@ -629,7 +628,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"OtpCode\":\"662681\"}",
+              "raw": "{\"OtpCode\":\"790105\"}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1351,7 +1350,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student4@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"student3@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -3168,7 +3167,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/notifications?Page=1&PageSize=15",
+              "raw": "{{baseurl}}/api/v1/notifications?Page=1&PageSize=15&SortDirection=asc&Types=normal",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3198,8 +3197,7 @@
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": "asc"
                 },
                 {
                   "key": "IsRead",
@@ -3208,8 +3206,7 @@
                 },
                 {
                   "key": "Types",
-                  "value": "",
-                  "disabled": true
+                  "value": "normal"
                 }
               ]
             }
@@ -3238,6 +3235,46 @@
                 "notifications",
                 "{{notificationId}}"
               ]
+            }
+          }
+        },
+        {
+          "id": "71a0c61e-924d-498e-ad52-f0c4474dcdfb",
+          "name": "Mark As Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/notifications/read?maxTime=2026-05-01T19:17:30.8505936+00:00",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "read"
+              ],
+              "query": [
+                {
+                  "key": "maxTime",
+                  "value": "2026-05-01T19:17:30.8505936+00:00"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
             }
           }
         }
