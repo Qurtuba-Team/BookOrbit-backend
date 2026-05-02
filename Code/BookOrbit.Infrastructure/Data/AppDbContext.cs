@@ -1,5 +1,7 @@
-﻿
+
 using BookOrbit.Domain.Otps;
+using BookOrbit.Domain.ChatGroups;
+using BookOrbit.Domain.ChatMessages;
 
 namespace BookOrbit.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : IdentityDbContext<AppUser>(options), IAppDbContext
@@ -27,6 +29,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator medi
     public DbSet<Otp> Otps => Set<Otp>();
 
     public DbSet<Notification> Notification => Set<Notification>();
+
+    public DbSet<ChatGroup> ChatGroups => Set<ChatGroup>();
+
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

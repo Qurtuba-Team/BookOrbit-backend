@@ -1,4 +1,4 @@
-﻿global using BookOrbit.Application.Common.Behaviours;
+global using BookOrbit.Application.Common.Behaviours;
 global using BookOrbit.Application.Common.Constants;
 global using BookOrbit.Application.Common.Errors;
 global using BookOrbit.Application.Common.Exceptions;
@@ -77,3 +77,9 @@ global using System.Text.Json.Serialization;
 global using BookOrbit.Application.Features.Notifications.Dtos;
 global using BookOrbit.Application.Features.Notifications.Queries.GetNotificationById;
 global using BookOrbit.Application.Features.Notifications.Queries.GetNotifications;
+global using BookOrbit.Application.Features.Chat;
+global using BookOrbit.Application.Features.Chat.Dtos;
+global using BookOrbit.Application.Features.Chat.Queries.GetChatHistory;
+global using BookOrbit.Application.Features.Chat.Queries.GetUserChatGroups;
+global using BookOrbit.Domain.ChatGroups;
+global using BookOrbit.Domain.ChatMessages;

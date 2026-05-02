@@ -1,4 +1,4 @@
-﻿global using Asp.Versioning;
+global using Asp.Versioning;
 global using BookOrbit.Api;
 global using BookOrbit.Api.Common.Constants;
 global using BookOrbit.Api.Common.Helpers;
@@ -134,3 +134,9 @@ global using System.Text.Json.Serialization;
 global using System.Threading.RateLimiting;
 global using BookOrbit.Application.Features.OTPs.VerifyBookDeliveryConfirmationOtp;
 global using BookOrbit.Api.Contracts.Requests.Otps;
+global using BookOrbit.Api.Contracts.Requests.Chat;
+global using BookOrbit.Application.Features.Chat.Commands.SendMessage;
+global using BookOrbit.Application.Features.Chat.Commands.MarkMessagesAsRead;
+global using BookOrbit.Application.Features.Chat.Dtos;
+global using BookOrbit.Application.Features.Chat.Queries.GetChatHistory;
+global using BookOrbit.Application.Features.Chat.Queries.GetUserChatGroups;

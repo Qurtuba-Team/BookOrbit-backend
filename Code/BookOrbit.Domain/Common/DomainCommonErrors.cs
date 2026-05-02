@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Domain.Common;
+namespace BookOrbit.Domain.Common;
 
 static public class DomainCommonErrors
 {
@@ -7,6 +7,9 @@ static public class DomainCommonErrors
 
     static public Error InvalidProp(string Class, string PropertyCode, string PropertyDescription, string Details = "") =>
         Error.Validation($"{Class}.{PropertyCode}.Invalid", $"{Class} {PropertyDescription} is invalid. {Details}");
+
+    static public Error MaxLengthProp(string Class, string PropertyCode, string PropertyDescription, int maxLength) =>
+        Error.Validation($"{Class}.{PropertyCode}.MaxLength", $"{Class} {PropertyDescription} must not exceed {maxLength} characters.");
 
     static public Error CustomValidation(string Class, string Code, string Description) =>
         Error.Validation($"{Class}.{Code}", Description);

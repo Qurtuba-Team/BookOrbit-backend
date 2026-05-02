@@ -1,4 +1,6 @@
-﻿
+using BookOrbit.Application.Common.Interfaces.ChatServices;
+using BookOrbit.Infrastructure.Services.ChatServices;
+
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
@@ -9,7 +11,8 @@ static public class DependencyInjection
             .AddIdentity()
             .AddInfrastructureServices()
             .AddPolicies()
-            .AddDbContext();
+            .AddDbContext()
+            .AddInfrastucureSignalR();
 
     }
     static private IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration)
@@ -90,6 +93,8 @@ static public class DependencyInjection
         services.AddTransient<IBorrowingTransactionOtpService, BorrowingTransactionOtpService>();
         services.AddTransient<IBorrowingRequestOtpService, BorrowingRequestOtpService>();
         services.AddTransient<ISystemNotificationService, SystemNotificationService>();
+        services.AddTransient<IChatService, ChatService>();
+        services.AddTransient<IRealTimeService, RealTimeService>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)
@@ -110,7 +115,7 @@ static public class DependencyInjection
         services.AddScoped<IAuthorizationHandler, StudentAcceptedForLendingListRecordHandler>();
         services.AddScoped<IAuthorizationHandler, BorrowingRequestRelatedStudentHandler>();
         services.AddScoped<IAuthorizationHandler, BorrowingTransactionRelatedStudentHandler>();
-        
+
         services.AddAuthorizationBuilder()
 
             .AddPolicy(PoliciesNames.ActiveUserPolicy, policy =>
@@ -198,19 +203,24 @@ static public class DependencyInjection
 
             .AddPolicy(PoliciesNames.BorrowingTransactionRelatedStudentPolicy, policy =>
             {
-            policy.Requirements.Add(new ActiveStudentRequirement());
-            policy.Requirements.Add(new BorrowingTransactionRelatedStudentRequirement());
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new BorrowingTransactionRelatedStudentRequirement());
             })
-            
+
 
             .AddPolicy(PoliciesNames.StudentAcceptedForLendingListRecordPolicy, policy =>
             {
-        policy.Requirements.Add(new ActiveStudentRequirement());
-        policy.Requirements.Add(new StudentAcceptedForLendingListRecordRequirement());
-    })
+                policy.Requirements.Add(new ActiveStudentRequirement());
+                policy.Requirements.Add(new StudentAcceptedForLendingListRecordRequirement());
+            })
             ;
 
         return services;
     }
 
+    static private IServiceCollection AddInfrastucureSignalR(this IServiceCollection services)
+    {
+        services.AddSignalR();
+        return services;
+    }
 }
