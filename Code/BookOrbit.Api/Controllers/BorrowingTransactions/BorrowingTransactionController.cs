@@ -164,12 +164,12 @@ public class BorrowingTransactionController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> MarkBorrowingTransactionAsReturned([FromRoute] Guid borrowingTransactionId, [FromBody] OtpRequest request, CancellationToken ct)
     {
-        var otpVerificationResult = await sender.Send(new VerifyBookReturningConfirmationOtpCommand(borrowingTransactionId, request.OtpCode), ct);
+        //var otpVerificationResult = await sender.Send(new VerifyBookReturningConfirmationOtpCommand(borrowingTransactionId, request.OtpCode), ct);
 
-        if (otpVerificationResult.IsFailure)
-        {
-            return Problem(otpVerificationResult.Errors, HttpContext);
-        }
+        //if (otpVerificationResult.IsFailure)
+        //{
+        //    return Problem(otpVerificationResult.Errors, HttpContext);
+        //}
 
         var result = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(borrowingTransactionId), ct);
 
