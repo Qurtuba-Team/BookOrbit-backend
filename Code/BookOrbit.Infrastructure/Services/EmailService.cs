@@ -28,6 +28,7 @@ public class EmailService(
         try
         {
             await client.SendMailAsync(mailMessage);
+            logger.LogInformation("Email sent successfully to {EmailAddress} with subject {Subject}", emailAddress, subject);
             return Result.Success;
         }
         catch (Exception ex)
