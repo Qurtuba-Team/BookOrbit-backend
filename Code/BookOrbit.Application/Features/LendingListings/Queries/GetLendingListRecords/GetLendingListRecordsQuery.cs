@@ -7,6 +7,7 @@ public record GetLendingListRecordsQuery(
     string? SortDirection = "desc",
     Guid? BookCopyId = null,
     Guid? BookId = null,
+    Guid? OwnerId = null,
     List<LendingListRecordState>? States = null)
     : ICachedQuery<Result<PaginatedList<LendingListRecordListItemDto>>>
 {

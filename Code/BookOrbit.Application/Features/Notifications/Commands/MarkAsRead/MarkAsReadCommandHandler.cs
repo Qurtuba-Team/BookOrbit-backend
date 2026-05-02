@@ -27,7 +27,7 @@ public class MarkAsReadCommandHandler(
 
         logger.LogInformation("Marked {Count} notifications as read", affectedRows);
 
-        await cache.RemoveByTagAsync(NotificationCachingConstants.NotificationTag);
+        await cache.RemoveByTagAsync(NotificationCachingConstants.NotificationTag, ct);
         return Result.Updated;
     }
 }

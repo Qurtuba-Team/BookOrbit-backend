@@ -41,6 +41,9 @@ public class GetLendingListRecordsQueryHandler(
         if (searchQuery.BookId is not null)
             query = query.Where(lr => lr.BookCopy!.BookId == searchQuery.BookId);
 
+        if(searchQuery.OwnerId is not null)
+            query = query.Where(lr => lr.BookCopy!.OwnerId == searchQuery.OwnerId);
+
         if (searchQuery.States is not null &&
             searchQuery.States.Count != 0)
             query = query.Where(lr => searchQuery.States.Contains(lr.State));

@@ -53,6 +53,7 @@ public class LendingListController(
             request.SortDirection,
             request.BookCopyId,
             request.BookId,
+            request.OwnerId,
             request.States);
 
         var result = await sender.Send(query, ct);
