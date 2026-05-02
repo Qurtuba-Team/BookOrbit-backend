@@ -3072,7 +3072,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/lendinglist?States=available&Page=1&PageSize=3",
+              "raw": "{{baseurl}}/api/v1/lendinglist?States=available&Page=1&PageSize=10",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3107,7 +3107,7 @@
                 },
                 {
                   "key": "PageSize",
-                  "value": "3"
+                  "value": "10"
                 },
                 {
                   "key": "BookId",
@@ -3116,6 +3116,11 @@
                 },
                 {
                   "key": "BookCopyId",
+                  "value": "",
+                  "disabled": true
+                },
+                {
+                  "key": "OwnerId",
                   "value": "",
                   "disabled": true
                 }
@@ -3167,7 +3172,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/notifications?Page=1&PageSize=15&SortDirection=asc&Types=normal",
+              "raw": "{{baseurl}}/api/v1/notifications?Page=1&PageSize=15&SortDirection=desc",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3197,7 +3202,7 @@
                 },
                 {
                   "key": "SortDirection",
-                  "value": "asc"
+                  "value": "desc"
                 },
                 {
                   "key": "IsRead",
@@ -3206,7 +3211,8 @@
                 },
                 {
                   "key": "Types",
-                  "value": "normal"
+                  "value": "normal",
+                  "disabled": true
                 }
               ]
             }
@@ -3250,7 +3256,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/notifications/read?maxTime=2026-05-01T19:17:30.8505936+00:00",
+              "raw": "{{baseurl}}/api/v1/notifications/read?=",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3262,17 +3268,17 @@
               ],
               "query": [
                 {
-                  "key": "maxTime",
-                  "value": "2026-05-01T19:17:30.8505936+00:00"
+                  "key": "",
+                  "value": ""
                 }
               ]
             },
             "body": {
               "mode": "raw",
-              "raw": "",
+              "raw": "{\"maxTime\":\"2026-05-02T12:30:10.8060481+00:00\"}",
               "options": {
                 "raw": {
-                  "language": "text"
+                  "language": "json"
                 }
               }
             }

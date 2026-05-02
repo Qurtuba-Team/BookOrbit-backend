@@ -19,7 +19,7 @@ public class NotificationController(
     [EndpointName("MarkNotificationsAsRead")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> MarkNotificationsAsRead([FromQuery] MarkNotificationAsReadRequest request, CancellationToken ct)
+    public async Task<ActionResult> MarkNotificationsAsRead([FromBody] MarkNotificationAsReadRequest request, CancellationToken ct)
     {
         var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
 
