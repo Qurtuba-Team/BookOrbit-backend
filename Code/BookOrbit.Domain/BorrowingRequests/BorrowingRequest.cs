@@ -96,7 +96,7 @@ public class BorrowingRequest : ExpirableEntity
         var result = UpdateState(BorrowingRequestState.Rejected);
         if (result.IsSuccess)
         {
-            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId,State));
         }
         return result;
     }
@@ -106,7 +106,7 @@ public class BorrowingRequest : ExpirableEntity
         var result = UpdateState(BorrowingRequestState.Cancelled);
         if (result.IsSuccess)
         {
-            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId,State));
         }
         return result;
     }
@@ -116,7 +116,7 @@ public class BorrowingRequest : ExpirableEntity
         var result = UpdateState(BorrowingRequestState.Expired);
         if (result.IsSuccess)
         {
-            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId));
+            AddDomainEvent(new BorrowingRequestTerminatedEvent(Id, BorrowingStudentId, LendingRecordId, State));
         }
         return result;
     }
