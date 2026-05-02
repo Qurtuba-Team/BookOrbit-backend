@@ -1,4 +1,4 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.
     AddPresentation(builder.Configuration)
@@ -31,6 +31,7 @@ else
 
 app.UseCoreMiddlewares(builder.Configuration);
 app.MapControllers();
+app.MapHub<BookOrbit.Infrastructure.Services.ChatServices.ChatHub>("/chat-hub");
 
 
 app.Run();

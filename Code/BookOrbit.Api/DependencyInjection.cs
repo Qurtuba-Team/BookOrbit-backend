@@ -140,13 +140,17 @@ static public class DependencyInjection
     {
         var appSettings = configuration.GetSection(AppSettingsSectionName).Get<AppSettings>()!;
 
-        services.AddCors(options => options.AddPolicy(
-            appSettings.CorsPolicyName,
-            policy => policy
-                .WithOrigins(appSettings.AllowedOrigins!)
-                .AllowAnyHeader()
-                .AllowAnyMethod()
-                .AllowCredentials()));
+        services.AddCors(options =>
+        {
+            options.AddPolicy(appSettings.CorsPolicyName, policy =>
+            {
+                policy
+                    .WithOrigins(appSettings.AllowedOrigins)
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            });
+        });
 
         return services;
     }

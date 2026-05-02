@@ -1,6 +1,8 @@
-﻿
+
 using BookOrbit.Domain.Notifications;
 using BookOrbit.Domain.Otps;
+using BookOrbit.Domain.ChatGroups;
+using BookOrbit.Domain.ChatMessages;
 
 namespace BookOrbit.Application.Common.Interfaces;
 
@@ -18,6 +20,8 @@ public interface IAppDbContext
     public DbSet<PointTransaction> PointTransactions { get; }
     public DbSet<Otp> Otps { get; }
     public DbSet<Notification> Notification { get; }
+    public DbSet<ChatGroup> ChatGroups { get; }
+    public DbSet<ChatMessage> ChatMessages { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }
 
