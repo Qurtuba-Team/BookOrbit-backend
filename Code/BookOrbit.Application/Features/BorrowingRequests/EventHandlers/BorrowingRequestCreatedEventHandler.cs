@@ -24,7 +24,7 @@ public class BorrowingRequestCreatedEventHandler(
         }
 
 
-        var emailResult = await emailService.SendEmailAsync(
+        Result<Success> emailResult = await emailService.SendEmailAsync(
             Email,
             subject,
             emailFormatResult.Value

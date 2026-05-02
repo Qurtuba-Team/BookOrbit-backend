@@ -1,4 +1,4 @@
-﻿using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
+using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
 
 namespace BookOrbit.Application.Features.BorrowingTransactions.EventHandlers;
 public class BorrowingTransactionBookCopyReturnedEventHandler(
@@ -10,7 +10,7 @@ public class BorrowingTransactionBookCopyReturnedEventHandler(
         var student = await context.Students.FirstOrDefaultAsync(s => s.Id == notification.BorrowingStudentId, ct);
         if (student is null)
         {
-            logger.LogWarning("Student {StudentId} not found in BorrowingRequestTerminatedEventHandler.", notification.BorrowingStudentId);
+            logger.LogWarning("Student {StudentId} not found in BorrowingTransactionBookCopyReturnedEventHandler.", notification.BorrowingStudentId);
             return;
         }
 

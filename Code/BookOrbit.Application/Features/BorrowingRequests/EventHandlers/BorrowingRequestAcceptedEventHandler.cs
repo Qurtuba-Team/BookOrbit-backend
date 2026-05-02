@@ -1,4 +1,4 @@
-﻿using BookOrbit.Application.Common.Interfaces.SystemNotificationService;
+using BookOrbit.Application.Common.Interfaces.SystemNotificationService;
 
 namespace BookOrbit.Application.Features.BorrowingRequests.EventHandlers;
 public class BorrowingRequestAcceptedEventHandler(
@@ -42,7 +42,7 @@ public class BorrowingRequestAcceptedEventHandler(
         // notify the borrower that their request has been accepted
         var borrowerDataResult = await
             context.BorrowingRequests
-            .Where(br => br.BorrowingStudentId == notification.BorrowingStudentId)
+            .Where(br => br.Id == notification.BorrowingRequestId)
             .Select(br => new
             {
                 email = br.BorrowingStudent!.UniversityMail.Value,

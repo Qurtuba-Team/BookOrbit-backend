@@ -1,4 +1,4 @@
-﻿
+
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.CreateBorrowingRequest;
 public class CreateBorrowingRequestCommandHandler(
     ILogger<CreateBorrowingRequestCommandHandler> logger,
@@ -97,9 +97,6 @@ public class CreateBorrowingRequestCommandHandler(
                 deductingPointsResult.Errors);
             return deductingPointsResult.Errors;
         }   
-
-        borrowingRequestResult.Value.AddDomainEvent(new BorrowingRequestCreatedEvent(borrowingRequestResult.Value.Id, borrowingRequestResult.Value.LendingRecordId));
-
         context.BorrowingRequests.Add(borrowingRequestResult.Value);
 
         await context.SaveChangesAsync(ct);
