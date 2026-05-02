@@ -1,3 +1,5 @@
+using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
+
 namespace BookOrbit.Domain.BorrowingTransactions;
 
 public class BorrowingTransaction : AuditableEntity
