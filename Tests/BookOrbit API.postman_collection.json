@@ -1350,7 +1350,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"student3@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
+              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
               "options": {
                 "raw": {
                   "language": "text"
@@ -3275,6 +3275,131 @@
                   "language": "text"
                 }
               }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "4f9c1d51-8592-4a36-a5f0-33cfebed33b4",
+      "name": "Chat",
+      "item": [
+        {
+          "id": "9ca34ddf-a43c-4d7c-88cd-24fbd0c8b23e",
+          "name": "Send Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/chat/messages",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "messages"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"ReceiverId\":\"fe34d61e-5dca-434d-838f-37d2973ea49b\",\"Content\":\"Long Live Egypt 2!!\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "59abc8c2-62a4-4ca1-9595-010de65a25ee",
+          "name": "Mark Message As Read",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/chat/groups/{{chatgroupid}}}/read",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "groups",
+                "{{chatgroupid}}}",
+                "read"
+              ]
+            }
+          }
+        },
+        {
+          "id": "3de4bd05-8747-4997-8d43-952b7babe956",
+          "name": "Get Chat History",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/chat/groups/{{chatgroupid}}/messages?=",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "groups",
+                "{{chatgroupid}}",
+                "messages"
+              ],
+              "query": [
+                {
+                  "key": "",
+                  "value": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "id": "e2a58aa3-3274-4e47-b920-df24d521930d",
+          "name": "GetUserChatGroups",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/chat/groups",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "chat",
+                "groups"
+              ]
             }
           }
         }
