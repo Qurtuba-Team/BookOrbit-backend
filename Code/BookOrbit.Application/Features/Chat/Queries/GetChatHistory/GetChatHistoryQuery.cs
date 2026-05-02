@@ -2,6 +2,7 @@ using BookOrbit.Application.Features.Chat.Dtos;
 
 namespace BookOrbit.Application.Features.Chat.Queries.GetChatHistory;
 public record GetChatHistoryQuery(
+    Guid StudentId,
     Guid ChatGroupId,
     int Page,
     int PageSize) : ICachedQuery<Result<PaginatedList<ChatMessageDto>>>

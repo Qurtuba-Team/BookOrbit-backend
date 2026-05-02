@@ -10,5 +10,10 @@ public class SendMessageCommandValidator : AbstractValidator<SendMessageCommand>
         RuleFor(x => x.Content)
             .Cascade(CascadeMode.Stop)
             .MessageContentRules();
+
+        RuleFor(x => x.SenderId)
+    .Cascade(CascadeMode.Stop)
+    .StudentIdRules();
+
     }
 }

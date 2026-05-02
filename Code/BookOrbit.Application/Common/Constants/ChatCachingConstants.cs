@@ -13,7 +13,7 @@ public class ChatCachingConstants
 
     public static string ChatHistoryKey(GetChatHistoryQuery query)
         =>
-        $"chathistory:gid={query.ChatGroupId}:p={query.Page}:ps={query.PageSize}";
+        $"chathistory:sid{query.StudentId}:gid={query.ChatGroupId}:p={query.Page}:ps={query.PageSize}";
 
     public const int ExpirationInMinutes = 5;
 }

@@ -1,27 +1,10 @@
 namespace BookOrbit.Application.Features.Chat.Queries.GetChatHistory;
 public class GetChatHistoryQueryHandler(
     ILogger<GetChatHistoryQueryHandler> logger,
-    IAppDbContext context,
-    ICurrentUser currentUser) : IRequestHandler<GetChatHistoryQuery, Result<PaginatedList<ChatMessageDto>>>
+    IAppDbContext context) : IRequestHandler<GetChatHistoryQuery, Result<PaginatedList<ChatMessageDto>>>
 {
     public async Task<Result<PaginatedList<ChatMessageDto>>> Handle(GetChatHistoryQuery query, CancellationToken ct)
     {
-        var userId = currentUser.Id;
-
-        if (string.IsNullOrEmpty(userId))
-            return ChatApplicationErrors.StudentNotFound;
-
-        var studentId = await context.Students
-            .Where(s => s.UserId == userId)
-            .Select(s => s.Id)
-            .FirstOrDefaultAsync(ct);
-
-        if (studentId == Guid.Empty)
-        {
-            logger.LogWarning("Student not found for UserId: {UserId}", userId);
-            return ChatApplicationErrors.StudentNotFound;
-        }
-
         var chatGroup = await context.ChatGroups
             .AsNoTracking()
             .FirstOrDefaultAsync(cg => cg.Id == query.ChatGroupId, ct);
@@ -32,9 +15,9 @@ public class GetChatHistoryQueryHandler(
             return ChatApplicationErrors.ChatGroupNotFoundById;
         }
 
-        if (chatGroup.Student1Id != studentId && chatGroup.Student2Id != studentId)
+        if (chatGroup.Student1Id != query.StudentId && chatGroup.Student2Id != query.StudentId)
         {
-            logger.LogWarning("Student {StudentId} is not part of ChatGroup {ChatGroupId}.", studentId, query.ChatGroupId);
+            logger.LogWarning("Student {StudentId} is not part of ChatGroup {ChatGroupId}.", query.StudentId, query.ChatGroupId);
             return ChatApplicationErrors.UserNotPartOfChatGroup;
         }
 

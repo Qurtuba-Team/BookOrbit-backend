@@ -6,5 +6,9 @@ public class MarkMessagesAsReadCommandValidator : AbstractValidator<MarkMessages
         RuleFor(x => x.ChatGroupId)
             .Cascade(CascadeMode.Stop)
             .ChatGroupIdRules();
+
+        RuleFor(x=>x.StudentId)
+            .Cascade(CascadeMode.Stop)
+            .StudentIdRules();
     }
 }

@@ -23,7 +23,15 @@ public class ChatController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult<ChatMessageDto>> SendMessage([FromBody] SendMessageRequest request, CancellationToken ct)
     {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
         var command = new SendMessageCommand(
+            studentResult.Value.Id,
             request.ReceiverId,
             request.Content);
 
@@ -50,7 +58,15 @@ public class ChatController(
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
     public async Task<ActionResult> MarkMessagesAsRead([FromRoute] Guid chatGroupId, CancellationToken ct)
     {
-        var result = await sender.Send(new MarkMessagesAsReadCommand(chatGroupId), ct);
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+
+        var result = await sender.Send(new MarkMessagesAsReadCommand(studentResult.Value.Id , chatGroupId), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -76,7 +92,16 @@ public class ChatController(
         [FromQuery] ChatPagedFilterRequest request,
         CancellationToken ct)
     {
+        var studentResult = await sender.Send(new GetStudentByUserIdQuery(currentUser.Id), ct);
+
+        if (studentResult.IsFailure)
+        {
+            return Problem(studentResult.Errors, HttpContext);
+        }
+
+
         var query = new GetChatHistoryQuery(
+            studentResult.Value.Id,
             chatGroupId,
             request.Page,
             request.PageSize);
