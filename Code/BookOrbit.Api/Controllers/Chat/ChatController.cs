@@ -9,7 +9,7 @@ public class ChatController(
 {
 
     [HttpPost("messages")]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
     [ProducesResponseType(typeof(ChatMessageDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
@@ -44,7 +44,7 @@ public class ChatController(
 
 
     [HttpPatch("groups/{chatGroupId:guid}/read")]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [Authorize(Policy = PoliciesNames.StudentOnlyPolicy)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]

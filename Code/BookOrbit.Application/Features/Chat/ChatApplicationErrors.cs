@@ -1,6 +1,3 @@
-using BookOrbit.Domain.ChatGroups;
-using BookOrbit.Domain.ChatMessages;
-
 namespace BookOrbit.Application.Features.Chat;
 public static class ChatApplicationErrors
 {
@@ -10,4 +7,5 @@ public static class ChatApplicationErrors
     static public readonly Error ChatGroupNotFoundById = ApplicationCommonErrors.NotFoundClass(ChatGroupClassName, "Id", "Id");
     static public readonly Error StudentNotFound = ApplicationCommonErrors.NotFoundClass("Student", "UserId", "User Id");
     static public readonly Error UserNotPartOfChatGroup = ApplicationCommonErrors.CustomUnauthorized(ChatGroupClassName, "UserNotPartOfChatGroup", "You are not a participant in this chat group.");
+        static public readonly Error ReceiverNotFound = ApplicationCommonErrors.NotFoundClass("Student", "Id", "Receiver Id");
 }

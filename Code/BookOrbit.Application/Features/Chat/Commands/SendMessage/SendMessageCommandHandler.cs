@@ -4,10 +4,19 @@ namespace BookOrbit.Application.Features.Chat.Commands.SendMessage;
 public class SendMessageCommandHandler(
     ILogger<SendMessageCommandHandler> logger,
     IChatService chatService,
-    HybridCache cache) : IRequestHandler<SendMessageCommand, Result<ChatMessageDto>>
+    HybridCache cache,
+    IAppDbContext context) : IRequestHandler<SendMessageCommand, Result<ChatMessageDto>>
 {
     public async Task<Result<ChatMessageDto>> Handle(SendMessageCommand command, CancellationToken ct)
     {
+        var studentExists = await context.Students.AnyAsync(u => u.Id == command.ReceiverId, ct);
+        
+        if (!studentExists)
+        {
+            logger.LogError("Failed to send message. Receiver with ID {ReceiverId} does not exist.", command.ReceiverId);
+            return ChatApplicationErrors.ReceiverNotFound;
+        }
+
         var result = await chatService.SaveMessageAsync(command.SenderId, command.ReceiverId, command.Content, ct);
 
         if (result.IsFailure)
