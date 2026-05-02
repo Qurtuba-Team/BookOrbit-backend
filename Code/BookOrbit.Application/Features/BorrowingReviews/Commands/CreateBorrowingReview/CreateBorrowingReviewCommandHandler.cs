@@ -8,42 +8,24 @@ public class CreateBorrowingReviewCommandHandler(
 {
     public async Task<Result<BorrowingReviewDto>> Handle(CreateBorrowingReviewCommand command, CancellationToken ct)
     {
-        var reviewerExists = await context.Students
-            .AsNoTracking()
-            .AnyAsync(s => s.Id == command.ReviewerStudentId, ct);
-
-        if (!reviewerExists)
-        {
-            logger.LogWarning("Reviewer student not found. ReviewerStudentId: {ReviewerStudentId}", command.ReviewerStudentId);
-            return StudentApplicationErrors.NotFoundById;
-        }
-
-        var reviewedExists = await context.Students
-            .AsNoTracking()
-            .AnyAsync(s => s.Id == command.ReviewedStudentId, ct);
-
-        if (!reviewedExists)
-        {
-            logger.LogWarning("Reviewed student not found. ReviewedStudentId: {ReviewedStudentId}", command.ReviewedStudentId);
-            return StudentApplicationErrors.NotFoundById;
-        }
-
-        var transactionState = await context.BorrowingTransactions
+        var transactionData = await context.BorrowingTransactions
             .AsNoTracking()
             .Select(bt => new
             {
                 bt.Id,
-                bt.State
+                bt.State,
+                ReviewerStudentId = bt.LenderStudentId,
+                ReviewedStudentId = bt.BorrowerStudentId
             })
             .FirstOrDefaultAsync(bt => bt.Id == command.BorrowingTransactionId, ct);
 
-        if (transactionState is null)
+        if (transactionData is null)
         {
             logger.LogWarning("Borrowing transaction not found. BorrowingTransactionId: {BorrowingTransactionId}", command.BorrowingTransactionId);
             return BorrowingTransactionApplicationErrors.NotFoundById;
         }
 
-        if(transactionState.State is not
+        if(transactionData.State is not
             BorrowingTransactionState.Returned
             or BorrowingTransactionState.Overdue)
         {
@@ -71,8 +53,8 @@ public class CreateBorrowingReviewCommandHandler(
 
         var reviewResult = BorrowingReview.Create(
             Guid.NewGuid(),
-            command.ReviewerStudentId,
-            command.ReviewedStudentId,
+            transactionData.ReviewerStudentId,
+            transactionData.ReviewedStudentId,
             command.BorrowingTransactionId,
             command.Description,
             ratingResult.Value);
