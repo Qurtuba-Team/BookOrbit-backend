@@ -2,6 +2,6 @@
 {
     public record MarkNotificationAsReadRequest
     {
-        public DateTime MaxTime { get; init; }
+        public DateTimeOffset MaxTime { get; init; }
     }
 }
