@@ -4,14 +4,6 @@ public class CreateBorrowingReviewCommandValidator : AbstractValidator<CreateBor
 {
     public CreateBorrowingReviewCommandValidator()
     {
-        RuleFor(x => x.ReviewerStudentId)
-            .Cascade(CascadeMode.Stop)
-            .ReviewerStudentIdRules();
-
-        RuleFor(x => x.ReviewedStudentId)
-            .Cascade(CascadeMode.Stop)
-            .ReviewedStudentIdRules();
-
         RuleFor(x => x.BorrowingTransactionId)
             .Cascade(CascadeMode.Stop)
             .BorrowingTransactionIdRules();

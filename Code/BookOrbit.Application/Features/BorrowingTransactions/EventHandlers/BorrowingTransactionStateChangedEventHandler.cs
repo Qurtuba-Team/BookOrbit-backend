@@ -1,4 +1,6 @@
 
+using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
+
 namespace BookOrbit.Application.Features.BorrowingTransactions.EventHandlers;
 public class BorrowingTransactionStateChangedEventHandler(
     IAppDbContext context,

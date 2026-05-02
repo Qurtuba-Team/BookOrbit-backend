@@ -1,4 +1,6 @@
-﻿namespace BookOrbit.Application.Features.BorrowingTransactions.EventHandlers;
+﻿using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
+
+namespace BookOrbit.Application.Features.BorrowingTransactions.EventHandlers;
 public class BorrowingTransactionBookCopyReturnedEventHandler(
     ILogger<BorrowingTransactionBookCopyReturnedEventHandler> logger,
     IAppDbContext context) : INotificationHandler<BorrowingTransactionBookCopyReturnedEvent>

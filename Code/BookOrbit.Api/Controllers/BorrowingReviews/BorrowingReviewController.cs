@@ -1,4 +1,6 @@
 ﻿
+using BookOrbit.Api.Services;
+
 namespace BookOrbit.Api.Controllers.BorrowingReviews;
 
 [Route("api/v{version:apiVersion}")]
@@ -24,8 +26,6 @@ public class BorrowingReviewController(
     public async Task<ActionResult<BorrowingReviewDto>> CreateBorrowingReview([FromRoute] Guid borrowingTransactionId, [FromBody] CreateBorrowingReviewRequest request, CancellationToken ct)
     {
         var command = new CreateBorrowingReviewCommand(
-            request.ReviewerStudentId,
-            request.ReviewedStudentId,
             borrowingTransactionId,
             request.Description,
             request.Rating);
