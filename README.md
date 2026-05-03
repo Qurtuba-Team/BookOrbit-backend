@@ -2,7 +2,7 @@
 
 A production-grade ASP.NET Core 9 backend for a university book-sharing platform, built on **Clean Architecture**, **Domain-Driven Design (DDD)**, and **CQRS** with a full observability stack (OpenTelemetry + Serilog + Jaeger + Prometheus + Grafana).
 
-Students lend and borrow physical books through a points-based economy. The system manages the complete lifecycle: book cataloging → copy registration → lending listings → borrowing requests → transactions → reviews → point settlement.
+Students lend and borrow physical books through a points-based economy. The system manages the complete lifecycle: book cataloging → copy registration → lending listings → borrowing requests → transactions → reviews → point settlement. It also includes real-time student chat, in-app notifications, and OTP-based delivery/return confirmations.
 
 ---
 
@@ -76,6 +76,10 @@ The handler (`CreateBookCommandHandler`) constructs value objects via factory me
 | `BorrowingRequest` | Request lifecycle (Pending → Accepted/Rejected/Cancelled/Expired) with configurable expiration |
 | `BorrowingTransaction` | Full borrow-return lifecycle including overdue detection and loss reporting |
 | `PointTransaction` | Directional point ledger (Add/Deduct) with reason-based categorization |
+| `ChatGroup` | One-to-one conversation container between students |
+| `ChatMessage` | Message thread with read-state tracking |
+| `Notification` | System notification inbox with read-state tracking |
+| `Otp` | Time-bound OTP for delivery/return confirmation flows |
 
 **Value Objects** — Immutable, self-validating types built on `ValueObject<T>`:
 
@@ -218,6 +222,18 @@ URL-segment versioning (`/api/v1/...`) via `Asp.Versioning.Mvc`, with `Substitut
 
 SQL Server connection is configured with `EnableRetryOnFailure` (5 retries, 10s max delay), providing transient fault tolerance.
 
+### 12. Real-Time Chat
+
+One-to-one chat is backed by `ChatGroup` and `ChatMessage` aggregates with real-time updates via SignalR (`/chat-hub`) and REST endpoints for history, read receipts, and group listing.
+
+### 13. Notification Center
+
+Students receive in-app notifications with pagination, filtering, and read tracking via the `Notification` aggregate and `/api/v1/notifications` endpoints.
+
+### 14. OTP Confirmation Flow
+
+Delivery and return confirmations use time-bound OTPs sent via email, backed by the `Otp` aggregate and dedicated OTP services for borrowing requests and transactions.
+
 ---
 
 ## Project Structure
@@ -237,6 +253,10 @@ BookOrbit-backend/
 │   │   ├── BorrowingRequests/         # BorrowingRequest aggregate, domain events
 │   │   ├── BorrowingTransactions/     # BorrowingTransaction, BorrowingReviews
 │   │   ├── PointTransactions/         # PointTransaction aggregate
+│   │   ├── ChatGroups/                # ChatGroup aggregate
+│   │   ├── ChatMessages/              # ChatMessage aggregate
+│   │   ├── Notifications/             # Notification aggregate
+│   │   ├── Otps/                      # OTP aggregate
 │   │   └── Identity/                  # RefreshToken entity
 │   │
 │   ├── BookOrbit.Application/         # Application Layer
@@ -258,6 +278,9 @@ BookOrbit-backend/
 │   │   │   ├── BorrowingReviews/      # Post-transaction reviews
 │   │   │   ├── BorrowingTransactionEvents/ # Audit events for transactions
 │   │   │   ├── PointTransactions/     # Points ledger queries
+│   │   │   ├── Chat/                  # Chat groups and messages
+│   │   │   ├── Notifications/         # Notification inbox
+│   │   │   ├── OTPs/                  # Delivery/return OTP workflows
 │   │   │   └── Identity/             # Auth commands (ConfirmEmail, ResetPassword, ChangePassword)
 │   │   └── DependencyInjection.cs     # MediatR + FluentValidation + Behaviours registration
 │   │
@@ -271,7 +294,10 @@ BookOrbit-backend/
 │   │   │   ├── IdentityService.cs     # ASP.NET Identity wrapper
 │   │   │   ├── TokenProvider.cs       # JWT + Refresh token generation
 │   │   │   └── Policies/             # 16+ IAuthorizationHandler implementations
-│   │   ├── Services/                  # Email, Masking, Caching, Image, Route services
+│   │   ├── Services/                  # Email, Masking, Caching, Image, Route, Chat, OTP services
+│   │   ├── Services/ChatServices/     # SignalR hub + real-time chat services
+│   │   ├── Services/OtpServices/      # OTP generation/verification services
+│   │   ├── Services/SystemNotificationServices/ # Notification service
 │   │   ├── Settings/                  # Strongly-typed settings (AppSettings, CacheSettings, etc.)
 │   │   ├── Common/EmailTemplates/     # HTML email templates (Confirm, Reset, BookRequested)
 │   │   └── DependencyInjection.cs     # EF Core, Identity, Services, Policies registration
@@ -405,10 +431,16 @@ dotnet run
 | `/api/v1/borrowing-transactions` | Active transaction tracking |
 | `/api/v1/borrowing-reviews` | Post-return reviews |
 | `/api/v1/point-transactions` | Points ledger |
+| `/api/v1/chat` | One-to-one student chat (groups, history, read receipts) |
+| `/api/v1/notifications` | In-app notification inbox |
 | `/api/v1/images` | Image serving (book covers, student photos) |
 | `/health` | Health check endpoint |
 | `/metrics` | Prometheus scraping endpoint |
 | `/openapi/v1.json` | OpenAPI 3.x specification (Development only) |
+
+### Real-Time Hub
+
+SignalR hub endpoint for chat: `http://localhost:7240/chat-hub`
 
 ### Default Credentials (Docker)
 
