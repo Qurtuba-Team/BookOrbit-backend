@@ -22,6 +22,7 @@ public class BookController(
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
 
+#pragma warning disable CS1998 
     public async Task<ActionResult<List<string>>> GetBookCategories(CancellationToken ct)
     {
         var categories = Enum.GetValues<BookCategory>()

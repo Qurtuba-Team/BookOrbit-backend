@@ -9,7 +9,7 @@ public class RouteService(
     public string GetBookCoverImageRoute()
     {
         string baseUrl = _settings.BaseUrl;
-        string routeRelativeUrl = "uploads/books"; //Could be better , but for now it's fine since we are only using it for book cover images and we know the route is "uploads/books"
+        string routeRelativeUrl = "uploads/books"; 
         var baseUri = new Uri(baseUrl); 
         var fullUri = new Uri(baseUri, routeRelativeUrl); 
         return fullUri.ToString(); 
