@@ -1,8 +1,16 @@
 # BookOrbit Domain Class Diagram
 
-This diagram visualizes the primary Domain Entities, their key attributes, and the relationships between them in the `BookOrbit.Domain` layer.
-
 ```mermaid
+
+%%{init: {
+  'flowchart': { 'curve': 'linear' },
+  'themeVariables': {
+    'fontSize': '14px',
+    'primaryColor': '#ffffff',
+    'edgeLabelBackground': '#ffffff'
+  }
+}}%%
+
 classDiagram
     %% Abstract Entities
     class AuditableEntity {
