@@ -1,6 +1,6 @@
 # BookOrbit Backend API Reference For Frontend
 
-Generated from the codebase on 2026-04-26.
+Generated from the codebase on 2026-05-04.
 
 This document is based on the checked-in backend code, not on assumptions.
 
@@ -371,6 +371,98 @@ Note: `claims` uses `System.Security.Claims.Claim` objects; frontend should not 
 - `state`
 - `expectedReturnDate`
 - `actualReturnDate`
+- `createdAtUtc`
+
+### `BorrowingReviewDto`
+
+- `id`
+- `reviewerStudentId`
+- `reviewedStudentId`
+- `borrowingTransactionId`
+- `description`
+- `rating`
+
+### `BorrowingReviewListItemDto`
+
+- `id`
+- `reviewerStudentId`
+- `reviewedStudentId`
+- `borrowingTransactionId`
+- `description`
+- `rating`
+- `createdAtUtc`
+
+### `BorrowingTransactionEventDto`
+
+- `id`
+- `borrowingTransactionId`
+- `state`
+- `createdAtUtc`
+- `lastModifiedUtc`
+
+### `BorrowingTransactionEventListItemDto`
+
+- `id`
+- `borrowingTransactionId`
+- `state`
+- `createdAtUtc`
+
+### `ChatMessageDto`
+
+- `id`
+- `content`
+- `senderId`
+- `chatGroupId`
+- `isRead`
+- `createdAtUtc`
+
+### `ChatGroupListItemDto`
+
+- `chatGroupId`
+- `otherStudentId`
+- `otherStudentName`
+- `otherStudentPersonalPhotoFileName`
+- `createdAtUtc`
+
+### `NotificationDto`
+
+- `id`
+- `studentId`
+- `title`
+- `message`
+- `isRead`
+- `type`
+- `createdAtUtc`
+- `lastModifiedUtc`
+
+### `NotificationListItemDto`
+
+- `id`
+- `studentId`
+- `title`
+- `message`
+- `isRead`
+- `type`
+- `createdAtUtc`
+
+### `PointTransactionDto`
+
+- `id`
+- `studentId`
+- `borrowingReviewId`
+- `points`
+- `reason`
+- `direction`
+
+### `PointTransactionListItemDto`
+
+- `id`
+- `studentId`
+- `studentName`
+- `borrowingReviewId`
+- `points`
+- `reason`
+- `direction`
 - `createdAtUtc`
 
 ## 6. State Machines
@@ -771,14 +863,14 @@ await api("/students?page=1&pageSize=20&sortColumn=createdAt&sortDirection=desc"
 ### `GET /students/{studentId}`
 
 - Full URL: `/api/v1.0/students/{studentId}`
-- Auth: `AdminOnlyPolicy`
+- Auth: `ActiveStudentPolicy`
 - Route params:
   - `studentId`
 - Returns: `200 OK` with `StudentDtoWithContactInfo`
 - What it does:
-  - returns full admin view of one student
+  - returns full student details including contact info
 - Use this when:
-  - admin opens student details page
+  - admin or active student opens student details page
 - JS:
 
 ```js
@@ -1319,6 +1411,7 @@ await api(`/lendinglist/${lendingListRecordId}`, { token });
   - `sortDirection`
   - `bookCopyId`
   - `bookId`
+  - `ownerId`: optional filter by book copy owner student id
   - `states`: list of `LendingListRecordState`
 - Returns: `200 OK` with paged `LendingListRecordListItemDto`
 - Search behavior:
@@ -1369,17 +1462,15 @@ await api(`/lendinglist/${lendingListRecordId}/request`, {
 ### `GET /lendinglist/{lendingListRecordId}/contact-info`
 
 - Full URL: `/api/v1.0/lendinglist/{lendingListRecordId}/contact-info`
-- Auth: `StudentOwnerOfLendingListRecordPolicy`
+- Auth: `StudentAcceptedForLendingListRecordPolicy`
 - Route params:
   - `lendingListRecordId`
 - Returns: `200 OK` with `StudentContactInformationDto`
-- What it does in current code:
+- What it does:
   - returns the owner student's phone/telegram info
   - only works when the lending list record state is `reserved`
-- Important backend caveat:
-  - despite the name, policy currently allows only the owner of the lending list record, not the accepted borrower
-  - query also ignores the current `studentId` argument for authorization logic
-  - frontend should treat this endpoint as owner-only unless backend is changed
+- Important:
+  - allowed for admin, or a student with an accepted borrowing request for that lending list record
 - JS:
 
 ```js
@@ -1574,20 +1665,46 @@ await api(`/borrowingrequests/${borrowingRequestId}/cancel`, {
 });
 ```
 
+### `POST /borrowingrequests/{borrowingRequestId}/otp`
+
+- Full URL: `/api/v1.0/borrowingrequests/{borrowingRequestId}/otp`
+- Auth: `BorrowingRequestLendingStudentPolicy`
+- Route params:
+  - `borrowingRequestId`
+- Returns: `200 OK`
+- What it does:
+  - sends an OTP code to the lending student's email to confirm delivery
+- Use this when:
+  - owner wants to confirm delivery, call this first to receive the OTP
+- Integrates with:
+  - `POST /borrowingrequests/{id}/deliver`
+- JS:
+
+```js
+await api(`/borrowingrequests/${borrowingRequestId}/otp`, {
+  method: "POST",
+  token
+});
+```
+
 ### `POST /borrowingrequests/{borrowingRequestId}/deliver`
 
 - Full URL: `/api/v1.0/borrowingrequests/{borrowingRequestId}/deliver`
 - Auth: `BorrowingRequestLendingStudentPolicy`
 - Route params:
   - `borrowingRequestId`
+- Body:
+  - `otpCode`: the OTP code received via email from the `/otp` endpoint
 - Returns: `200 OK` with `BorrowingTransactionDto`
 - What it does:
+  - verifies the OTP code first
   - creates borrowing transaction from an accepted request
   - sets expected return date to now + lending record borrowing duration
   - marks book copy `borrowed`
   - marks lending record `borrowed`
-- Important rule:
+- Important rules:
   - borrowing request must already be `accepted`
+  - OTP must be valid (call `POST /borrowingrequests/{id}/otp` first)
 - Use this when:
   - owner confirms the handoff/delivery happened
 - Integrates with:
@@ -1597,7 +1714,8 @@ await api(`/borrowingrequests/${borrowingRequestId}/cancel`, {
 ```js
 await api(`/borrowingrequests/${borrowingRequestId}/deliver`, {
   method: "POST",
-  token
+  token,
+  body: { otpCode }
 });
 ```
 
@@ -1642,14 +1760,90 @@ await api(`/borrowingtransactions/${borrowingTransactionId}`, { token });
   - searches borrower `name`
   - searches lender `name`
   - searches book `title`
-- Important frontend limitation:
-  - there is no "my incoming/my outgoing transactions list" endpoint in current code
-  - only admin has a list endpoint
-  - normal users can only fetch a transaction by id if they are related to it
 - JS:
 
 ```js
 await api("/borrowingtransactions?page=1&pageSize=20&states=borrowed", { token });
+```
+
+### `GET /borrowingtransactions/me/in`
+
+- Full URL: `/api/v1.0/borrowingtransactions/me/in`
+- Auth: `ActiveStudentPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+  - `searchTerm`
+  - `sortColumn`: `createdAt`, `updatedAt`, `expectedReturnDate`, `actualReturnDate`, `state`, `borrowerName`, `lenderName`, `bookTitle`
+  - `sortDirection`
+  - `borrowerStudentId`: optional extra filter
+  - `bookCopyId`: optional extra filter
+  - `borrowingRequestId`: optional extra filter
+  - `states`
+- Returns: `200 OK` with paged `BorrowingTransactionListItemDto`
+- What it does:
+  - automatically sets `lenderStudentId` to current student id
+- Search behavior:
+  - searches borrower `name`
+  - searches lender `name`
+  - searches book `title`
+- Use this when:
+  - current lender views incoming transactions on their lent copies
+- JS:
+
+```js
+await api("/borrowingtransactions/me/in?page=1&pageSize=20", { token });
+```
+
+### `GET /borrowingtransactions/me/out`
+
+- Full URL: `/api/v1.0/borrowingtransactions/me/out`
+- Auth: `ActiveStudentPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+  - `searchTerm`
+  - `sortColumn`: `createdAt`, `updatedAt`, `expectedReturnDate`, `actualReturnDate`, `state`, `borrowerName`, `lenderName`, `bookTitle`
+  - `sortDirection`
+  - `lenderStudentId`: optional extra filter
+  - `bookCopyId`: optional extra filter
+  - `borrowingRequestId`: optional extra filter
+  - `states`
+- Returns: `200 OK` with paged `BorrowingTransactionListItemDto`
+- What it does:
+  - automatically sets `borrowerStudentId` to current student id
+- Search behavior:
+  - searches borrower `name`
+  - searches lender `name`
+  - searches book `title`
+- Use this when:
+  - current borrower views transactions where they borrowed books
+- JS:
+
+```js
+await api("/borrowingtransactions/me/out?page=1&pageSize=20", { token });
+```
+
+### `POST /borrowingtransactions/{borrowingTransactionId}/otp`
+
+- Full URL: `/api/v1.0/borrowingtransactions/{borrowingTransactionId}/otp`
+- Auth: `BorrowingTransactionBorrowingStudentPolicy`
+- Route params:
+  - `borrowingTransactionId`
+- Returns: `200 OK`
+- What it does:
+  - sends an OTP code to the lender student's email to confirm returning
+- Use this when:
+  - borrower wants to return the book, call this first to receive the OTP
+- Integrates with:
+  - `PATCH /borrowingtransactions/{id}/return`
+- JS:
+
+```js
+await api(`/borrowingtransactions/${borrowingTransactionId}/otp`, {
+  method: "POST",
+  token
+});
 ```
 
 ### `PATCH /borrowingtransactions/{borrowingTransactionId}/return`
@@ -1658,11 +1852,16 @@ await api("/borrowingtransactions?page=1&pageSize=20&states=borrowed", { token }
 - Auth: `BorrowingTransactionBorrowingStudentPolicy`
 - Route params:
   - `borrowingTransactionId`
+- Body:
+  - `otpCode`: the OTP code received via email from the `/otp` endpoint
 - Returns: `204 No Content`
 - What it does:
+  - verifies the OTP code first
   - marks transaction returned or overdue depending on current date vs expected return date
   - sets `actualReturnDate`
   - marks the book copy back to `available`
+- Important rules:
+  - OTP must be valid (call `POST /borrowingtransactions/{id}/otp` first)
 - Use this when:
   - borrower returns the book
 - JS:
@@ -1670,7 +1869,8 @@ await api("/borrowingtransactions?page=1&pageSize=20&states=borrowed", { token }
 ```js
 await api(`/borrowingtransactions/${borrowingTransactionId}/return`, {
   method: "PATCH",
-  token
+  token,
+  body: { otpCode }
 });
 ```
 
@@ -1741,6 +1941,322 @@ const blob = await api(`/images/books/${bookId}`, { token });
 const url = URL.createObjectURL(blob);
 ```
 
+---
+
+## 7.10 Borrowing Reviews
+
+### `POST /borrowingtransactions/{borrowingTransactionId}/review`
+
+- Full URL: `/api/v1.0/borrowingtransactions/{borrowingTransactionId}/review`
+- Auth: `BorrowingTransactionLendingStudentPolicy`
+- Route params:
+  - `borrowingTransactionId`
+- Body:
+  - `description`: optional text review
+  - `rating`: integer between `1` and `5`
+- Returns: `201 Created` with `BorrowingReviewDto`
+- What it does:
+  - creates a borrowing review for the specified transaction
+  - the reviewer is the lending student, the reviewed is the borrowing student
+  - triggers a `BorrowingReviewCreatedEvent` that adjusts points based on the rating
+- Important rules:
+  - only one review per transaction
+  - transaction must exist
+- Use this when:
+  - lender reviews the borrower after a transaction completes
+- JS:
+
+```js
+await api(`/borrowingtransactions/${borrowingTransactionId}/review`, {
+  method: "POST",
+  token,
+  body: { description, rating }
+});
+```
+
+### `GET /borrowingreviews/{borrowingReviewId}`
+
+- Full URL: `/api/v1.0/borrowingreviews/{borrowingReviewId}`
+- Auth: `ActiveStudentPolicy`
+- Route params:
+  - `borrowingReviewId`
+- Returns: `200 OK` with `BorrowingReviewDto`
+- What it does:
+  - returns one borrowing review
+- JS:
+
+```js
+await api(`/borrowingreviews/${borrowingReviewId}`, { token });
+```
+
+### `GET /borrowingreviews`
+
+- Full URL: `/api/v1.0/borrowingreviews`
+- Auth: `ActiveStudentPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+  - `searchTerm`
+  - `sortColumn`: `createdAt`, `updatedAt`, `rating`
+  - `sortDirection`
+  - `reviewerStudentId`
+  - `reviewedStudentId`
+  - `borrowingTransactionId`
+- Returns: `200 OK` with paged `BorrowingReviewListItemDto`
+- Search behavior:
+  - if `searchTerm` is a valid GUID: searches `id`, `borrowingTransactionId`, `reviewerStudentId`, `reviewedStudentId`
+  - otherwise: searches `description` text
+- Use this when:
+  - viewing reviews for a student or transaction
+- JS:
+
+```js
+await api("/borrowingreviews?page=1&pageSize=20&reviewedStudentId=" + studentId, { token });
+```
+
+---
+
+## 7.11 Chat
+
+### `POST /chat/messages`
+
+- Full URL: `/api/v1.0/chat/messages`
+- Auth: `StudentOnlyPolicy`
+- Body:
+  - `receiverId`: student id of the message recipient
+  - `content`: message text
+- Returns: `201 Created` with `ChatMessageDto`
+- What it does:
+  - resolves current user to student
+  - creates a chat group between the two students if one does not already exist
+  - sends the message in that chat group
+- Important rules:
+  - sender and receiver must be different students
+- Use this when:
+  - student sends a direct message to another student
+- JS:
+
+```js
+await api("/chat/messages", {
+  method: "POST",
+  token,
+  body: { receiverId, content }
+});
+```
+
+### `PATCH /chat/groups/{chatGroupId}/read`
+
+- Full URL: `/api/v1.0/chat/groups/{chatGroupId}/read`
+- Auth: `StudentOnlyPolicy`
+- Route params:
+  - `chatGroupId`
+- Returns: `204 No Content`
+- What it does:
+  - marks all unread messages sent by the other participant as read for the current student
+- Use this when:
+  - student opens a chat conversation
+- JS:
+
+```js
+await api(`/chat/groups/${chatGroupId}/read`, {
+  method: "PATCH",
+  token
+});
+```
+
+### `GET /chat/groups/{chatGroupId}/messages`
+
+- Full URL: `/api/v1.0/chat/groups/{chatGroupId}/messages`
+- Auth: `ActiveStudentPolicy`
+- Route params:
+  - `chatGroupId`
+- Query params:
+  - `page`
+  - `pageSize`
+- Returns: `200 OK` with paged `ChatMessageDto`
+- What it does:
+  - returns paginated messages for the chat group, ordered by most recent first
+  - current student must be a participant in the chat group
+- Use this when:
+  - loading chat history for a conversation
+- JS:
+
+```js
+await api(`/chat/groups/${chatGroupId}/messages?page=1&pageSize=50`, { token });
+```
+
+### `GET /chat/groups`
+
+- Full URL: `/api/v1.0/chat/groups`
+- Auth: `ActiveStudentPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+- Returns: `200 OK` with paged `ChatGroupListItemDto`
+- What it does:
+  - returns all chat groups the current student participates in
+  - includes the name and photo filename of the other participant
+  - ordered by most recent first
+- Use this when:
+  - showing the chat inbox/conversation list
+- JS:
+
+```js
+await api("/chat/groups?page=1&pageSize=20", { token });
+```
+
+---
+
+## 7.12 Notifications
+
+### `PATCH /notifications/read`
+
+- Full URL: `/api/v1.0/notifications/read`
+- Auth: `ActiveStudentPolicy`
+- Body:
+  - `maxTime`: ISO 8601 datetime cutoff; all unread notifications created at or before this time are marked as read
+- Returns: `204 No Content`
+- What it does:
+  - marks all unread notifications for the current student as read up to the specified cutoff time
+- Use this when:
+  - student opens notification panel and frontend marks visible notifications as read
+- JS:
+
+```js
+await api("/notifications/read", {
+  method: "PATCH",
+  token,
+  body: { maxTime: new Date().toISOString() }
+});
+```
+
+### `GET /notifications/{notificationId}`
+
+- Full URL: `/api/v1.0/notifications/{notificationId}`
+- Auth: `ActiveStudentPolicy`
+- Route params:
+  - `notificationId`
+- Returns: `200 OK` with `NotificationDto`
+- What it does:
+  - returns one notification belonging to the current student
+- JS:
+
+```js
+await api(`/notifications/${notificationId}`, { token });
+```
+
+### `GET /notifications`
+
+- Full URL: `/api/v1.0/notifications`
+- Auth: `ActiveStudentPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+  - `searchTerm`
+  - `sortColumn`: `createdAt`, `updatedAt`, `title`, `type`, `isRead`
+  - `sortDirection`
+  - `isRead`: `true` or `false`
+  - `types`: list of `NotificationType`
+- Returns: `200 OK` with paged `NotificationListItemDto`
+- Search behavior:
+  - searches notification `title`
+  - searches notification `message`
+- What it does:
+  - returns paginated notifications for the current student
+- Use this when:
+  - displaying the notification list/feed
+- JS:
+
+```js
+await api("/notifications?page=1&pageSize=20&isRead=false", { token });
+```
+
+---
+
+## 7.13 Point Transactions (Admin)
+
+### `GET /pointtransactions/{pointTransactionId}`
+
+- Full URL: `/api/v1.0/pointtransactions/{pointTransactionId}`
+- Auth: `AdminOnlyPolicy`
+- Route params:
+  - `pointTransactionId`
+- Returns: `200 OK` with `PointTransactionDto`
+- What it does:
+  - returns one point transaction
+- JS:
+
+```js
+await api(`/pointtransactions/${pointTransactionId}`, { token });
+```
+
+### `GET /pointtransactions`
+
+- Full URL: `/api/v1.0/pointtransactions`
+- Auth: `AdminOnlyPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+  - `searchTerm`
+  - `sortColumn`: `createdAt`, `updatedAt`, `points`, `reason`, `studentName`
+  - `sortDirection`
+  - `studentId`
+  - `borrowingReviewId`
+  - `reasons`: list of `PointTransactionReason`
+- Returns: `200 OK` with paged `PointTransactionListItemDto`
+- Search behavior:
+  - searches student `name`
+- Use this when:
+  - admin reviews point activity history
+- JS:
+
+```js
+await api("/pointtransactions?page=1&pageSize=20&studentId=" + studentId, { token });
+```
+
+---
+
+## 7.14 Borrowing Transaction Events (Admin)
+
+### `GET /borrowingtransactionevents/{borrowingTransactionEventId}`
+
+- Full URL: `/api/v1.0/borrowingtransactionevents/{borrowingTransactionEventId}`
+- Auth: `AdminOnlyPolicy`
+- Route params:
+  - `borrowingTransactionEventId`
+- Returns: `200 OK` with `BorrowingTransactionEventDto`
+- What it does:
+  - returns one borrowing transaction event (state change record)
+- JS:
+
+```js
+await api(`/borrowingtransactionevents/${borrowingTransactionEventId}`, { token });
+```
+
+### `GET /borrowingtransactionevents`
+
+- Full URL: `/api/v1.0/borrowingtransactionevents`
+- Auth: `AdminOnlyPolicy`
+- Query params:
+  - `page`
+  - `pageSize`
+  - `searchTerm`
+  - `sortColumn`: `createdAt`, `updatedAt`, `state`
+  - `sortDirection`
+  - `borrowingTransactionId`
+  - `states`: list of `BorrowingTransactionState`
+- Returns: `200 OK` with paged `BorrowingTransactionEventListItemDto`
+- Search behavior:
+  - if `searchTerm` is a valid GUID: searches `id` and `borrowingTransactionId`
+  - otherwise: no text search applies
+- Use this when:
+  - admin reviews the state change history of borrowing transactions
+- JS:
+
+```js
+await api("/borrowingtransactionevents?page=1&pageSize=20&borrowingTransactionId=" + transactionId, { token });
+```
+
 ## 8. Frontend Flows
 
 ### Case 1: Create account and reach normal student usage
@@ -1784,17 +2300,19 @@ const url = URL.createObjectURL(blob);
 4. Owner calls either:
    - `PATCH /borrowingrequests/{id}/accept`, or
    - `PATCH /borrowingrequests/{id}/reject`
-5. If accepted, owner can later call `POST /borrowingrequests/{id}/deliver`
-6. Borrower uses returned `BorrowingTransactionDto.id` for later transaction actions
+5. If accepted, owner requests delivery OTP via `POST /borrowingrequests/{id}/otp`
+6. Owner confirms delivery with borrower's OTP via `POST /borrowingrequests/{id}/deliver`
+7. Borrower uses returned `BorrowingTransactionDto.id` for later transaction actions
 
 ### Case 6: Return a borrowed book
 
-1. Owner delivers by calling `POST /borrowingrequests/{id}/deliver`
-2. Borrower later calls `PATCH /borrowingtransactions/{transactionId}/return`
+1. Borrower requests return OTP via `POST /borrowingtransactions/{transactionId}/otp`
+2. Borrower later calls `PATCH /borrowingtransactions/{transactionId}/return` passing the OTP received by the owner
 3. Backend:
    - marks transaction `returned` or `overdue`
    - sets `actualReturnDate`
    - marks copy back to `available`
+4. Lender reviews borrower via `POST /borrowingtransactions/{transactionId}/review`
 
 ### Case 7: Report book copy lost
 
@@ -1834,29 +2352,12 @@ On `POST /lendinglist/{id}/request`:
 - borrower points are deducted immediately
 - reject/cancel/expire paths refund those points
 
-### 5. No current-user borrowing transaction list exists
+### 5. Chat System Considerations
 
-Normal students do not have:
+The chat system establishes a 1-to-1 chat group automatically when the first message is sent using `POST /chat/messages`.
+Unread message counts are managed on a per-group basis and must be cleared explicitly using `PATCH /chat/groups/{chatGroupId}/read`.
 
-- `GET /borrowingtransactions/me/in`
-- `GET /borrowingtransactions/me/out`
-
-They only have:
-
-- transaction detail by id if related
-- return/lost by id if they are the borrower
-
-### 6. Contact-info endpoint currently looks mismatched
-
-`GET /lendinglist/{id}/contact-info`:
-
-- name suggests borrower access
-- actual policy is owner-only
-- actual query returns owner contact info
-
-Frontend should treat this as a backend limitation/quirk unless it is changed.
-
-### 7. CORS in checked-in config does not currently include the frontend URL from email links
+### 6. CORS in checked-in config does not currently include the frontend URL from email links
 
 Current checked-in settings:
 
@@ -1866,13 +2367,11 @@ Current checked-in settings:
 
 If the frontend really runs on `http://localhost:3000`, browser calls may fail until backend config is updated.
 
-### 8. Unused policies exist
+### 7. Unused policies exist
 
 Defined but not currently attached to controller actions:
 
 - `ActiveUserPolicy`
 - `RegisteredUserOwnershipPolicy`
-- `BorrowingTransactionLendingStudentPolicy`
-- `StudentAcceptedForLendingListRecordPolicy`
 
 These should not be assumed to protect any current route.
