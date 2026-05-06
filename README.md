@@ -5,6 +5,11 @@ A production-grade ASP.NET Core 9 backend for a university book-sharing platform
 Students lend and borrow physical books through a points-based economy. The system manages the complete lifecycle: book cataloging → copy registration → lending listings → borrowing requests → transactions → reviews → point settlement.
 
 ---
+## Main Project Repository
+| Repository | Description | Link |
+|:---|:---|:---|
+| 📋 **BookOrbit** | Project overview, documentation & planning | [![MainRepo]](https://github.com/Qurtuba-Team/BookOrbit) |
+---
 
 ## Table of Contents
 
