@@ -318,6 +318,12 @@ BookOrbit-backend/
 | .NET SDK | 9.0+ (local development only) |
 | SQL Server | 2022 (provided via Docker) |
 
+## ⏬ Download Guid
+
+> **📽️ How To Download Video** → _[https://youtu.be/0H5k4S97i6U]_
+
+---
+
 ### Clone
 
 ```bash
