@@ -357,7 +357,7 @@ DB_CONNECTION=Server=sqlserver,1433;Database=BookOrbitDb;User=sa;Password=VerySt
 
 ```bash
 cd Code
-docker compose up --build -d
+docker compose up --build
 ```
 
 This starts **6 services**: API, SQL Server, Seq, Prometheus, Grafana, and Jaeger.
