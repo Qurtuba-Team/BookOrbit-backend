@@ -2,7 +2,7 @@
 
 static public class BorrowingTransactionErrors
 {
-    private const string ClassName = nameof(BorrowingTransaction);
+    public const string ClassName = nameof(BorrowingTransaction);
 
     #region General
     static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");

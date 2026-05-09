@@ -3,7 +3,7 @@ namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 
 public class BorrowingReviewErrors
 {
-    private const string ClassName = nameof(BorrowingReview);
+    public const string ClassName = nameof(BorrowingReview);
 
     static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");
     static public readonly Error RatingRequired = DomainCommonErrors.RequiredProp(ClassName, "Rating", "Rating");

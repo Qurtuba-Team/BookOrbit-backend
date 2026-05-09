@@ -6,6 +6,8 @@
       dockerfile: Dockerfile
       target: final
 
+    image: eyaddawood/bookorbit-api:v1
+
     env_file:
       - .env 
 

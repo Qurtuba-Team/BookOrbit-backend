@@ -1,11 +1,8 @@
 namespace BookOrbit.Application.Features.Chat;
 public static class ChatApplicationErrors
 {
-    private const string ChatGroupClassName = nameof(ChatGroup);
-    private const string ChatMessageClassName = nameof(ChatMessage);
-
-    static public readonly Error ChatGroupNotFoundById = ApplicationCommonErrors.NotFoundClass(ChatGroupClassName, "Id", "Id");
-    static public readonly Error StudentNotFound = ApplicationCommonErrors.NotFoundClass("Student", "UserId", "User Id");
-    static public readonly Error UserNotPartOfChatGroup = ApplicationCommonErrors.CustomUnauthorized(ChatGroupClassName, "UserNotPartOfChatGroup", "You are not a participant in this chat group.");
-        static public readonly Error ReceiverNotFound = ApplicationCommonErrors.NotFoundClass("Student", "Id", "Receiver Id");
+    static public readonly Error ChatGroupNotFoundById = ApplicationCommonErrors.NotFoundClass(ChatGroupErrors.ClassName, "Id", "Id");
+    static public readonly Error StudentNotFound = ApplicationCommonErrors.NotFoundClass(StudentErrors.ClassName, "UserId", "User Id");
+    static public readonly Error UserNotPartOfChatGroup = ApplicationCommonErrors.CustomUnauthorized(ChatGroupErrors.ClassName, "UserNotPartOfChatGroup", "You are not a participant in this chat group.");
+        static public readonly Error ReceiverNotFound = ApplicationCommonErrors.NotFoundClass(StudentErrors.ClassName, "Id", "Receiver Id");
 }

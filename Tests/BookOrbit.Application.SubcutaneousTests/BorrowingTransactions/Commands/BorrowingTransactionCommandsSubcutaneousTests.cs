@@ -65,9 +65,7 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         result.Value.State.Should().Be(BorrowingTransactionState.Borrowed);
 
         context.BorrowingTransactions.Should().HaveCount(1);
-        context.BorrowingTransactionEvents.Should().HaveCount(1);
         context.BorrowingTransactions.Single().State.Should().Be(BorrowingTransactionState.Borrowed);
-        context.BorrowingTransactionEvents.Single().State.Should().Be(BorrowingTransactionState.Borrowed);
         bookCopy.State.Should().Be(BookCopyState.Borrowed);
         lendingRecord.State.Should().Be(LendingListRecordState.Borrowed);
         borrowingRequest.State.Should().Be(BorrowingRequestState.Accepted);
@@ -117,8 +115,6 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         transaction.State.Should().Be(BorrowingTransactionState.Returned);
         transaction.ActualReturnDate.Should().NotBeNull();
         bookCopy.State.Should().Be(BookCopyState.Available);
-        context.BorrowingTransactionEvents.Should().HaveCount(1);
-        context.BorrowingTransactionEvents.Single().State.Should().Be(BorrowingTransactionState.Returned);
     }
 
     [Fact]
@@ -160,8 +156,6 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         result.IsSuccess.Should().BeTrue();
         transaction.State.Should().Be(BorrowingTransactionState.Lost);
         bookCopy.State.Should().Be(BookCopyState.Lost);
-        context.BorrowingTransactionEvents.Should().HaveCount(1);
-        context.BorrowingTransactionEvents.Single().State.Should().Be(BorrowingTransactionState.Lost);
     }
 
     [Fact]

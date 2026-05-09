@@ -2,7 +2,7 @@
 {
     static public class BookCopyErrors
     {
-        private const string ClassName = nameof(BookCopy);
+        public const string ClassName = nameof(BookCopy);
 
         static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");
         static public readonly Error OwnerIdRequired = DomainCommonErrors.RequiredProp(ClassName, "OwnerId", "Owner Id");
