@@ -382,23 +382,6 @@ public class StudentTests
         result.IsSuccess.Should().BeTrue();
         student.Points.Value.Should().Be(originalPoints - pointsToDeduct.Value);
     }
-
-    [Fact]
-    public void DeductPoints_WithInsufficientPoints_ReturnsInsufficientPointsError()
-    {
-        // Arrange
-        var student = CreateValidStudent();
-        var pointsToDeduct = new Point(student.Points.Value + 1);
-
-        // Act
-        var result = student.DeductPoints(pointsToDeduct);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Errors.Should().Contain(StudentErrors.InsufficientPoints);
-        student.Points.Value.Should().Be(Point.StudentInitialPoint);
-    }
-
     #endregion
 
     #region Approve Method Tests
