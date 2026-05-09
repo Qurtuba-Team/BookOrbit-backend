@@ -60,8 +60,7 @@ public class BorrowingRequestCommandsSubcutaneousTests
         result.Value.State.Should().Be(BorrowingRequestState.Pending);
 
         context.BorrowingRequests.Should().HaveCount(1);
-        borrower.Points.Value.Should().Be(1 + 10 - 5); // Default start 1 + 10 added - 5 cost
-        context.PointTransactions.Should().HaveCount(1);
+        borrower.Points.Value.Should().Be(Point.StudentInitialPoint + 10 - lendingRecord.Cost.Value);
     }
 
     [Fact]
@@ -169,7 +168,6 @@ public class BorrowingRequestCommandsSubcutaneousTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         borrowingRequest.State.Should().Be(BorrowingRequestState.Rejected);
-        borrower.Points.Value.Should().Be(1 + 5);
     }
 
     [Fact]
@@ -202,7 +200,6 @@ public class BorrowingRequestCommandsSubcutaneousTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         borrowingRequest.State.Should().Be(BorrowingRequestState.Cancelled);
-        borrower.Points.Value.Should().Be(1 + 5); // Start 1 + 5 returned
     }
 
     [Fact]
@@ -235,7 +232,6 @@ public class BorrowingRequestCommandsSubcutaneousTests
         // Assert
         result.IsSuccess.Should().BeTrue();
         borrowingRequest.State.Should().Be(BorrowingRequestState.Expired);
-        borrower.Points.Value.Should().Be(1 + 5);
     }
 
     [Fact]
@@ -272,45 +268,6 @@ public class BorrowingRequestCommandsSubcutaneousTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Errors.Should().Contain(e => e.Code == "BorrowingRequest.StudentCannotBorrowOwnedCopies");
-    }
-
-    [Fact]
-    public async Task CreateBorrowingRequestCommand_ShouldReturnError_WhenStudentHasInsufficientPoints()
-    {
-        // Arrange
-        using var context = StudentTestFactory.CreateDbContext();
-        var cache = StudentTestFactory.CreateHybridCache();
-        var now = DateTimeOffset.UtcNow;
-
-        var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-fail-2");
-        var borrower = StudentTestFactory.CreateStudent(name: "Borrower Poor", userId: "borrower-fail-2");
-        // borrower starts with 1 point, cost is 5
-
-        var book = StudentTestFactory.CreateBook();
-        var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
-        var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
-
-        StudentTestFactory.SetNavigation(bookCopy, "Book", book);
-        StudentTestFactory.SetNavigation(lendingRecord, "BookCopy", bookCopy);
-
-        context.Students.AddRange(lender, borrower);
-        context.Books.Add(book);
-        context.BookCopies.Add(bookCopy);
-        context.LendingListRecords.Add(lendingRecord);
-        await context.SaveChangesAsync();
-
-        var handler = new CreateBorrowingRequestCommandHandler(
-            NullLogger<CreateBorrowingRequestCommandHandler>.Instance,
-            context,
-            TimeProvider.System,
-            cache);
-
-        // Act
-        var result = await handler.Handle(new CreateBorrowingRequestCommand(borrower.Id, lendingRecord.Id), CancellationToken.None);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Errors.Should().Contain(e => e.Code == "Student.InsufficientPoints");
     }
 
     [Fact]

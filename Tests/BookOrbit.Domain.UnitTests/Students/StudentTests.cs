@@ -92,7 +92,7 @@ public class StudentTests
         result.Value.PhoneNumber.Should().Be(phoneNumber);
         result.Value.TelegramUserId.Should().BeNull();
         result.Value.State.Should().Be(StudentState.Pending);
-        result.Value.Points.Value.Should().Be(1);
+        result.Value.Points.Value.Should().Be(Point.StudentInitialPoint);
         result.Value.JoinDateUtc.Should().BeNull();
     }
 
@@ -396,7 +396,7 @@ public class StudentTests
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Errors.Should().Contain(StudentErrors.InsufficientPoints);
-        student.Points.Value.Should().Be(1);
+        student.Points.Value.Should().Be(Point.StudentInitialPoint);
     }
 
     #endregion

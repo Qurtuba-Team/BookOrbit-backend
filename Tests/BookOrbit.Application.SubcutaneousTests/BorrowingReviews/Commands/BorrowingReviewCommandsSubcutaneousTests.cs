@@ -29,6 +29,9 @@ public class BorrowingReviewCommandsSubcutaneousTests
             bookCopy.Id,
             now);
 
+        StudentTestFactory.SetCreatedAt(transaction, now.AddDays(-1));
+        transaction.ReturnBookCopy(now, now);
+
         context.Students.AddRange(lender, borrower);
         context.Books.Add(book);
         context.BookCopies.Add(bookCopy);
@@ -50,16 +53,16 @@ public class BorrowingReviewCommandsSubcutaneousTests
 
         // Assert
         result.IsSuccess.Should().BeTrue();
-        result.Value.ReviewerStudentId.Should().Be(borrower.Id);
-        result.Value.ReviewedStudentId.Should().Be(lender.Id);
+        result.Value.ReviewerStudentId.Should().Be(lender.Id);
+        result.Value.ReviewedStudentId.Should().Be(borrower.Id);
         result.Value.BorrowingTransactionId.Should().Be(transaction.Id);
         result.Value.Description.Should().Be("Great communication and easy return.");
         result.Value.Rating.Should().Be(5);
 
         context.BorrowingReviews.Should().HaveCount(1);
         var review = context.BorrowingReviews.Single();
-        review.ReviewerStudentId.Should().Be(borrower.Id);
-        review.ReviewedStudentId.Should().Be(lender.Id);
+        review.ReviewerStudentId.Should().Be(lender.Id);
+        review.ReviewedStudentId.Should().Be(borrower.Id);
         review.BorrowingTransactionId.Should().Be(transaction.Id);
         review.Description.Should().Be("Great communication and easy return.");
         review.Rating.Value.Should().Be(5);

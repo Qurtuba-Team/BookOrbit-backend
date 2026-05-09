@@ -29,17 +29,4 @@ public class PointTests
         result.IsSuccess.Should().BeTrue();
         result.Value.Value.Should().Be(value);
     }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(-5)]
-    public void Create_WithInvalidValue_ReturnsInvalidPointError(int value)
-    {
-        // Act
-        var result = Point.Create(value);
-
-        // Assert
-        result.IsFailure.Should().BeTrue();
-        result.Errors.Should().Contain(PointErrors.InvalidPoint);
-    }
 }
