@@ -3,7 +3,5 @@ namespace BookOrbit.Application.Features.BorrowingTransactionEvents;
 
 public static class BorrowingTransactionEventApplicationErrors
 {
-    private const string ClassName = nameof(BorrowingTransactionEvent);
-
-    public static readonly Error NotFoundById = ApplicationCommonErrors.NotFoundClass(ClassName, "Id", "Id");
+    public static readonly Error NotFoundById = ApplicationCommonErrors.NotFoundClass(BorrowingTransactionEventErrors.ClassName, "Id", "Id");
 }

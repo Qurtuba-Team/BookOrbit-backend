@@ -3,7 +3,7 @@ namespace BookOrbit.Domain.BorrowingRequests;
 
 static public class BorrowingRequestErrors
 {
-    private const string ClassName = nameof(BorrowingRequest);
+    public const string ClassName = nameof(BorrowingRequest);
 
     static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");
     static public readonly Error BorrowingStudentIdRequired = DomainCommonErrors.RequiredProp(ClassName, "BorrowingStudentId", "Borrowing Student Id");

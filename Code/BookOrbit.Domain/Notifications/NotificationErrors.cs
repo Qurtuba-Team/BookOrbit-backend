@@ -1,9 +1,11 @@
 ﻿namespace BookOrbit.Domain.Notifications;
 static public class NotificationErrors
 {
-    static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(nameof(Notification), "Id", "Id");
-    static public readonly Error MessageRequired = DomainCommonErrors.RequiredProp(nameof(Notification), "Message", "Message");
-    static public readonly Error TitleRequired = DomainCommonErrors.RequiredProp(nameof(Notification), "Title", "Title");
-    static public readonly Error StudentIdRequired = DomainCommonErrors.RequiredProp(nameof(Notification), "StudentId", "StudentId");
-    static public readonly Error InvalidNotificationType = DomainCommonErrors.InvalidProp(nameof(Notification), "NotificationType", "Notification Type", "Invalid notification type value");
+    public const string ClassName = nameof(Notification);
+
+    static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");
+    static public readonly Error MessageRequired = DomainCommonErrors.RequiredProp(ClassName, "Message", "Message");
+    static public readonly Error TitleRequired = DomainCommonErrors.RequiredProp(ClassName, "Title", "Title");
+    static public readonly Error StudentIdRequired = DomainCommonErrors.RequiredProp(ClassName, "StudentId", "StudentId");
+    static public readonly Error InvalidNotificationType = DomainCommonErrors.InvalidProp(ClassName, "NotificationType", "Notification Type", "Invalid notification type value");
 }

@@ -41,8 +41,6 @@ public class BorrowingReviewCommandsSubcutaneousTests
             cache);
 
         var command = new CreateBorrowingReviewCommand(
-            ReviewerStudentId: borrower.Id,
-            ReviewedStudentId: lender.Id,
             BorrowingTransactionId: transaction.Id,
             Description: "Great communication and easy return.",
             Rating: 5);

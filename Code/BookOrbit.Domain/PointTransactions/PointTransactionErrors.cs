@@ -1,7 +1,7 @@
 ﻿namespace BookOrbit.Domain.PointTransactions;
 static public class PointTransactionErrors
 {
-    private const string ClassName = nameof(PointTransaction);
+    public const string ClassName = nameof(PointTransaction);
 
     public static readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");
     public static readonly Error StudentIdRequired = DomainCommonErrors.RequiredProp(ClassName, "StudentId", "Student Id");

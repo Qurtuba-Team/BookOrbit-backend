@@ -3,7 +3,7 @@ namespace BookOrbit.Domain.Students;
 
 static public class StudentErrors
 {
-    private const string ClassName = nameof(Student);
+    public const string ClassName = nameof(Student);
 
     #region General
     static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName,"Id","Id");

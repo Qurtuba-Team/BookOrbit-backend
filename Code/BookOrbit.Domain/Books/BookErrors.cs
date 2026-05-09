@@ -2,7 +2,7 @@
 
 static public class BookErrors
 {
-    private const string ClassName = nameof(Book);
+    public const string ClassName = nameof(Book);
     static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName,"Id","Id");
     static public readonly Error TitleRequired = DomainCommonErrors.RequiredProp(ClassName,"Title","Title");
     static public readonly Error InvalidTitle = DomainCommonErrors.InvalidProp(ClassName, "Title", "Title", $"It must be between {BookTitle.MinLength} and {BookTitle.MaxLength} [Arabic/English] characters");

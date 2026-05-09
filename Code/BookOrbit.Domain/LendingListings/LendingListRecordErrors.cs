@@ -2,7 +2,7 @@
 
 static public class LendingListRecordErrors
 {
-    private const string ClassName = nameof(LendingListRecord);
+    public const string ClassName = nameof(LendingListRecord);
 
     static public readonly Error IdRequired = DomainCommonErrors.RequiredProp(ClassName, "Id", "Id");
     static public readonly Error CostRequeired = DomainCommonErrors.RequiredProp(ClassName, "Cost", "Cost");
