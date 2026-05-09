@@ -17,7 +17,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     State = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Payload = table.Column<string>(type: "nvarchar(15000)", maxLength: 15000, nullable: false),
+                    Payload = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RetryCount = table.Column<int>(type: "int", nullable: false),
                     CreatedAtUtc = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),

@@ -18,7 +18,6 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
             .IsRequired();
 
         builder.Property(m => m.Payload)
-            .HasMaxLength(15000)
             .IsRequired();
 
         builder.Property(m => m.RetryCount)

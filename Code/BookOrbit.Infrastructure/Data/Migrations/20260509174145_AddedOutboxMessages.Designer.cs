@@ -574,8 +574,7 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                     b.Property<string>("Payload")
                         .IsRequired()
-                        .HasMaxLength(4000)
-                        .HasColumnType("nvarchar(4000)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RetryCount")
                         .HasColumnType("int");

@@ -17,12 +17,6 @@ public class AppDbContextInitialiser(
         {
             try
             {
-                if (await DatabaseAlreadyExistsAsync())
-                {
-                    logger.LogInformation("Database already exists. Skipping database creation.");
-                    return;
-                }
-
                 await context.Database.MigrateAsync();
                 return;
             }
@@ -893,18 +887,6 @@ public class AppDbContextInitialiser(
         await context.SaveChangesAsync();
     }
 
-
-    private async Task<bool> DatabaseAlreadyExistsAsync()
-    {
-        try
-        {
-            return await context.Database.CanConnectAsync();
-        }
-        catch (Exception ex) when (GetSqlException(ex)?.Number is 4060)
-        {
-            return false;
-        }
-    }
 
     private static bool IsTransientDatabaseStartupFailure(Exception ex)
     {
