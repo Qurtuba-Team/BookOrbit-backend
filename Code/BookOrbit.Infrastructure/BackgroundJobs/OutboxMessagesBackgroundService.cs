@@ -28,6 +28,12 @@ public class OutboxMessagesBackgroundService(
                 .OrderBy(m => m.CreatedAtUtc)
                 .Take(Options.OutboxMessagesBatchSize)
                 .ToListAsync(ct);
+            
+            if(pendingMessages.Count == 0)
+            {
+                logger.LogInformation("No pending outbox messages found at {Time}", timeProvider.GetUtcNow());
+                continue;
+            }
 
             foreach (var message in pendingMessages)
             {
@@ -68,8 +74,6 @@ public class OutboxMessagesBackgroundService(
 
                     continue;
                 }
-
-                logger.LogInformation("Email notification sent to {Email}", deserializedMessageResult.Value.EmailAddress);
             }
             
             await context.SaveChangesAsync(ct);

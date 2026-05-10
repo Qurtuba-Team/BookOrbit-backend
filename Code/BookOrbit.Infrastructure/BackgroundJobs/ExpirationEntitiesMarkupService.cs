@@ -35,6 +35,7 @@ namespace BookOrbit.Infrastructure.BackgroundJobs
                         !e.IsOwned() &&
                         !e.ClrType.IsAbstract);
 
+
                 foreach (var entityType in entityTypes)
                 {
                     var clrType = entityType.ClrType;
@@ -71,6 +72,12 @@ namespace BookOrbit.Infrastructure.BackgroundJobs
                             affected,
                             tableName,
                             requiredState);
+                    }
+                    else
+                    {
+                            logger.LogInformation(
+                            "No rows to update in {Table} for expiration check",
+                            tableName);
                     }
                 }
             }
