@@ -32,12 +32,6 @@ public class AppDbContextInitialiser(
         {
             try
             {
-                if (await DatabaseAlreadyExistsAsync())
-                {
-                    logger.LogInformation("Database already exists. Skipping database creation.");
-                    return;
-                }
-
                 await context.Database.MigrateAsync();
                 return;
             }
@@ -730,25 +724,6 @@ public class AppDbContextInitialiser(
         var studentRoleName = nameof(IdentityRoles.student);
         var adminRoleName = nameof(IdentityRoles.admin);
 
-
-        await SeedRoles(studentRoleName, adminRoleName);
-        await SeedStudents(studentRoleName);
-        await SeedAdminAsync(adminRoleName);
-        await SeedBooksAndCopiesAsync();
-        await SeedFlow();
-    }
-    #region Helpers
-    private async Task<bool> DatabaseAlreadyExistsAsync()
-    {
-        try
-        {
-            return await context.Database.CanConnectAsync();
-        }
-        catch (Exception ex) when (GetSqlException(ex)?.Number is 4060)
-        {
-            return false;
-        }
-    }
 
     private static bool IsTransientDatabaseStartupFailure(Exception ex)
     {

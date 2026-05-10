@@ -2,14 +2,14 @@
 
 namespace BookOrbit.Application.Features.BorrowingRequests.EventHandlers;
 public class BorrowingRequestCreatedEventHandler(
-    IEmailService emailService,
     IAppDbContext context,
     ILogger<BorrowingRequestCreatedEventHandler>logger,
     IEmailFormatService emailFormatService,
-    ISystemNotificationService systemNotificationService) : INotificationHandler<BorrowingRequestCreatedEvent>
+    ISystemNotificationService systemNotificationService,
+    IOutboxMessageService outboxMessageService) : INotificationHandler<BorrowingRequestCreatedEvent>
 {
 
-    private async Task NotifyEmail(string Booktitle,string Email,Guid BorrowingRequestId ,Guid LendingRecordId,CancellationToken ct)
+    private async Task NotifyEmail(string Booktitle,string Email, CancellationToken ct)
     {
         string subject = $"New borrowing request for your copy of the book: {Booktitle}";
 
@@ -23,17 +23,13 @@ public class BorrowingRequestCreatedEventHandler(
             return;
         }
 
+        var outboxMessageResult = await outboxMessageService.AddOutboxMessageAsync(new OutboxMessageRecord(
+            subject: subject,
+            emailAddress: Email,
+            emailFormat: emailFormatResult.Value
+        ), ct);
 
-        Result<Success> emailResult = await emailService.SendEmailAsync(
-            Email,
-            subject,
-            emailFormatResult.Value
-        );
-
-        //Dont Use Emali Result , even if the email fails to send, we dont want to fail the borrowing request creation process, we just log the error and move on
-        //Dont Log Here , Email Service should handle the logging of email sending success or failure, we just log the fact that we attempted to send an email notification for the borrowing request creation event
-
-        logger.LogInformation("Email notification sent to {Email} for borrowing request with id {BorrowingRequestId} and lending record id {LendingRecordId}", Email, BorrowingRequestId,LendingRecordId);
+        //log inside service
     }
     private async Task NotifySystem(Guid StudentId,string BookTitle, CancellationToken ct)
     {
@@ -64,8 +60,7 @@ public class BorrowingRequestCreatedEventHandler(
             return;
         }
 
-
-        await NotifyEmail(ownerDataResult.Booktitle, ownerDataResult.email,notification.BorrowingRequestId,notification.LendingRecordId, ct);
+        await NotifyEmail(ownerDataResult.Booktitle, ownerDataResult.email, ct);
         await NotifySystem(ownerDataResult.OwnerId,ownerDataResult.Booktitle, ct);
     }
 }

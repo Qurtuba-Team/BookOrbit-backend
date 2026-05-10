@@ -1,5 +1,3 @@
-using BookOrbit.Application.Common.Interfaces.ChatServices;
-using BookOrbit.Infrastructure.Services.ChatServices;
 
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
@@ -11,7 +9,7 @@ static public class DependencyInjection
             .AddIdentity()
             .AddInfrastructureServices()
             .AddPolicies()
-            .AddDbContext()
+            .AddHostedServices()
             .AddInfrastucureSignalR();
 
     }
@@ -40,9 +38,10 @@ static public class DependencyInjection
         return services;
     }
 
-    static private IServiceCollection AddDbContext(this IServiceCollection services)
+    static private IServiceCollection AddHostedServices(this IServiceCollection services)
     {
         services.AddHostedService<ExpirationEntitiesMarkupService>();
+        services.AddHostedService<OutboxMessagesBackgroundService>();
 
         return services;
     }
@@ -95,6 +94,8 @@ static public class DependencyInjection
         services.AddTransient<ISystemNotificationService, SystemNotificationService>();
         services.AddTransient<IChatService, ChatService>();
         services.AddTransient<IRealTimeService, RealTimeService>();
+        services.AddTransient<IOutboxMessageService, OutboxMessageService>();
+        services.AddTransient<ISerializationService, SerializationService>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)
