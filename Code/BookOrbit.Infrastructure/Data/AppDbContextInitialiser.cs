@@ -32,6 +32,12 @@ public class AppDbContextInitialiser(
         {
             try
             {
+                if (await DatabaseAlreadyExistsAsync())
+                {
+                    logger.LogInformation("Database already exists. Skipping database creation.");
+                    return;
+                }
+
                 await context.Database.MigrateAsync();
                 return;
             }
@@ -259,7 +265,7 @@ public class AppDbContextInitialiser(
 
         context.Students.Add(studentResult.Value);
         await context.SaveChangesAsync();
-        
+
         logger.LogInformation("Student created for user {Email}", user.Email);
     }
     #endregion
@@ -472,7 +478,7 @@ public class AppDbContextInitialiser(
         await SeedBorrowingScenarios(students);
     }
 
-    private async Task SeedReturnedTransaction(Student Lender,Student Borrower,BookCopy copy)
+    private async Task SeedReturnedTransaction(Student Lender, Student Borrower, BookCopy copy)
     {
         var requestResult = await CreateBorrowingRequestAsync(Lender, Borrower, copy, borrowingDurationInDays: 14);
 
@@ -725,6 +731,25 @@ public class AppDbContextInitialiser(
         var adminRoleName = nameof(IdentityRoles.admin);
 
 
+        await SeedRoles(studentRoleName, adminRoleName);
+        await SeedStudents(studentRoleName);
+        await SeedAdminAsync(adminRoleName);
+        await SeedBooksAndCopiesAsync();
+        await SeedFlow();
+    }
+    #region Helpers
+    private async Task<bool> DatabaseAlreadyExistsAsync()
+    {
+        try
+        {
+            return await context.Database.CanConnectAsync();
+        }
+        catch (Exception ex) when (GetSqlException(ex)?.Number is 4060)
+        {
+            return false;
+        }
+    }
+
     private static bool IsTransientDatabaseStartupFailure(Exception ex)
     {
         var sqlException = GetSqlException(ex);
@@ -744,7 +769,7 @@ public class AppDbContextInitialiser(
     }
 
 
-   
+
     #endregion
 }
 
