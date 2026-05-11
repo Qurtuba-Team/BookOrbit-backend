@@ -2,13 +2,13 @@ using BookOrbit.Application.Common.Interfaces.SystemNotificationService;
 
 namespace BookOrbit.Application.Features.BorrowingRequests.EventHandlers;
 public class BorrowingRequestAcceptedEventHandler(
-    IEmailService emailService,
     IAppDbContext context,
     ILogger<BorrowingRequestAcceptedEventHandler> logger,
     IEmailFormatService emailFormatService,
-    ISystemNotificationService systemNotificationService) : INotificationHandler<BorrowingRequestAcceptedEvent>
+    ISystemNotificationService systemNotificationService,
+    IOutboxMessageService outboxMessageService) : INotificationHandler<BorrowingRequestAcceptedEvent>
 {
-    private async Task NotifyEmail(string bookTitle, string email, Guid borrowingRequestId, CancellationToken ct)
+    private async Task NotifyEmail(string bookTitle, string email, CancellationToken ct)
     {
         string subject = $"Your borrowing request has been accepted for the book {bookTitle}";
 
@@ -21,14 +21,14 @@ public class BorrowingRequestAcceptedEventHandler(
             return;
         }
 
-        var emailResult = await emailService.SendEmailAsync(
-            email,
-            subject,
-            emailFormatResult.Value);
+        var outboxMessageResult = await outboxMessageService.AddOutboxMessageAsync(new OutboxMessageRecord(
+            subject: subject,
+            emailAddress: email,
+            emailFormat: emailFormatResult.Value
+        ), ct);
 
-        logger.LogInformation("Email notification sent to {Email} for borrowing request with id {BorrowingRequestId}", email, borrowingRequestId);
-    }
-
+        //log inside service
+    }   
     private async Task NotifySystem(Guid studentId, string bookTitle, CancellationToken ct)
     {
         string title = $"Your borrowing request has been accepted for the book {bookTitle}";
@@ -57,7 +57,7 @@ public class BorrowingRequestAcceptedEventHandler(
             return;
         }
 
-        await NotifyEmail(borrowerDataResult.bookTitle, borrowerDataResult.email, notification.BorrowingRequestId, ct);
+        await NotifyEmail(borrowerDataResult.bookTitle, borrowerDataResult.email,ct);
         await NotifySystem(borrowerDataResult.borrowerId, borrowerDataResult.bookTitle, ct);
     }
 }

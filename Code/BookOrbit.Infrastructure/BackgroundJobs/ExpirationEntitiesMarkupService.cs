@@ -15,12 +15,12 @@ namespace BookOrbit.Infrastructure.BackgroundJobs
         { typeof(LendingListRecord), LendingListRecordState.Available }
     };
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken ct)
         {
             var timer = new PeriodicTimer(
                 TimeSpan.FromMinutes(Options.ExpirationCheckIntervalInMinutes));
 
-            while (await timer.WaitForNextTickAsync(stoppingToken))
+            while (await timer.WaitForNextTickAsync(ct))
             {
                 using var scope = serviceScopeFactory.CreateScope();
                 var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -34,6 +34,7 @@ namespace BookOrbit.Infrastructure.BackgroundJobs
                         typeof(ExpirableEntity).IsAssignableFrom(e.ClrType) &&
                         !e.IsOwned() &&
                         !e.ClrType.IsAbstract);
+
 
                 foreach (var entityType in entityTypes)
                 {
@@ -71,6 +72,12 @@ namespace BookOrbit.Infrastructure.BackgroundJobs
                             affected,
                             tableName,
                             requiredState);
+                    }
+                    else
+                    {
+                            logger.LogInformation(
+                            "No rows to update in {Table} for expiration check",
+                            tableName);
                     }
                 }
             }

@@ -1,11 +1,11 @@
 ﻿namespace BookOrbit.Application.Common.Behaviours;
-public class ValidationBehaviour<TRequst, TResponse>(IValidator<TRequst>? validator = null)
-    : IPipelineBehavior<TRequst, TResponse>
-    where TRequst : IRequest<TResponse>
-    where TResponse : IResult
+public class ValidationBehaviour<TRequest, TResponse>(IValidator<TRequest>? validator = null)
+    : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
+    where TResponse : IResult, IErrorFactory<TResponse>
 
 {
-    public async Task<TResponse> Handle(TRequst request,
+    public async Task<TResponse> Handle(TRequest request,
         RequestHandlerDelegate<TResponse> next,
         CancellationToken ct)
     {
@@ -23,6 +23,6 @@ public class ValidationBehaviour<TRequst, TResponse>(IValidator<TRequst>? valida
         description: error.ErrorMessage))
             .ToList();
 
-        return (dynamic)errors;
+        return TResponse.FromErrors(errors);
     }
 }
