@@ -34,6 +34,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator medi
 
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
+    public DbSet<OutboxMessage> OutboxMessages => Set<OutboxMessage>();
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

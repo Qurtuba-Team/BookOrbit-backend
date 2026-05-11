@@ -1,25 +1,16 @@
 ﻿
+using BookOrbit.Application.Features.Identity.Queries.GenerateTokens;
+using BookOrbit.Application.Features.Students.Commands.CreateStudent;
+
 namespace BookOrbit.Application.Common.Behaviours;
 
-public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public class PerformanceBehaviour<TRequest, TResponse>(
+    ILogger<TRequest> logger,
+    ICurrentUser user,
+    IIdentityService identityService) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : notnull
 {
-    private readonly ILogger<TRequest> logger;
-    private readonly Stopwatch stopWatch;
-    private readonly ICurrentUser user;
-    private readonly IIdentityService identityService;
-    public PerformanceBehaviour(
-        ILogger<TRequest> logger,
-        ICurrentUser user,
-        IIdentityService identityService)
-    {
-        this.logger = logger;
-        stopWatch = new();
-        this.user = user;
-        this.identityService = identityService;
-    }
-
-
+    private readonly Stopwatch stopWatch = new();
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
     {
@@ -42,8 +33,19 @@ public class PerformanceBehaviour<TRequest, TResponse> : IPipelineBehavior<TRequ
                 userName = await identityService.GetUserNameAsync(userId,ct);
             }
 
-            logger.LogWarning(
-            "Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}", requestName, elapsedMilliseconds, userId, userName, request);
+            if(request is 
+                GenerateTokenQuery
+                or CreateStudentCommand)
+            {
+                //very secret information , cannot log the full request
+                logger.LogWarning(
+                    "Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}", requestName, elapsedMilliseconds, userId, userName, "Sensitive Information");
+            }
+            else
+            {
+                logger.LogWarning(
+                    "Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@UserId} {@UserName} {@Request}", requestName, elapsedMilliseconds, userId, userName, request);
+            }
         }
 
         return response;
