@@ -1,6 +1,6 @@
 ﻿
 namespace BookOrbit.Application.Features.Books.Queries.GetBooks;
-public class GetBookQueryHandler(
+public class GetBooksQueryHandler(
     IAppDbContext context,
     IRouteService routeService) : BasePagedQueryHandler<Book, BookListItemDto, GetBooksQuery>
 {

@@ -48,7 +48,7 @@ public class BookQueriesSubcutaneousTests
         context.Books.AddRange(book1, book2);
         await context.SaveChangesAsync();
 
-        var handler = new GetBookQueryHandler(context, routeService);
+        var handler = new GetBooksQueryHandler(context, routeService);
         var query = new GetBooksQuery(
             Page: 1,
             PageSize: 10,
