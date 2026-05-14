@@ -2,42 +2,43 @@
 
 namespace BookOrbit.Application.Features.Students.Queries.GetStudents;
 
-public class GetStudentsQueryHandler(IAppDbContext context,IStudentQueryService studentQueryService)
-    : IRequestHandler<GetStudentsQuery, Result<PaginatedList<StudentListItemDto>>>
+public class GetStudentsQueryHandler(IAppDbContext context, IStudentQueryService studentQueryService)
+    :BasePagedQueryHandler<Student, StudentListItemDto, GetStudentsQuery>
 {
-    public async Task<Result<PaginatedList<StudentListItemDto>>> Handle(GetStudentsQuery query, CancellationToken ct)
+    protected override Dictionary<
+    string,
+    Func<IQueryable<Student>, bool, IOrderedQueryable<Student>>>
+    SortMappings
+    => new()
     {
-        var studentQuery = context.Students.AsNoTracking();
-        
-        studentQuery = ApplyFilters(studentQuery, query);
+        ["createdat"] = (query, desc) =>
+            desc
+                ? query.OrderByDescending(x => x.CreatedAtUtc)
+                : query.OrderBy(x => x.CreatedAtUtc),
 
-        studentQuery = ApplySearchTerm(studentQuery, query);
+        ["updatedat"] = (query, desc) =>
+            desc
+                ? query.OrderByDescending(x => x.LastModifiedUtc)
+                : query.OrderBy(x => x.LastModifiedUtc),
 
-        studentQuery = ApplySorting(studentQuery, query.SortColumn, query.SortDirection);
+        ["name"] = (query, desc) =>
+            desc
+                ? query.OrderByDescending(x => x.Name.Value)
+                : query.OrderBy(x => x.Name.Value),
 
+        ["state"] = (query, desc) =>
+            desc
+                ? query.OrderByDescending(x => x.State)
+                : query.OrderBy(x => x.State),
 
-        int count = await studentQuery.CountAsync(ct);
+        ["joindate"] = (query, desc) =>
+            desc
+                ? query.OrderByDescending(x => x.JoinDateUtc)
+                : query.OrderBy(x => x.JoinDateUtc)
+    };
 
-        int page = Math.Max(1, query.Page);
-        int pageSize = Math.Max(1, query.PageSize);
-        studentQuery = studentQuery.ApplyPagination(page, pageSize);
-
-
-        var items = await studentQuery.
-            Select(StudentListItemDto.Projection)
-            .ToListAsync(ct);
-
-        return new PaginatedList<StudentListItemDto>
-        {
-            Items = items,
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = count,
-            TotalPages = MathHelper.CalculateTotalPages(count, pageSize)
-        };
-    }
-
-    private static IQueryable<Student> ApplySearchTerm(IQueryable<Student> query, GetStudentsQuery searchQuery)
+    protected override IQueryable<Student> ApplySearch(
+        IQueryable<Student> query, GetStudentsQuery searchQuery)
     {
         if (string.IsNullOrWhiteSpace(searchQuery.SearchTerm))
             return query;//no need for filters
@@ -57,7 +58,7 @@ public class GetStudentsQueryHandler(IAppDbContext context,IStudentQueryService 
         return query;
     }
 
-    private IQueryable<Student> ApplyFilters(IQueryable<Student> query, GetStudentsQuery searchQuery)
+    protected override IQueryable<Student> ApplyFilters(IQueryable<Student> query, GetStudentsQuery searchQuery)
     {
         if(searchQuery.States is not null &&
             searchQuery.States.Count != 0)
@@ -69,24 +70,13 @@ public class GetStudentsQueryHandler(IAppDbContext context,IStudentQueryService 
         return query;
     }
 
-    private static IQueryable<Student> ApplySorting(IQueryable<Student> query, string? sortColumn, string? sortDirection)
+    protected override IQueryable<Student> GetBaseQuery()
     {
-        if (string.IsNullOrWhiteSpace(sortColumn))
-            sortColumn = "createdat";
+        return context.Students.AsNoTracking();
+    }
 
-        if (string.IsNullOrWhiteSpace(sortDirection))
-            sortDirection = "desc";
-
-        var isDescending = sortDirection.Equals("desc", StringComparison.OrdinalIgnoreCase);
-
-        return sortColumn.ToLower() switch
-        {
-            "createdat" => isDescending ? query.OrderByDescending(s => s.CreatedAtUtc) : query.OrderBy(s => s.CreatedAtUtc),
-            "updatedat" => isDescending ? query.OrderByDescending(s => s.LastModifiedUtc) : query.OrderBy(s => s.LastModifiedUtc),
-            "name" => isDescending ? query.OrderByDescending(s => s.Name.Value) : query.OrderBy(s => s.Name.Value),
-            "state" => isDescending ? query.OrderByDescending(s => s.State) : query.OrderBy(s => s.State),
-            "joindate" => isDescending ? query.OrderByDescending(s => s.JoinDateUtc) : query.OrderBy(s => s.JoinDateUtc),
-            _ => query.OrderByDescending(wo => wo.CreatedAtUtc) // Default sorting
-        };
+    protected override IQueryable<StudentListItemDto> ProjectToDto(IQueryable<Student> query)
+    {
+        return query.Select(StudentListItemDto.Projection);
     }
 }
