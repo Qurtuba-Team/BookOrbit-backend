@@ -1,39 +1,42 @@
 namespace BookOrbit.Application.Features.Notifications.Queries.GetNotifications;
 
 public class GetNotificationsQueryHandler(IAppDbContext context)
-    : IRequestHandler<GetNotificationsQuery, Result<PaginatedList<NotificationListItemDto>>>
+    : BasePagedQueryHandler<Notification, NotificationListItemDto, GetNotificationsQuery>
 {
-    public async Task<Result<PaginatedList<NotificationListItemDto>>> Handle(GetNotificationsQuery query, CancellationToken ct)
-    {
-        var notificationsQuery = context.Notification.AsNoTracking()
-            .Where(n => n.StudentId == query.StudentId);
-
-        notificationsQuery = ApplyFilters(notificationsQuery, query);
-        notificationsQuery = ApplySearchTerm(notificationsQuery, query);
-        notificationsQuery = ApplySorting(notificationsQuery, query.SortColumn, query.SortDirection);
-
-        int count = await notificationsQuery.CountAsync(ct);
-
-        int page = Math.Max(1, query.Page);
-        int pageSize = Math.Max(1, query.PageSize);
-
-        var items = await notificationsQuery
-            .ApplyPagination(page, pageSize)
-            .Select(NotificationListItemDto.Projection)
-            .ToListAsync(ct);
-
-        return new PaginatedList<NotificationListItemDto>
+    protected override Dictionary<string, Func<IQueryable<Notification>, bool, IOrderedQueryable<Notification>>> SortMappings
+        => new()
         {
-            Items = items,
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = count,
-            TotalPages = MathHelper.CalculateTotalPages(count, pageSize)
+            ["createdat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(n => n.CreatedAtUtc)
+                    : query.OrderBy(n => n.CreatedAtUtc),
+            ["updatedat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(n => n.LastModifiedUtc)
+                    : query.OrderBy(n => n.LastModifiedUtc),
+            ["title"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(n => n.Title)
+                    : query.OrderBy(n => n.Title),
+            ["type"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(n => n.Type)
+                    : query.OrderBy(n => n.Type),
+            ["isread"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(n => n.IsRead)
+                    : query.OrderBy(n => n.IsRead)
         };
+
+    protected override IQueryable<Notification> GetBaseQuery()
+    {
+        return context.Notification.AsNoTracking();
     }
 
-    private static IQueryable<Notification> ApplyFilters(IQueryable<Notification> query, GetNotificationsQuery searchQuery)
+    protected override IQueryable<Notification> ApplyFilters(IQueryable<Notification> query, GetNotificationsQuery searchQuery)
     {
+        query = query.Where(n => n.StudentId == searchQuery.StudentId);
+
         if (searchQuery.IsRead is not null)
             query = query.Where(n => n.IsRead == searchQuery.IsRead);
 
@@ -43,7 +46,7 @@ public class GetNotificationsQueryHandler(IAppDbContext context)
         return query;
     }
 
-    private static IQueryable<Notification> ApplySearchTerm(IQueryable<Notification> query, GetNotificationsQuery searchQuery)
+    protected override IQueryable<Notification> ApplySearch(IQueryable<Notification> query, GetNotificationsQuery searchQuery)
     {
         if (string.IsNullOrWhiteSpace(searchQuery.SearchTerm))
             return query;
@@ -55,24 +58,8 @@ public class GetNotificationsQueryHandler(IAppDbContext context)
             n.Message.Contains(searchTerm));
     }
 
-    private static IQueryable<Notification> ApplySorting(IQueryable<Notification> query, string? sortColumn, string? sortDirection)
+    protected override IQueryable<NotificationListItemDto> ProjectToDto(IQueryable<Notification> query)
     {
-        if (string.IsNullOrWhiteSpace(sortColumn))
-            sortColumn = "createdat";
-
-        if (string.IsNullOrWhiteSpace(sortDirection))
-            sortDirection = "desc";
-
-        var isDescending = sortDirection.Equals("desc", StringComparison.OrdinalIgnoreCase);
-
-        return sortColumn.ToLower() switch
-        {
-            "createdat" => isDescending ? query.OrderByDescending(n => n.CreatedAtUtc) : query.OrderBy(n => n.CreatedAtUtc),
-            "updatedat" => isDescending ? query.OrderByDescending(n => n.LastModifiedUtc) : query.OrderBy(n => n.LastModifiedUtc),
-            "title" => isDescending ? query.OrderByDescending(n => n.Title) : query.OrderBy(n => n.Title),
-            "type" => isDescending ? query.OrderByDescending(n => n.Type) : query.OrderBy(n => n.Type),
-            "isread" => isDescending ? query.OrderByDescending(n => n.IsRead) : query.OrderBy(n => n.IsRead),
-            _ => query.OrderByDescending(n => n.CreatedAtUtc)
-        };
+        return query.Select(NotificationListItemDto.Projection);
     }
 }

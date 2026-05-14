@@ -5,11 +5,11 @@ public record GetNotificationsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     bool? IsRead = null,
     List<NotificationType>? Types = null)
-    : ICachedQuery<Result<PaginatedList<NotificationListItemDto>>>
+    : IPagedQuery<NotificationListItemDto>
 {
     public string CacheKey => NotificationCachingConstants.NotificationListKey(this);
 

@@ -1,14 +1,13 @@
-﻿
-namespace BookOrbit.Application.Features.Students.Queries.GetStudents;
+﻿namespace BookOrbit.Application.Features.Students.Queries.GetStudents;
 
 public record GetStudentsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     List<StudentState>? States = null,
-    bool? EmailConfirmed = null) : ICachedQuery<Result<PaginatedList<StudentListItemDto>>>
+    bool? EmailConfirmed = null) : IPagedQuery<StudentListItemDto>
 {
     public string CacheKey => StudentCachingConstants.StudentListKey(this);
 
