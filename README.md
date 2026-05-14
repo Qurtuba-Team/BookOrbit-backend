@@ -506,6 +506,17 @@ BookOrbit.Api/Controllers/Wishlists/
 - Apply `[EnableRateLimiting(ApiConstants.XxxPolicyName)]` for rate limiting.
 - Add request contracts in `Contracts/Requests/Wishlists/`.
 
+### Paged GetAll Query Pattern
+
+For list endpoints, use the shared paged-query pattern implemented by `GetStudentsQuery` and `GetStudentsQueryHandler`:
+
+1. Query records implement `IPagedQuery<TDto>`.
+2. `SortColumn` and `SortDirection` default to `QuerySettings.DefaultSortColumn` and `QuerySettings.DefaultSortDirection`.
+3. Handlers inherit from `BasePagedQueryHandler<TEntity, TDto, TQuery>` and implement:
+   - `SortMappings` for supported columns.
+   - `GetBaseQuery`, `ApplyFilters`, and `ApplySearch`.
+   - `ProjectToDto` for DTO projection.
+
 ### Key Conventions to Follow
 
 1. **Never throw exceptions for business logic** — Return `Result<T>` with typed `Error` values.

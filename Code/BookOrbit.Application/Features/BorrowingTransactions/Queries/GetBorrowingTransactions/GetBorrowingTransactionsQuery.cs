@@ -4,14 +4,14 @@ public record GetBorrowingTransactionsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? BorrowerStudentId = null,
     Guid? LenderStudentId = null,
     Guid? BookCopyId = null,
     Guid? BorrowingRequestId = null,
     List<BorrowingTransactionState>? States = null)
-    : ICachedQuery<Result<PaginatedList<BorrowingTransactionListItemDto>>>
+    : IPagedQuery<BorrowingTransactionListItemDto>
 {
     public string CacheKey => BorrowingTransactionCachingConstants.BorrowingTransactionListKey(this);
 

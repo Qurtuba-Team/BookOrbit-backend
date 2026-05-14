@@ -2,68 +2,39 @@
 namespace BookOrbit.Application.Features.Books.Queries.GetBooks;
 public class GetBookQueryHandler(
     IAppDbContext context,
-    IRouteService routeService) : IRequestHandler<GetBooksQuery, Result<PaginatedList<BookListItemDto>>>
-    
+    IRouteService routeService) : BasePagedQueryHandler<Book, BookListItemDto, GetBooksQuery>
 {
-    public async Task<Result<PaginatedList<BookListItemDto>>> Handle(GetBooksQuery query, CancellationToken ct)
-    {
-        var bookQuery = context.Books.AsNoTracking();
-
-        bookQuery = ApplyFilters(bookQuery, query);
-
-        bookQuery = ApplySearchTerm(bookQuery, query);
-
-        bookQuery = ApplySorting(bookQuery, query.SortColumn, query.SortDirection);
-
-        var bookQueryWithCount = bookQuery
-    .Select(b => new BookWithCountDto
-    {
-        Id = b.Id,
-        Title = b.Title.Value,
-        ISBN = b.ISBN.Value,
-        Publisher = b.Publisher.Value,
-        Category = b.Category,
-        Author = b.Author.Value,
-        AvailableCopiesCount = context.BookCopies
-            .Where(c => c.BookId == b.Id && c.State == BookCopyState.Available)
-            .Count(),
-        BookCoverImageFileName = b.CoverImageFileName,
-        Status = b.Status
-    });
-
-        int count = await bookQueryWithCount.CountAsync(ct);
-
-        var page = Math.Max(1, query.Page);
-        var pageSize = Math.Max(1, query.PageSize);
-
-        string baseUrl = routeService.GetBookCoverImageRoute();
-
-        var items = await bookQueryWithCount
-            .ApplyPagination(page, pageSize)
-            .Select(s => new BookListItemDto(
-                s.Id,
-                s.Title,
-                s.ISBN,
-                s.Publisher,
-                s.Category,
-                s.Author,
-                s.AvailableCopiesCount,
-                baseUrl + "/" + s.BookCoverImageFileName,
-                s.Status))
-            .ToListAsync(ct);
-
-        return new PaginatedList<BookListItemDto>
+    protected override Dictionary<string, Func<IQueryable<Book>, bool, IOrderedQueryable<Book>>> SortMappings
+        => new()
         {
-            Items = items,
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = count,
-            TotalPages = MathHelper.CalculateTotalPages(count, pageSize)
+            ["createdat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(b => b.CreatedAtUtc)
+                    : query.OrderBy(b => b.CreatedAtUtc),
+            ["updatedat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(b => b.LastModifiedUtc)
+                    : query.OrderBy(b => b.LastModifiedUtc),
+            ["title"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(b => b.Title.Value)
+                    : query.OrderBy(b => b.Title.Value),
+            ["publisher"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(b => b.Publisher.Value)
+                    : query.OrderBy(b => b.Publisher.Value),
+            ["author"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(b => b.Author.Value)
+                    : query.OrderBy(b => b.Author.Value)
         };
 
+    protected override IQueryable<Book> GetBaseQuery()
+    {
+        return context.Books.AsNoTracking();
     }
 
-    private static IQueryable<Book> ApplySearchTerm(IQueryable<Book> query, GetBooksQuery searchQuery)
+    protected override IQueryable<Book> ApplySearch(IQueryable<Book> query, GetBooksQuery searchQuery)
     {
         if (string.IsNullOrWhiteSpace(searchQuery.SearchTerm))
             return query;//no need for filters
@@ -82,7 +53,7 @@ public class GetBookQueryHandler(
         return query;
     }
 
-    private static IQueryable<Book> ApplyFilters(IQueryable<Book> query, GetBooksQuery searchQuery)
+    protected override IQueryable<Book> ApplyFilters(IQueryable<Book> query, GetBooksQuery searchQuery)
     {
         if (searchQuery.Categories is not null &&
             searchQuery.Categories.Count != 0)
@@ -106,24 +77,19 @@ public class GetBookQueryHandler(
         return query;
     }
 
-    private static IQueryable<Book> ApplySorting(IQueryable<Book> query, string? sortColumn, string? sortDirection)
+    protected override IQueryable<BookListItemDto> ProjectToDto(IQueryable<Book> query)
     {
-        if (string.IsNullOrWhiteSpace(sortColumn))
-            sortColumn = "createdat";
+        string baseUrl = routeService.GetBookCoverImageRoute();
 
-        if (string.IsNullOrWhiteSpace(sortDirection))
-            sortDirection = "desc";
-
-        var isDescending = sortDirection.Equals("desc", StringComparison.OrdinalIgnoreCase);
-
-        return sortColumn.ToLower() switch
-        {
-            "createdat" => isDescending ? query.OrderByDescending(b => b.CreatedAtUtc) : query.OrderBy(b => b.CreatedAtUtc),
-            "updatedat" => isDescending ? query.OrderByDescending(b => b.LastModifiedUtc) : query.OrderBy(b => b.LastModifiedUtc),
-            "title" => isDescending ? query.OrderByDescending(b => b.Title.Value) : query.OrderBy(b => b.Title.Value),
-            "publisher" => isDescending ? query.OrderByDescending(b => b.Publisher.Value) : query.OrderBy(b => b.Publisher.Value),
-            "author" => isDescending ? query.OrderByDescending(b => b.Author.Value) : query.OrderBy(b => b.Author.Value),
-            _ => query.OrderByDescending(b => b.CreatedAtUtc)
-        };
+        return query.Select(b => new BookListItemDto(
+            b.Id,
+            b.Title.Value,
+            b.ISBN.Value,
+            b.Publisher.Value,
+            b.Category,
+            b.Author.Value,
+            context.BookCopies.Count(c => c.BookId == b.Id && c.State == BookCopyState.Available),
+            baseUrl + "/" + b.CoverImageFileName,
+            b.Status));
     }
 }

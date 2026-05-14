@@ -5,12 +5,12 @@ public record GetBorrowingReviewsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? ReviewerStudentId = null,
     Guid? ReviewedStudentId = null,
     Guid? BorrowingTransactionId = null)
-    : ICachedQuery<Result<PaginatedList<BorrowingReviewListItemDto>>>
+    : IPagedQuery<BorrowingReviewListItemDto>
 {
     public string CacheKey => BorrowingReviewCachingConstants.BorrowingReviewListKey(this);
 
