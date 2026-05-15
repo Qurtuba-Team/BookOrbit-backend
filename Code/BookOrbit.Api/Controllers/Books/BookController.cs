@@ -125,7 +125,8 @@ public class BookController(
             new UpdateBookCommand(
                 bookId,
             request.Title,
-            imageFileName),
+            imageFileName,
+            request.RowVersion!),
             ct);
 
         if (result.IsSuccess)
@@ -160,9 +161,9 @@ public class BookController(
     [EndpointName("MakeBookAvailable")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> MakeBookAvailable([FromRoute] Guid bookId, CancellationToken ct)
+    public async Task<ActionResult> MakeBookAvailable([FromRoute] Guid bookId, [FromBody] MakeBookAvailableRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new MakeBookAvilableCommand(bookId), ct);
+        var result = await sender.Send(new MakeBookAvilableCommand(bookId, request.RowVersion), ct);
 
         return result.Match(
            _ => NoContent(),
@@ -184,9 +185,9 @@ public class BookController(
     [EndpointName("RejectBook")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> RejectBook([FromRoute] Guid bookId, CancellationToken ct)
+    public async Task<ActionResult> RejectBook([FromRoute] Guid bookId, [FromBody] RejectBookRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new RejectBookCommand(bookId), ct);
+        var result = await sender.Send(new RejectBookCommand(bookId, request.RowVersion), ct);
 
         return result.Match(
            _ => NoContent(),

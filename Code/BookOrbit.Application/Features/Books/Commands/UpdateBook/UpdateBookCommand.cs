@@ -2,4 +2,5 @@
 public record UpdateBookCommand(
     Guid Id,
     string Title,
-    string BookCoverImageFileName) : IRequest<Result<Updated>>;
+    string BookCoverImageFileName,
+    string RowVersion) : ConcurrencyCommand<Result<Updated>>(RowVersion);

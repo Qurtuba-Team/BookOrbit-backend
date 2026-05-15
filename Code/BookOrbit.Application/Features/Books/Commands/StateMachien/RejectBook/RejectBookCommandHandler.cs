@@ -1,6 +1,7 @@
 namespace BookOrbit.Application.Features.Books.Commands.StateMachien.RejectBook;
 public class RejectBookCommandHandler(
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<RejectBookCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<RejectBookCommand, Result<Updated>>
@@ -20,6 +21,11 @@ public class RejectBookCommandHandler(
 
         if (rejectResult.IsFailure)
             return rejectResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(book, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BookCachingConstants.BookTag, ct);

@@ -59,15 +59,19 @@ public class BookCommandsSubcutaneousTests
         context.Books.Add(book);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new UpdateBookCommandHandler(
             NullLogger<UpdateBookCommandHandler>.Instance,
             context,
+            concurrencyService,
             cache);
 
         var command = new UpdateBookCommand(
             Id: book.Id,
             Title: "New Title",
-            BookCoverImageFileName: "new-cover.png");
+            BookCoverImageFileName: "new-cover.png",
+            RowVersion: Convert.ToBase64String(new byte[] {1,2,3}));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -89,13 +93,16 @@ public class BookCommandsSubcutaneousTests
         context.Books.Add(book);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MakeBookAvilableCommandHandler(
             context,
             NullLogger<MakeBookAvilableCommandHandler>.Instance,
-            cache);
+            cache,
+            concurrencyService);
 
         // Act
-        var result = await handler.Handle(new MakeBookAvilableCommand(book.Id), CancellationToken.None);
+        var result = await handler.Handle(new MakeBookAvilableCommand(book.Id, Convert.ToBase64String(new byte[] {1,2,3})), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -112,13 +119,16 @@ public class BookCommandsSubcutaneousTests
         context.Books.Add(book);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new RejectBookCommandHandler(
             context,
+            concurrencyService,
             NullLogger<RejectBookCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new RejectBookCommand(book.Id), CancellationToken.None);
+        var result = await handler.Handle(new RejectBookCommand(book.Id, Convert.ToBase64String(new byte[] {1,2,3})), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();

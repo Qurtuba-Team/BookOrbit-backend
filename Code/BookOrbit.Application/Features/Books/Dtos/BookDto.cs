@@ -9,6 +9,7 @@ public record BookDto
     public string Author { get; set; } = string.Empty;
     public string BookCoverImageUrl { get; set; } = string.Empty;
     public BookStatus Status { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private BookDto() { }
@@ -21,7 +22,8 @@ public record BookDto
         BookCategory category,
         string author,
         string bookCoverImageUrl,
-        BookStatus bookStatus)
+        BookStatus bookStatus,
+        byte[] rowVersion)
     {
         Id = id;
         Title = title;
@@ -31,6 +33,7 @@ public record BookDto
         Author = author;
         BookCoverImageUrl = bookCoverImageUrl;
         Status = bookStatus;
+        RowVersion = rowVersion;
     }
 
     static public BookDto FromEntity(Book book,string bookCoverImageUrl)
@@ -43,7 +46,8 @@ public record BookDto
             book.Category,
             book.Author.Value,
             bookCoverImageUrl,
-            book.Status);
+            book.Status,
+            book.RowVersion);
 
 
 }

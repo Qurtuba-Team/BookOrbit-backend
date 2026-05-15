@@ -3,6 +3,7 @@ namespace BookOrbit.Application.Features.Books.Commands.UpdateBook;
 public class UpdateBookCommandHandler(
     ILogger<UpdateBookCommandHandler> logger,
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     HybridCache cache) : IRequestHandler<UpdateBookCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(UpdateBookCommand command, CancellationToken ct)
@@ -28,6 +29,11 @@ public class UpdateBookCommandHandler(
 
         if (updateResult.IsFailure)
             return updateResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(book, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BookCachingConstants.BookTag, ct);
