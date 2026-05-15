@@ -1,7 +1,12 @@
 ﻿namespace BookOrbit.Domain.Common.ValueObjects;
 
-public record Url(string Value) : ValueObject<string>(Value)
+    //Currently Unused
+public record Url : ValueObject<string>
 {
+    private Url(string Value) : base(Value)
+    {
+    }
+
     private static string Normalize(string value)
     {
         return

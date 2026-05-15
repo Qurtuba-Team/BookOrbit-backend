@@ -104,7 +104,7 @@ public class CreateBorrowingTransactionCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var pointToAddCreationResult = Point.Create(Point.DeliveringBookReward);
+        var pointToAddCreationResult = Point.Create(Point.DeliveringBookReward.Value);
 
         if(pointToAddCreationResult.IsFailure)
         {

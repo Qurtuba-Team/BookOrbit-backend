@@ -1,12 +1,16 @@
 ﻿namespace BookOrbit.Domain.Books.ValueObjects;
 
-public record ISBN(string Value) : ValueObject<string>(Value)
+public record ISBN : ValueObject<string>
 {
     private static readonly Regex IsbnRegex =
         new(@"^(?:[0-9]{9}[0-9X]|97[89][0-9]{10})$", RegexOptions.Compiled);
 
     public const int MinLength = 10;
     public const int MaxLength = 13;
+
+    private ISBN(string Value) : base(Value)
+    {
+    }
 
     public static string Normalize(string value)
     {

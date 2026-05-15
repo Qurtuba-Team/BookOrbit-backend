@@ -1,11 +1,13 @@
 ﻿namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.ValueObjects;
 
-public record StarsRating(int Value) : ValueObject<int>(Value)
+public record StarsRating : ValueObject<int>
 {
     public const int MinRating = 1;
     public const int MaxRating = 5;
 
-
+    private StarsRating(int Value) : base(Value)
+    {
+    }
     public static int Normalize(int value)
     {
         return value;

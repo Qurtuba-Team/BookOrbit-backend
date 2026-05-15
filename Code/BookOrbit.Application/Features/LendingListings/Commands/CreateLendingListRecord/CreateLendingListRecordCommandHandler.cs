@@ -58,7 +58,7 @@ public class CreateLendingListRecordCommandHandler(
             Guid.NewGuid(),
             command.BookCopyId,
             command.BorrowingDurationInDays,
-            new Point(Point.LendingRecordDefaultCost),
+            Point.LendingRecordDefaultCost,
             now.AddDays(LendingListRecord.DefaultExpirationDurationInDays),
             now);
 

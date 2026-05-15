@@ -17,7 +17,7 @@ public class BorrowingTransactionBookCopyReturnedEventHandler(
 
         if(notification.State is BorrowingTransactionState.Returned)
         {
-            var pointsToAdd = Point.Create(Point.ReturningBookReward);
+            var pointsToAdd = Point.Create(Point.ReturningBookReward.Value);
             var addingPointsResult = student.AddPoints(pointsToAdd.Value, PointTransactionReason.Returning, notification.BorrowingTransactionId);
             if(addingPointsResult.IsFailure)
             {
@@ -29,7 +29,7 @@ public class BorrowingTransactionBookCopyReturnedEventHandler(
 
         else if(notification.State is BorrowingTransactionState.Overdue)
         {
-            var pointsToDeduct = Point.Create(Point.OverduePenalty);
+            var pointsToDeduct = Point.Create(Point.OverduePenalty.Value);
             var deductPointsResult = student.DeductPoints(pointsToDeduct.Value, PointTransactionReason.Penalty, notification.BorrowingTransactionId);
             if (deductPointsResult.IsFailure)
             {

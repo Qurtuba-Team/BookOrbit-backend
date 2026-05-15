@@ -42,7 +42,7 @@ public class Student : Entity, IAuditableEntity
         PhoneNumber = phoneNumber;
         TelegramUserId = telegramUserId;
         State = StudentState.Pending;
-        Points = new Point(Point.StudentInitialPoint);
+        Points = Point.StudentInitialPoint;
     }
 
 
