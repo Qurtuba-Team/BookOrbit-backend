@@ -1,24 +1,27 @@
 ﻿namespace BookOrbit.Domain.PointTransactions.ValueObjects;
 
-public record Point(int Value) : ValueObject<int>(Value)
+public record Point : ValueObject<int>
 {
     public const int MinValue = int.MinValue;
     public const int MaxValue = int.MaxValue;
 
-    public const int StudentInitialPoint = 3;
+    public static readonly Point StudentInitialPoint = new(3);
 
-    public const int LendingRecordDefaultCost = 1;
+    public static readonly Point LendingRecordDefaultCost = new(1);
 
-    public const int DeliveringBookReward = 1;
-    public const int ReturningBookReward = 1;
-    public const int OverduePenalty = -2;
-    public const int LostBookPenalty = -5;
-    
-    public const int OneStarReviewPenalty = -1;
-    public const int TwoStarsReviewPenalty = -1;
-    public const int ThreeStarsReviewReward = 0;
-    public const int FourStarsReviewReward = 1;
-    public const int FiveStarsReviewReward = 2;
+    public static readonly Point DeliveringBookReward = new(1);
+    public static readonly Point ReturningBookReward = new(1);
+    public static readonly Point OverduePenalty = new(2);
+    public static readonly Point LostBookPenalty = new(5);
+
+    public static readonly Point OneStarReviewPenalty = new(1);
+    public static readonly Point TwoStarsReviewPenalty = new(1);
+    public static readonly Point ThreeStarsReviewReward = new(0);
+    public static readonly Point FourStarsReviewReward = new(1);
+    public static readonly Point FiveStarsReviewReward = new(2);
+    private Point(int Value) : base(Value)
+    {
+    }
 
     public static int Normalize(int value)
     {

@@ -1,6 +1,6 @@
 ﻿namespace BookOrbit.Domain.Common.ValueObjects;
 
-public record PhoneNumber(string Value) : ValueObject<string>(Value)
+public record PhoneNumber: ValueObject<string>
 {
     private static readonly Regex PhoneNumberRegex =
        new(@"^(?:01|201)[0125][0-9]+$", RegexOptions.Compiled);
@@ -8,6 +8,11 @@ public record PhoneNumber(string Value) : ValueObject<string>(Value)
     public const int MinLength = 11;
     public const int MaxLength = 12;
     static public readonly List<string> Prefixes = ["01", "201"];
+
+
+    private PhoneNumber(string Value) : base(Value)
+    {
+    }
 
     public static string Normalize(string value)
     {

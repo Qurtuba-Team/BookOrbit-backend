@@ -1,12 +1,16 @@
 ﻿namespace BookOrbit.Domain.Common.ValueObjects;
 
-public record TelegramUserId(string Value) : ValueObject<string>(Value)
+public record TelegramUserId : ValueObject<string>
 {
     private static readonly Regex TelegramUserIdRegex =
        new(@"^(?=(?:[0-9_]*[a-z]){3})[a-z0-9_]+$", RegexOptions.Compiled);
 
     public const int MinLength = 5;
     public const int MaxLength = 32;
+
+    private TelegramUserId(string Value) : base(Value)
+    {
+    }
 
     public static string Normalize(string value)
     {

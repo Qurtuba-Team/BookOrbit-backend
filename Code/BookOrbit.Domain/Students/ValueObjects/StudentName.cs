@@ -1,6 +1,6 @@
 ﻿namespace BookOrbit.Domain.Students.ValueObjects;
 
-public record StudentName(string Value) : ValueObject<string>(Value)
+public record StudentName : ValueObject<string>
 {
     //Arabic , english , spaces
     private static readonly Regex NameRegex =
@@ -9,6 +9,10 @@ public record StudentName(string Value) : ValueObject<string>(Value)
     public const int MinLength = 3;
     public const int MaxLength = 50;
 
+
+    private StudentName(string Value) : base(Value)
+    {
+    }
 
     public static string Normalize(string value)
     {

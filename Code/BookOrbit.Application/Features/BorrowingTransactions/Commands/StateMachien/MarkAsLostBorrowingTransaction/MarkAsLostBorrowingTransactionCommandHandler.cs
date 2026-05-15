@@ -63,7 +63,7 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
             return StudentApplicationErrors.NotFoundById;
         }
 
-        var pointsToDeductCreationResult = Point.Create(Point.LostBookPenalty);
+        var pointsToDeductCreationResult = Point.Create(Point.LostBookPenalty.Value);
 
         if(pointsToDeductCreationResult.IsFailure)
         {

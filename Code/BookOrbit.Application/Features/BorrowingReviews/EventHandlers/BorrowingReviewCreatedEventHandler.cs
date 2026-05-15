@@ -52,27 +52,27 @@ public class BorrowingReviewCreatedEventHandler(
         switch (notification.RatingValue)
         {
             case 1:
-                pointsValue = Math.Abs(Point.OneStarReviewPenalty);
+                pointsValue = Math.Abs(Point.OneStarReviewPenalty.Value);
                 isReward = false;
                 reason = PointTransactionReason.BadReview;
                 break;
             case 2:
-                pointsValue = Math.Abs(Point.TwoStarsReviewPenalty);
+                pointsValue = Math.Abs(Point.TwoStarsReviewPenalty.Value);
                 isReward = false;
                 reason = PointTransactionReason.BadReview;
                 break;
             case 3:
-                pointsValue = Math.Abs(Point.ThreeStarsReviewReward);
+                pointsValue = Math.Abs(Point.ThreeStarsReviewReward.Value);
                 isReward = true;
                 reason = PointTransactionReason.GoodReview;
                 break;
             case 4:
-                pointsValue = Math.Abs(Point.FourStarsReviewReward);
+                pointsValue = Math.Abs(Point.FourStarsReviewReward.Value);
                 isReward = true;
                 reason = PointTransactionReason.GoodReview;
                 break;
             case 5:
-                pointsValue = Math.Abs(Point.FiveStarsReviewReward);
+                pointsValue = Math.Abs(Point.FiveStarsReviewReward.Value);
                 isReward = true;
                 reason = PointTransactionReason.GoodReview;
                 break;
