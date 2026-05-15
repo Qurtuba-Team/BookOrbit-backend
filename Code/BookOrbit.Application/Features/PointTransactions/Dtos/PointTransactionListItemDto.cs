@@ -15,7 +15,7 @@ public record PointTransactionListItemDto
     [JsonConstructor]
     private PointTransactionListItemDto() { }
 
-    private PointTransactionListItemDto(
+    public PointTransactionListItemDto(
         Guid id,
         Guid studentId,
         string studentName,

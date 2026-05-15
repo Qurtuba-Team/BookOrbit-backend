@@ -5,11 +5,11 @@ public record GetBorrowingTransactionEventsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? BorrowingTransactionId = null,
     List<BorrowingTransactionState>? States = null)
-    : ICachedQuery<Result<PaginatedList<BorrowingTransactionEventListItemDto>>>
+    : IPagedQuery<BorrowingTransactionEventListItemDto>
 {
     public string CacheKey => BorrowingTransactionEventCachingConstants.BorrowingTransactionEventListKey(this);
 

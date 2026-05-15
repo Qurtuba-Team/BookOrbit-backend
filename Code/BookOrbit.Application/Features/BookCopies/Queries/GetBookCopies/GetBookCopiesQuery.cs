@@ -3,12 +3,12 @@ public record GetBookCopiesQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? BookId = null,
     Guid? OwnerId = null,
     List<BookCopyCondition>? Conditions = null,
-    List<BookCopyState>? States = null) : ICachedQuery<Result<PaginatedList<BookCopyListItemDto>>>
+    List<BookCopyState>? States = null) : IPagedQuery<BookCopyListItemDto>
 {
     public string CacheKey => BookCopyCachingConstants.BookCoopyListKey(this);
 

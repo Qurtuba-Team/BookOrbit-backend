@@ -21,6 +21,8 @@ global using BookOrbit.Domain.BorrowingTransactions;
 global using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 global using BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 global using BookOrbit.Domain.BorrowingTransactions.Enums;
+global using BookOrbit.Domain.ChatGroups;
+global using BookOrbit.Domain.ChatMessages;
 global using BookOrbit.Domain.Common;
 global using BookOrbit.Domain.Common.Entities;
 global using BookOrbit.Domain.Common.Results;
@@ -79,5 +81,4 @@ global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Text;
 global using System.Text.Json;
-
 

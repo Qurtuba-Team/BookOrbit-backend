@@ -1,8 +1,3 @@
-
-using BookOrbit.Domain.Otps;
-using BookOrbit.Domain.ChatGroups;
-using BookOrbit.Domain.ChatMessages;
-
 namespace BookOrbit.Infrastructure.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> options, IMediator mediator) : IdentityDbContext<AppUser>(options), IAppDbContext
 {

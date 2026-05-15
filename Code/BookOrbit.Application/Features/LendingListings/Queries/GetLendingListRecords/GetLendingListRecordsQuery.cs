@@ -3,13 +3,13 @@ public record GetLendingListRecordsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? BookCopyId = null,
     Guid? BookId = null,
     Guid? OwnerId = null,
     List<LendingListRecordState>? States = null)
-    : ICachedQuery<Result<PaginatedList<LendingListRecordListItemDto>>>
+    : IPagedQuery<LendingListRecordListItemDto>
 {
     public string CacheKey => LendingListCachingConstants.LendingListListKey(this);
 

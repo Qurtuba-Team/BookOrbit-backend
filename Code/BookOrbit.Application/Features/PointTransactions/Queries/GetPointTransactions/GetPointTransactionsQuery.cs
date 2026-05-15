@@ -5,12 +5,12 @@ public record GetPointTransactionsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? StudentId = null,
     Guid? BorrowingReviewId = null,
     List<PointTransactionReason>? Reasons = null)
-    : ICachedQuery<Result<PaginatedList<PointTransactionListItemDto>>>
+    : IPagedQuery<PointTransactionListItemDto>
 {
     public string CacheKey => PointTransactionCachingConstants.PointTransactionListKey(this);
 

@@ -2,57 +2,45 @@
 namespace BookOrbit.Application.Features.PointTransactions.Queries.GetPointTransactions;
 
 public class GetPointTransactionsQueryHandler(IAppDbContext context)
-    : IRequestHandler<GetPointTransactionsQuery, Result<PaginatedList<PointTransactionListItemDto>>>
+    : BasePagedQueryHandler<PointTransaction, PointTransactionListItemDto, GetPointTransactionsQuery>
 {
-    public async Task<Result<PaginatedList<PointTransactionListItemDto>>> Handle(GetPointTransactionsQuery query, CancellationToken ct)
-    {
-        var transactionQuery = context.PointTransactions.AsNoTracking();
-
-        transactionQuery = ApplyFilters(transactionQuery, query);
-
-        var queryWithStudent = transactionQuery.Join(
-            context.Students.AsNoTracking(),
-            transaction => transaction.StudentId,
-            student => student.Id,
-            (transaction, student) => new PointTransactionWithStudentNameDto
-            {
-                Id = transaction.Id,
-                StudentId = transaction.StudentId,
-                StudentName = student.Name.Value,
-                BorrowingReviewId = transaction.BorrowingReviewId,
-                Points = transaction.Points,
-                Reason = transaction.Reason,
-                CreatedAtUtc = transaction.CreatedAtUtc,
-                LastModifiedUtc = transaction.LastModifiedUtc
-            });
-
-        queryWithStudent = ApplySearchTerm(queryWithStudent, query);
-        queryWithStudent = ApplySorting(queryWithStudent, query.SortColumn, query.SortDirection);
-
-        int count = await queryWithStudent.CountAsync(ct);
-
-        int page = Math.Max(1, query.Page);
-        int pageSize = Math.Max(1, query.PageSize);
-
-        var items = await queryWithStudent
-            .ApplyPagination(page, pageSize)
-            .ToListAsync(ct);
-
-        var listItems = items
-            .Select(PointTransactionListItemDto.FromIntermediate)
-            .ToList();
-
-        return new PaginatedList<PointTransactionListItemDto>
+    protected override Dictionary<string, Func<IQueryable<PointTransaction>, bool, IOrderedQueryable<PointTransaction>>> SortMappings
+        => new()
         {
-            Items = listItems,
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = count,
-            TotalPages = MathHelper.CalculateTotalPages(count, pageSize)
+            ["createdat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(pt => pt.CreatedAtUtc)
+                    : query.OrderBy(pt => pt.CreatedAtUtc),
+            ["updatedat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(pt => pt.LastModifiedUtc)
+                    : query.OrderBy(pt => pt.LastModifiedUtc),
+            ["points"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(pt => pt.Points)
+                    : query.OrderBy(pt => pt.Points),
+            ["reason"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(pt => pt.Reason)
+                    : query.OrderBy(pt => pt.Reason),
+            ["studentname"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(pt => context.Students
+                        .Where(s => s.Id == pt.StudentId)
+                        .Select(s => s.Name.Value)
+                        .FirstOrDefault())
+                    : query.OrderBy(pt => context.Students
+                        .Where(s => s.Id == pt.StudentId)
+                        .Select(s => s.Name.Value)
+                        .FirstOrDefault())
         };
+
+    protected override IQueryable<PointTransaction> GetBaseQuery()
+    {
+        return context.PointTransactions.AsNoTracking();
     }
 
-    private static IQueryable<PointTransaction> ApplyFilters(IQueryable<PointTransaction> query, GetPointTransactionsQuery searchQuery)
+    protected override IQueryable<PointTransaction> ApplyFilters(IQueryable<PointTransaction> query, GetPointTransactionsQuery searchQuery)
     {
         if (searchQuery.StudentId is not null)
             query = query.Where(pt => pt.StudentId == searchQuery.StudentId);
@@ -66,8 +54,8 @@ public class GetPointTransactionsQueryHandler(IAppDbContext context)
         return query;
     }
 
-    private static IQueryable<PointTransactionWithStudentNameDto> ApplySearchTerm(
-        IQueryable<PointTransactionWithStudentNameDto> query,
+    protected override IQueryable<PointTransaction> ApplySearch(
+        IQueryable<PointTransaction> query,
         GetPointTransactionsQuery searchQuery)
     {
         if (string.IsNullOrWhiteSpace(searchQuery.SearchTerm))
@@ -75,30 +63,35 @@ public class GetPointTransactionsQueryHandler(IAppDbContext context)
 
         var normalizedName = StudentName.Normalize(searchQuery.SearchTerm);
 
-        return query.Where(pt => pt.StudentName.Contains(normalizedName));
+        return query.Where(pt => context.Students
+            .Any(s => s.Id == pt.StudentId && s.Name.Value.Contains(normalizedName)));
     }
 
-    private static IQueryable<PointTransactionWithStudentNameDto> ApplySorting(
-        IQueryable<PointTransactionWithStudentNameDto> query,
-        string? sortColumn,
-        string? sortDirection)
+    protected override IQueryable<PointTransactionListItemDto> ProjectToDto(IQueryable<PointTransaction> query)
     {
-        if (string.IsNullOrWhiteSpace(sortColumn))
-            sortColumn = "createdat";
-
-        if (string.IsNullOrWhiteSpace(sortDirection))
-            sortDirection = "desc";
-
-        var isDescending = sortDirection.Equals("desc", StringComparison.OrdinalIgnoreCase);
-
-        return sortColumn.ToLower() switch
-        {
-            "createdat" => isDescending ? query.OrderByDescending(pt => pt.CreatedAtUtc) : query.OrderBy(pt => pt.CreatedAtUtc),
-            "updatedat" => isDescending ? query.OrderByDescending(pt => pt.LastModifiedUtc) : query.OrderBy(pt => pt.LastModifiedUtc),
-            "points" => isDescending ? query.OrderByDescending(pt => pt.Points) : query.OrderBy(pt => pt.Points),
-            "reason" => isDescending ? query.OrderByDescending(pt => pt.Reason) : query.OrderBy(pt => pt.Reason),
-            "studentname" => isDescending ? query.OrderByDescending(pt => pt.StudentName) : query.OrderBy(pt => pt.StudentName),
-            _ => query.OrderByDescending(pt => pt.CreatedAtUtc)
-        };
+        return query.Join(
+            context.Students.AsNoTracking(),
+            transaction => transaction.StudentId,
+            student => student.Id,
+            (transaction, student) => new PointTransactionListItemDto(
+                transaction.Id,
+                transaction.StudentId,
+                student.Name.Value,
+                transaction.BorrowingReviewId,
+                transaction.Points,
+                transaction.Reason,
+                transaction.Reason == PointTransactionReason.BadReview ||
+                transaction.Reason == PointTransactionReason.Borrowing ||
+                transaction.Reason == PointTransactionReason.NegativeAdjustment ||
+                transaction.Reason == PointTransactionReason.Penalty
+                    ? PointTransactionDirection.Deduct
+                    : transaction.Reason == PointTransactionReason.GoodReview ||
+                      transaction.Reason == PointTransactionReason.Returning ||
+                      transaction.Reason == PointTransactionReason.PositiveAdjustment ||
+                      transaction.Reason == PointTransactionReason.Reward ||
+                      transaction.Reason == PointTransactionReason.BookBorrowedFrom
+                        ? PointTransactionDirection.Add
+                        : PointTransactionDirection.None,
+                transaction.CreatedAtUtc));
     }
 }

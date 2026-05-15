@@ -3,13 +3,13 @@ public record GetBorrowingRequestsQuery(
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     Guid? BorrowingStudentId = null,
     Guid? LendingRecordId = null,
     Guid? LendingStudentId = null,
     List<BorrowingRequestState>? States = null)
-    : ICachedQuery<Result<PaginatedList<BorrowingRequestListItemDto>>>
+    : IPagedQuery<BorrowingRequestListItemDto>
 {
     public string CacheKey => BorrowingRequestCachingConstants.BorrowingRequestListKey(this);
 

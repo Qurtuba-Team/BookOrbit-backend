@@ -249,7 +249,7 @@ public class BookController(
 
 
     [HttpGet]
-    [Authorize(Policy = PoliciesNames.ActiveStudentPolicy)]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(PaginatedList<BookListItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status403Forbidden)]

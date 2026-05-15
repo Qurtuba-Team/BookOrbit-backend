@@ -4,11 +4,11 @@ public record GetBooksQuery
     int Page,
     int PageSize,
     string? SearchTerm,
-    string? SortColumn = "createdAt",
-    string? SortDirection = "desc",
+    string? SortColumn = QuerySettings.DefaultSortColumn,
+    string? SortDirection = QuerySettings.DefaultSortDirection,
     List<BookCategory>? Categories = null,
     List<BookStatus>? Statuses = null)
-    : ICachedQuery<Result<PaginatedList<BookListItemDto>>>
+    : IPagedQuery<BookListItemDto>
 {
     public string CacheKey => BookCachingConstants.BookListKey(this);
 

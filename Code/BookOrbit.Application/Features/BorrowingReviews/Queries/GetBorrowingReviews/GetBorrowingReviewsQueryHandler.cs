@@ -2,37 +2,31 @@
 namespace BookOrbit.Application.Features.BorrowingReviews.Queries.GetBorrowingReviews;
 
 public class GetBorrowingReviewsQueryHandler(IAppDbContext context)
-    : IRequestHandler<GetBorrowingReviewsQuery, Result<PaginatedList<BorrowingReviewListItemDto>>>
+    : BasePagedQueryHandler<BorrowingReview, BorrowingReviewListItemDto, GetBorrowingReviewsQuery>
 {
-    public async Task<Result<PaginatedList<BorrowingReviewListItemDto>>> Handle(GetBorrowingReviewsQuery query, CancellationToken ct)
-    {
-        var reviewQuery = context.BorrowingReviews.AsNoTracking();
-
-        reviewQuery = ApplyFilters(reviewQuery, query);
-        reviewQuery = ApplySearchTerm(reviewQuery, query);
-        reviewQuery = ApplySorting(reviewQuery, query.SortColumn, query.SortDirection);
-
-        int count = await reviewQuery.CountAsync(ct);
-
-        int page = Math.Max(1, query.Page);
-        int pageSize = Math.Max(1, query.PageSize);
-
-        var items = await reviewQuery
-            .ApplyPagination(page, pageSize)
-            .Select(br => BorrowingReviewListItemDto.FromEntity(br))
-            .ToListAsync(ct);
-
-        return new PaginatedList<BorrowingReviewListItemDto>
+    protected override Dictionary<string, Func<IQueryable<BorrowingReview>, bool, IOrderedQueryable<BorrowingReview>>> SortMappings
+        => new()
         {
-            Items = items,
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = count,
-            TotalPages = MathHelper.CalculateTotalPages(count, pageSize)
+            ["createdat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(br => br.CreatedAtUtc)
+                    : query.OrderBy(br => br.CreatedAtUtc),
+            ["updatedat"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(br => br.LastModifiedUtc)
+                    : query.OrderBy(br => br.LastModifiedUtc),
+            ["rating"] = (query, desc) =>
+                desc
+                    ? query.OrderByDescending(br => br.Rating.Value)
+                    : query.OrderBy(br => br.Rating.Value)
         };
+
+    protected override IQueryable<BorrowingReview> GetBaseQuery()
+    {
+        return context.BorrowingReviews.AsNoTracking();
     }
 
-    private static IQueryable<BorrowingReview> ApplyFilters(IQueryable<BorrowingReview> query, GetBorrowingReviewsQuery searchQuery)
+    protected override IQueryable<BorrowingReview> ApplyFilters(IQueryable<BorrowingReview> query, GetBorrowingReviewsQuery searchQuery)
     {
         if (searchQuery.ReviewerStudentId is not null)
             query = query.Where(br => br.ReviewerStudentId == searchQuery.ReviewerStudentId);
@@ -46,7 +40,7 @@ public class GetBorrowingReviewsQueryHandler(IAppDbContext context)
         return query;
     }
 
-    private static IQueryable<BorrowingReview> ApplySearchTerm(IQueryable<BorrowingReview> query, GetBorrowingReviewsQuery searchQuery)
+    protected override IQueryable<BorrowingReview> ApplySearch(IQueryable<BorrowingReview> query, GetBorrowingReviewsQuery searchQuery)
     {
         if (string.IsNullOrWhiteSpace(searchQuery.SearchTerm))
             return query;
@@ -63,25 +57,8 @@ public class GetBorrowingReviewsQueryHandler(IAppDbContext context)
         return query.Where(br => br.Description != null && br.Description.Contains(searchQuery.SearchTerm));
     }
 
-    private static IQueryable<BorrowingReview> ApplySorting(
-        IQueryable<BorrowingReview> query,
-        string? sortColumn,
-        string? sortDirection)
+    protected override IQueryable<BorrowingReviewListItemDto> ProjectToDto(IQueryable<BorrowingReview> query)
     {
-        if (string.IsNullOrWhiteSpace(sortColumn))
-            sortColumn = "createdat";
-
-        if (string.IsNullOrWhiteSpace(sortDirection))
-            sortDirection = "desc";
-
-        var isDescending = sortDirection.Equals("desc", StringComparison.OrdinalIgnoreCase);
-
-        return sortColumn.ToLower() switch
-        {
-            "createdat" => isDescending ? query.OrderByDescending(br => br.CreatedAtUtc) : query.OrderBy(br => br.CreatedAtUtc),
-            "updatedat" => isDescending ? query.OrderByDescending(br => br.LastModifiedUtc) : query.OrderBy(br => br.LastModifiedUtc),
-            "rating" => isDescending ? query.OrderByDescending(br => br.Rating.Value) : query.OrderBy(br => br.Rating.Value),
-            _ => query.OrderByDescending(br => br.CreatedAtUtc)
-        };
+        return query.Select(br => BorrowingReviewListItemDto.FromEntity(br));
     }
 }
