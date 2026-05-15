@@ -6,5 +6,9 @@ public class ExpireBorrowingRequestCommandValidator : AbstractValidator<ExpireBo
         RuleFor(x => x.BorrowingRequestId)
             .Cascade(CascadeMode.Stop)
             .BorrowingRequestIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

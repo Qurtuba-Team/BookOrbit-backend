@@ -6,6 +6,7 @@ public record BorrowingRequestDto
     public Guid LendingRecordId { get; set; } = Guid.Empty;
     public BorrowingRequestState State { get; set; }
     public DateTimeOffset? ExpirationDateUtc { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private BorrowingRequestDto() { }
@@ -15,13 +16,15 @@ public record BorrowingRequestDto
         Guid borrowingStudentId,
         Guid lendingRecordId,
         BorrowingRequestState state,
-        DateTimeOffset? expirationDateUtc)
+        DateTimeOffset? expirationDateUtc,
+        byte[] rowVersion)
     {
         Id = id;
         BorrowingStudentId = borrowingStudentId;
         LendingRecordId = lendingRecordId;
         State = state;
         ExpirationDateUtc = expirationDateUtc;
+        RowVersion = rowVersion;
     }
 
     public static BorrowingRequestDto FromEntity(BorrowingRequest borrowingRequest)
@@ -31,6 +34,7 @@ public record BorrowingRequestDto
             borrowingRequest.BorrowingStudentId,
             borrowingRequest.LendingRecordId,
             borrowingRequest.State,
-            borrowingRequest.ExpirationDateUtc);
+            borrowingRequest.ExpirationDateUtc,
+            borrowingRequest.RowVersion);
     }
 }

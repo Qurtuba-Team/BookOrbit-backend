@@ -178,9 +178,9 @@ public class BorrowingRequestController(
     [EndpointName("AcceptBorrowingRequest")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> AcceptBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
+    public async Task<ActionResult> AcceptBorrowingRequest([FromRoute] Guid borrowingRequestId, [FromBody] BorrowingRequestStateChangeRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new AcceptBorrowingRequestCommand(borrowingRequestId), ct);
+        var result = await sender.Send(new AcceptBorrowingRequestCommand(borrowingRequestId, request.RowVersion), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -202,9 +202,9 @@ public class BorrowingRequestController(
     [EndpointName("RejectBorrowingRequest")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> RejectBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
+    public async Task<ActionResult> RejectBorrowingRequest([FromRoute] Guid borrowingRequestId, [FromBody] BorrowingRequestStateChangeRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new RejectBorrowingRequestCommand(borrowingRequestId), ct);
+        var result = await sender.Send(new RejectBorrowingRequestCommand(borrowingRequestId, request.RowVersion), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -226,9 +226,9 @@ public class BorrowingRequestController(
     [EndpointName("CancelBorrowingRequest")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> CancelBorrowingRequest([FromRoute] Guid borrowingRequestId, CancellationToken ct)
+    public async Task<ActionResult> CancelBorrowingRequest([FromRoute] Guid borrowingRequestId, [FromBody] BorrowingRequestStateChangeRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new CancelBorrowingRequestCommand(borrowingRequestId), ct);
+        var result = await sender.Send(new CancelBorrowingRequestCommand(borrowingRequestId, request.RowVersion), ct);
 
         return result.Match(
             _ => NoContent(),

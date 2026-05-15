@@ -485,7 +485,9 @@ public class AppDbContextInitialiser(
         if (requestResult is null)
             return;
 
-        var approveResult = await sender.Send(new AcceptBorrowingRequestCommand(requestResult.Value.RequestId));
+        var br = await context.BorrowingRequests.FirstOrDefaultAsync(br => br.Id == requestResult.Value.RequestId);
+        var rv = br is null ? string.Empty : Convert.ToBase64String(br.RowVersion);
+        var approveResult = await sender.Send(new AcceptBorrowingRequestCommand(requestResult.Value.RequestId, rv));
 
         if (approveResult.IsFailure)
         {
@@ -589,7 +591,9 @@ public class AppDbContextInitialiser(
         if (requestResult is null)
             return;
 
-        var approveResult = await sender.Send(new AcceptBorrowingRequestCommand(requestResult.Value.RequestId));
+        var br2 = await context.BorrowingRequests.FirstOrDefaultAsync(br => br.Id == requestResult.Value.RequestId);
+        var rv2 = br2 is null ? string.Empty : Convert.ToBase64String(br2.RowVersion);
+        var approveResult = await sender.Send(new AcceptBorrowingRequestCommand(requestResult.Value.RequestId, rv2));
 
         if (approveResult.IsFailure)
         {
@@ -621,7 +625,9 @@ public class AppDbContextInitialiser(
         if (requestResult is null)
             return;
 
-        var rejectResult = await sender.Send(new RejectBorrowingRequestCommand(requestResult.Value.RequestId));
+        var br3 = await context.BorrowingRequests.FirstOrDefaultAsync(br => br.Id == requestResult.Value.RequestId);
+        var rv3 = br3 is null ? string.Empty : Convert.ToBase64String(br3.RowVersion);
+        var rejectResult = await sender.Send(new RejectBorrowingRequestCommand(requestResult.Value.RequestId, rv3));
 
         if (rejectResult.IsFailure)
         {
@@ -637,7 +643,9 @@ public class AppDbContextInitialiser(
         if (requestResult is null)
             return;
 
-        var cancelResult = await sender.Send(new CancelBorrowingRequestCommand(requestResult.Value.RequestId));
+        var br4 = await context.BorrowingRequests.FirstOrDefaultAsync(br => br.Id == requestResult.Value.RequestId);
+        var rv4 = br4 is null ? string.Empty : Convert.ToBase64String(br4.RowVersion);
+        var cancelResult = await sender.Send(new CancelBorrowingRequestCommand(requestResult.Value.RequestId, rv4));
 
         if (cancelResult.IsFailure)
         {
@@ -653,7 +661,9 @@ public class AppDbContextInitialiser(
         if (requestResult is null)
             return;
 
-        var expireResult = await sender.Send(new ExpireBorrowingRequestCommand(requestResult.Value.RequestId));
+        var br5 = await context.BorrowingRequests.FirstOrDefaultAsync(br => br.Id == requestResult.Value.RequestId);
+        var rv5 = br5 is null ? string.Empty : Convert.ToBase64String(br5.RowVersion);
+        var expireResult = await sender.Send(new ExpireBorrowingRequestCommand(requestResult.Value.RequestId, rv5));
 
         if (expireResult.IsFailure)
         {

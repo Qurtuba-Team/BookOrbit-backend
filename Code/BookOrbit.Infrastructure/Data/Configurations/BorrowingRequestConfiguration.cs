@@ -5,6 +5,7 @@ public class BorrowingRequestConfiguration : IEntityTypeConfiguration<BorrowingR
     public void Configure(EntityTypeBuilder<BorrowingRequest> builder)
     {
         builder.ConfigureAuditable();
+        builder.ConfigureConcurrency();
 
         builder.ToTable("BorrowingRequests");
 
@@ -41,5 +42,7 @@ public class BorrowingRequestConfiguration : IEntityTypeConfiguration<BorrowingR
         builder.HasIndex(br => br.BorrowingStudentId);
         builder.HasIndex(br => br.LendingRecordId);
         builder.HasIndex(br => br.State);
+
+        
     }
 }

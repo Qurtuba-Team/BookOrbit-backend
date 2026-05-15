@@ -127,10 +127,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new AcceptBorrowingRequestCommandHandler(context, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new AcceptBorrowingRequestCommandHandler(context, concurrencyService, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new AcceptBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new AcceptBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -160,10 +162,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new RejectBorrowingRequestCommandHandler(context, NullLogger<RejectBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService2 = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new RejectBorrowingRequestCommandHandler(context, concurrencyService2, NullLogger<RejectBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new RejectBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new RejectBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -192,10 +196,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new CancelBorrowingRequestCommandHandler(context, NullLogger<CancelBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService3 = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new CancelBorrowingRequestCommandHandler(context, concurrencyService3, NullLogger<CancelBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new CancelBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new CancelBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -224,10 +230,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new ExpireBorrowingRequestCommandHandler(context, NullLogger<ExpireBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService4 = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new ExpireBorrowingRequestCommandHandler(context, concurrencyService4, NullLogger<ExpireBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new ExpireBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new ExpireBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -299,10 +307,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.AddRange(request1, request2);
         await context.SaveChangesAsync();
 
-        var handler = new AcceptBorrowingRequestCommandHandler(context, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyServiceFail = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new AcceptBorrowingRequestCommandHandler(context, concurrencyServiceFail, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new AcceptBorrowingRequestCommand(request2.Id), CancellationToken.None);
+        var result = await handler.Handle(new AcceptBorrowingRequestCommand(request2.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();
