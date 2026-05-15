@@ -2,8 +2,13 @@
 
 namespace BookOrbit.Domain.PointTransactions;
 
-public class PointTransaction : AuditableEntity
+public class PointTransaction : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+
     public Guid StudentId { get; }
     public Guid? BorrowingReviewId { get; }
     public int Points { get; }

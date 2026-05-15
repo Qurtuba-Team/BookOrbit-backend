@@ -1,8 +1,14 @@
 
 
 namespace BookOrbit.Domain.LendingListings;
-public class LendingListRecord : ExpirableEntity
+public class LendingListRecord : Entity, IAuditableEntity, IExpirableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset? ExpirationDateUtc { get; set; }
+
     public Guid BookCopyId { get; }
     public LendingListRecordState State { get; private set; }
     public int BorrowingDurationInDays { get; }

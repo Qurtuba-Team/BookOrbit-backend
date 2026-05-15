@@ -1,7 +1,13 @@
 ﻿
 namespace BookOrbit.Domain.Otps;
-public class Otp : ExpirableEntity
+public class Otp : Entity, IAuditableEntity, IExpirableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset? ExpirationDateUtc { get; set; }
+
     public Guid TargetId { get; set; }
     public string Code { get; set; }
     public OtpType Type { get; set; }

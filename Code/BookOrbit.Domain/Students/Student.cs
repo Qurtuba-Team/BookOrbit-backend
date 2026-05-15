@@ -2,8 +2,13 @@ using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Domain.Students;
 
-public class Student : AuditableEntity
+public class Student : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+
     public StudentName Name { get; private set; } = null!;
     public PhoneNumber? PhoneNumber { get; }
     public TelegramUserId? TelegramUserId { get; }

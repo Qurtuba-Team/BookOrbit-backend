@@ -2,7 +2,7 @@
 public static class ConcurrencyEntityConfiguration
 {
     public static void ConfigureConcurrency<T>(this EntityTypeBuilder<T> builder)
-            where T : ConcurrencyEntity
+            where T : class, IConcurrencyEntity
     {
         builder.Property(e => e.RowVersion)
             .IsRowVersion()

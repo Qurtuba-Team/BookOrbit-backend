@@ -1,6 +1,11 @@
 ﻿namespace BookOrbit.Domain.OutboxMessages;
-public class OutboxMessage : AuditableEntity
+public class OutboxMessage : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+
     private OutboxMessage(
         Guid id,
         string payload) : base(id)

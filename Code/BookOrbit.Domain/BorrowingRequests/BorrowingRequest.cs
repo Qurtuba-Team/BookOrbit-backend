@@ -3,8 +3,14 @@ using BookOrbit.Domain.BorrowingRequests.DomainEvents;
 
 namespace BookOrbit.Domain.BorrowingRequests;
 
-public class BorrowingRequest : ExpirableEntity
+public class BorrowingRequest : Entity, IAuditableEntity, IExpirableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset? ExpirationDateUtc { get; set; }
+
     public Guid BorrowingStudentId { get; }
     public Guid LendingRecordId { get; }
     public BorrowingRequestState State { get; private set; }

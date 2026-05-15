@@ -29,23 +29,24 @@ public class AuditableEntityInterceptor
         var utcNow = timeProvider.GetUtcNow();
         var userId = string.IsNullOrWhiteSpace(user?.Id) ? "system" : user.Id;
 
-        foreach (var entry in context.ChangeTracker.Entries<AuditableEntity>())
+        foreach (var entry in context.ChangeTracker.Entries().Where(e => e.Entity is IAuditableEntity))
         {
             if ((entry.State is EntityState.Added or EntityState.Modified) || entry.HasChangedOwnedEntities())
             {
+                var auditableEntity = (IAuditableEntity)entry.Entity;
 
                 if (entry.State == EntityState.Added)
                 {
-                    entry.Entity.CreatedBy = userId;
-                    entry.Entity.CreatedAtUtc = utcNow;
+                    auditableEntity.CreatedBy = userId;
+                    auditableEntity.CreatedAtUtc = utcNow;
                 }
 
-                entry.Entity.LastModifiedBy = userId;
-                entry.Entity.LastModifiedUtc = utcNow;
+                auditableEntity.LastModifiedBy = userId;
+                auditableEntity.LastModifiedUtc = utcNow;
 
                 foreach (var ownedEntry in entry.References)
                 {
-                    if (ownedEntry.TargetEntry is { Entity: AuditableEntity ownedEntity } && ownedEntry.TargetEntry.State is EntityState.Added or EntityState.Modified)
+                    if (ownedEntry.TargetEntry is { Entity: IAuditableEntity ownedEntity } && ownedEntry.TargetEntry.State is EntityState.Added or EntityState.Modified)
                     {
                         if (ownedEntry.TargetEntry.State == EntityState.Added)
                         {

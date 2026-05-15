@@ -1,7 +1,12 @@
 namespace BookOrbit.Domain.Identity;
 
-public sealed class RefreshToken : AuditableEntity
+public sealed class RefreshToken : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+
     public string? Token { get; }
     public string? UserId { get; }
     public DateTimeOffset ExpiresOnUtc { get; }

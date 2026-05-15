@@ -31,7 +31,7 @@ namespace BookOrbit.Infrastructure.BackgroundJobs
 
                 var entityTypes = context.Model.GetEntityTypes()
                     .Where(e =>
-                        typeof(ExpirableEntity).IsAssignableFrom(e.ClrType) &&
+                        typeof(IExpirableEntity).IsAssignableFrom(e.ClrType) &&
                         !e.IsOwned() &&
                         !e.ClrType.IsAbstract);
 

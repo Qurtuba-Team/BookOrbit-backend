@@ -2,8 +2,13 @@ using BookOrbit.Domain.Students;
 
 namespace BookOrbit.Domain.ChatGroups;
 
-public class ChatGroup : AuditableEntity
+public class ChatGroup : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public string? CreatedBy { get; set; }
+    public DateTimeOffset LastModifiedUtc { get; set; }
+    public string? LastModifiedBy { get; set; }
+
     public Guid Student1Id { get; }
     public Guid Student2Id { get; }
 
