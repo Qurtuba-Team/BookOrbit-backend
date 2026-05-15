@@ -1,6 +1,7 @@
 ﻿namespace BookOrbit.Application.Features.Students.Commands.StateMachien.ActivateStudent;
 public class ActivateStudentCommandHandler(
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<ActivateStudentCommandHandler> logger,
     HybridCache cache) : IRequestHandler<ActivateStudentCommand, Result<Updated>>
 {
@@ -19,6 +20,11 @@ public class ActivateStudentCommandHandler(
 
         if (activationResult.IsFailure)
             return activationResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(student, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(StudentCachingConstants.StudentTag, ct);

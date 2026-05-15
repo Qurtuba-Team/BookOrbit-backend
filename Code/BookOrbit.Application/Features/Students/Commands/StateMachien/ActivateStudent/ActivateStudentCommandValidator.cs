@@ -6,5 +6,9 @@ public class ActivateStudentCommandValidator : AbstractValidator<ActivateStudent
         RuleFor(x => x.StudentId)
             .Cascade(CascadeMode.Stop)
             .StudentIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

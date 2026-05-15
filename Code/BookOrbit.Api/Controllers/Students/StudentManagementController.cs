@@ -28,11 +28,12 @@ public class StudentManagementController(
     [EndpointDescription("Approves the specified student after the required validation checks pass so the student can move forward in the account lifecycle.")]
     [EndpointName("ApproveStudent")]
     [MapToApiVersion("1.0")]
-    public async Task<ActionResult> ApproveStudent([FromRoute] Guid studentId, CancellationToken ct)
+    public async Task<ActionResult> ApproveStudent([FromRoute] Guid studentId, [FromBody] ApproveStudentRequest request, CancellationToken ct)
     {
         var result = await sender.Send(
             new ApproveStudentCommand(
-                studentId),
+                studentId,
+                request.RowVersion),
             ct);
 
         return result.Match(
@@ -54,11 +55,12 @@ public class StudentManagementController(
     [EndpointDescription("Marks the specified student as active after approval so the student can use the platform according to the assigned permissions.")]
     [EndpointName("ActivateStudent")]
     [MapToApiVersion("1.0")]
-    public async Task<ActionResult> ActivateStudent([FromRoute] Guid studentId, CancellationToken ct)
+    public async Task<ActionResult> ActivateStudent([FromRoute] Guid studentId, [FromBody] ActivateStudentRequest request, CancellationToken ct)
     {
         var result = await sender.Send(
             new ActivateStudentCommand(
-                studentId),
+                studentId,
+                request.RowVersion),
             ct);
 
         return result.Match(
@@ -79,11 +81,12 @@ public class StudentManagementController(
     [EndpointDescription("Blocks the specified student from using the platform by moving the account into a banned state until further administrative action is taken.")]
     [EndpointName("BanStudent")]
     [MapToApiVersion("1.0")]
-    public async Task<ActionResult> BanStudent([FromRoute] Guid studentId, CancellationToken ct)
+    public async Task<ActionResult> BanStudent([FromRoute] Guid studentId, [FromBody] BanStudentRequest request, CancellationToken ct)
     {
         var result = await sender.Send(
             new BanStudentCommand(
-                studentId),
+                studentId,
+                request.RowVersion),
             ct);
 
         return result.Match(

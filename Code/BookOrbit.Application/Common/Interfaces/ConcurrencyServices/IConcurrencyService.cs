@@ -4,5 +4,5 @@ public interface IConcurrencyService
 {
     Result<Success> SetOriginalRowVersion(
       IConcurrencyEntity entity,
-      string originalRowVersion);
+      string? originalRowVersion);
 }

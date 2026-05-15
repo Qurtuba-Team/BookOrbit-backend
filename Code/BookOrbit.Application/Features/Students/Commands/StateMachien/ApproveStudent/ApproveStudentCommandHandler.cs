@@ -4,6 +4,7 @@ public class ApproveStudentCommandHandler (
     TimeProvider timeProvider,
     IIdentityService identityService,
     IMaskingService maskingService,
+    IConcurrencyService concurrencyService,
     ILogger<ApproveStudentCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<ApproveStudentCommand, Result<Updated>>
@@ -36,6 +37,11 @@ public class ApproveStudentCommandHandler (
 
         if (approveResult.IsFailure)
             return approveResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(student, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(StudentCachingConstants.StudentTag, ct);

@@ -12,6 +12,7 @@ using BookOrbit.Application.SubcutaneousTests.Students.TestDoubles;
 using BookOrbit.Domain.Students.Enums;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using BookOrbit.Infrastructure.Services.ConcurrencyServices;
 using Xunit;
 
 public class StudentCommandsSubcutaneousTests
@@ -54,6 +55,7 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var student = StudentTestFactory.CreateStudent();
         context.Students.Add(student);
         await context.SaveChangesAsync();
@@ -61,9 +63,14 @@ public class StudentCommandsSubcutaneousTests
         var handler = new UpdateStudentCommandHandler(
             NullLogger<UpdateStudentCommandHandler>.Instance,
             context,
-            cache);
+            cache,
+            concurrencyService);
 
-        var command = new UpdateStudentCommand(student.Id, "Updated Name", "updated.png");
+        var command = new UpdateStudentCommand(
+            student.Id,
+            "Updated Name",
+            "updated.png",
+            Convert.ToBase64String(new byte[] { 1, 2, 3 }));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -80,6 +87,7 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var identityService = new FakeIdentityService();
         var student = StudentTestFactory.CreateStudent();
         StudentTestFactory.SetCreatedAt(student, DateTimeOffset.UtcNow.AddMinutes(-10));
@@ -92,10 +100,11 @@ public class StudentCommandsSubcutaneousTests
             TimeProvider.System,
             identityService,
             new FakeMaskingService(),
+            concurrencyService,
             NullLogger<ApproveStudentCommandHandler>.Instance,
             cache);
 
-        var command = new ApproveStudentCommand(student.Id);
+        var command = new ApproveStudentCommand(student.Id, Convert.ToBase64String(new byte[] { 1, 2, 3 }));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -112,6 +121,7 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var student = StudentTestFactory.CreateStudent();
         StudentTestFactory.SetCreatedAt(student, DateTimeOffset.UtcNow.AddMinutes(-10));
         student.MarkAsApproved(DateTimeOffset.UtcNow);
@@ -120,11 +130,12 @@ public class StudentCommandsSubcutaneousTests
 
         var handler = new ActivateStudentCommandHandler(
             context,
+            concurrencyService,
             NullLogger<ActivateStudentCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new ActivateStudentCommand(student.Id), CancellationToken.None);
+        var result = await handler.Handle(new ActivateStudentCommand(student.Id, Convert.ToBase64String(new byte[] { 1, 2, 3 })), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -137,17 +148,19 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var student = StudentTestFactory.CreateStudent();
         context.Students.Add(student);
         await context.SaveChangesAsync();
 
         var handler = new BanStudentCommandHandler(
             context,
+            concurrencyService,
             NullLogger<BanStudentCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new BanStudentCommand(student.Id), CancellationToken.None);
+        var result = await handler.Handle(new BanStudentCommand(student.Id, Convert.ToBase64String(new byte[] { 1, 2, 3 })), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
