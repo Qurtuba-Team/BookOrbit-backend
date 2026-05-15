@@ -1,6 +1,7 @@
 ﻿namespace BookOrbit.Application.Features.Students.Commands.StateMachien.RejectStudent;
 public class RejectStudentCommandHandler
     (IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<RejectStudentCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<RejectStudentCommand, Result<Updated>>
@@ -21,6 +22,11 @@ public class RejectStudentCommandHandler
 
         if (rejectResult.IsFailure)
             return rejectResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(student, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(StudentCachingConstants.StudentTag, ct);

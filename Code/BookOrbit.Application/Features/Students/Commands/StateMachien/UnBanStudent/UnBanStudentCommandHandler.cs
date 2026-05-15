@@ -1,6 +1,7 @@
 ﻿namespace BookOrbit.Application.Features.Students.Commands.StateMachien.UnBanStudent;
 public class UnBanStudentCommandHandler
     (IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<UnBanStudentCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<UnBanStudentCommand, Result<Updated>>
@@ -20,6 +21,11 @@ public class UnBanStudentCommandHandler
 
         if (unBanResult.IsFailure)
             return unBanResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(student, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(StudentCachingConstants.StudentTag, ct);

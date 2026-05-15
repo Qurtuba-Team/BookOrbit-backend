@@ -173,17 +173,19 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var student = StudentTestFactory.CreateStudent();
         context.Students.Add(student);
         await context.SaveChangesAsync();
 
         var handler = new RejectStudentCommandHandler(
             context,
+            concurrencyService,
             NullLogger<RejectStudentCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new RejectStudentCommand(student.Id), CancellationToken.None);
+        var result = await handler.Handle(new RejectStudentCommand(student.Id, Convert.ToBase64String(new byte[] { 1, 2, 3 })), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -196,18 +198,20 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var student = StudentTestFactory.CreateStudent();
         student.MarkAsRejected();
         context.Students.Add(student);
         await context.SaveChangesAsync();
 
         var handler = new PendStudentCommandHandler(
-            NullLogger<PendStudentCommandHandler>.Instance,
             context,
+            concurrencyService,
+            NullLogger<PendStudentCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new PendStudentCommand(student.Id), CancellationToken.None);
+        var result = await handler.Handle(new PendStudentCommand(student.Id, Convert.ToBase64String(new byte[] { 1, 2, 3 })), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -220,6 +224,7 @@ public class StudentCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
         var student = StudentTestFactory.CreateStudent();
         student.MarkAsBanned();
         context.Students.Add(student);
@@ -227,11 +232,12 @@ public class StudentCommandsSubcutaneousTests
 
         var handler = new UnBanStudentCommandHandler(
             context,
+            concurrencyService,
             NullLogger<UnBanStudentCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new UnBanStudentCommand(student.Id), CancellationToken.None);
+        var result = await handler.Handle(new UnBanStudentCommand(student.Id, Convert.ToBase64String(new byte[] { 1, 2, 3 })), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
