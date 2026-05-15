@@ -17,7 +17,7 @@ public class LendingListRecordTests
         var now = currentTime ?? DateTimeOffset.UtcNow;
         var expiration = expirationDateUtc ?? now.AddDays(1);
         var duration = borrowingDuration ?? LendingListRecord.MinBorrowingDurationInDays;
-        var pointCost = cost ?? new Point(LendingListRecord.MinCostInPoints);
+        var pointCost = cost ?? Point.Create(LendingListRecord.MinCostInPoints).Value;
 
         return LendingListRecord.Create(
             Guid.NewGuid(),
@@ -37,7 +37,7 @@ public class LendingListRecordTests
         var id = Guid.NewGuid();
         var bookCopyId = Guid.NewGuid();
         var duration = LendingListRecord.MinBorrowingDurationInDays;
-        var cost = new Point(10);
+        var cost = Point.Create(10).Value;
 
         // Act
         var result = LendingListRecord.Create(id, bookCopyId, duration, cost, expiration, now);
@@ -59,7 +59,7 @@ public class LendingListRecordTests
         var now = DateTimeOffset.UtcNow;
 
         // Act
-        var result = LendingListRecord.Create(Guid.Empty, Guid.NewGuid(), 7, new Point(1), now.AddDays(1), now);
+        var result = LendingListRecord.Create(Guid.Empty, Guid.NewGuid(), 7, Point.Create(1).Value, now.AddDays(1), now);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -73,7 +73,7 @@ public class LendingListRecordTests
         var now = DateTimeOffset.UtcNow;
 
         // Act
-        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.Empty, 7, new Point(1), now.AddDays(1), now);
+        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.Empty, 7, Point.Create(1).Value, now.AddDays(1), now);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -89,7 +89,7 @@ public class LendingListRecordTests
         var now = DateTimeOffset.UtcNow;
 
         // Act
-        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.NewGuid(), duration, new Point(1), now.AddDays(1), now);
+        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.NewGuid(), duration, Point.Create(1).Value, now.AddDays(1), now);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -117,10 +117,10 @@ public class LendingListRecordTests
     {
         // Arrange
         var now = DateTimeOffset.UtcNow;
-        var cost = new Point(costValue <= 0 ? 1 : costValue);
+        var cost = Point.Create(costValue <= 0 ? 1 : costValue).Value;
 
         // Act
-        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.NewGuid(), 7, costValue <= 0 ? new Point(0) : cost, now.AddDays(1), now);
+        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.NewGuid(), 7, costValue <= 0 ? Point.Create(0).Value : cost, now.AddDays(1), now);
 
         // Assert
         result.IsFailure.Should().BeTrue();
@@ -137,7 +137,7 @@ public class LendingListRecordTests
         var expiration = now.AddDays(offsetDays);
 
         // Act
-        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.NewGuid(), 7, new Point(1), expiration, now);
+        var result = LendingListRecord.Create(Guid.NewGuid(), Guid.NewGuid(), 7, Point.Create(1).Value, expiration, now);
 
         // Assert
         result.IsFailure.Should().BeTrue();
