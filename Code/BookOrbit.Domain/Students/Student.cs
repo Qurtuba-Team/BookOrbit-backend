@@ -21,7 +21,7 @@ public class Student : Entity, IAuditableEntity , IConcurrencyEntity
    //Identity
    public string UserId { get; } = null!;
 
-    public byte[] RowVersion { get; private set; } = null!;
+    public byte[] RowVersion { get; private set; } = [];
 
     private Student()
     { }

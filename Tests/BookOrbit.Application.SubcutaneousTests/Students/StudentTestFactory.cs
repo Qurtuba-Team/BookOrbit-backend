@@ -62,7 +62,7 @@ internal static class StudentTestFactory
             telegram = TelegramUserId.Create(telegramUserId).Value;
         }
 
-        return Student.Create(
+        var student = Student.Create(
             Guid.NewGuid(),
             studentName,
             universityMail,
@@ -70,7 +70,15 @@ internal static class StudentTestFactory
             userId,
             phone,
             telegram).Value;
+
+        SetRowVersion(student, CreateRowVersion());
+
+        return student;
     }
+
+    public static byte[] CreateRowVersion() => [1, 2, 3];
+
+    public static string CreateRowVersionBase64() => Convert.ToBase64String(CreateRowVersion());
 
     public static Book CreateBook(
         string title = "Test Book",
@@ -218,6 +226,21 @@ internal static class StudentTestFactory
 
         var field = typeof(TTarget).GetField($"<{propertyName}>k__BackingField", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
         field?.SetValue(target, value);
+    }
+
+    public static void SetRowVersion<TTarget>(TTarget target, byte[] rowVersion)
+        where TTarget : class
+    {
+        var property = typeof(TTarget).GetProperty("RowVersion", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic);
+
+        if (property != null && property.CanWrite)
+        {
+            property.SetValue(target, rowVersion);
+            return;
+        }
+
+        var field = typeof(TTarget).GetField("<RowVersion>k__BackingField", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+        field?.SetValue(target, rowVersion);
     }
 
     private sealed class NoOpMediator : IMediator
