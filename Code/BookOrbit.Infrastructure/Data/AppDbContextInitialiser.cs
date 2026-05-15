@@ -503,7 +503,7 @@ public class AppDbContextInitialiser(
             return;
         }
 
-        var returnResult = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(transactionResult.Value.Id));
+        var returnResult = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(transactionResult.Value.Id, Convert.ToBase64String(transactionResult.Value.RowVersion ?? [])));
 
         if (returnResult.IsFailure)
         {
@@ -609,7 +609,7 @@ public class AppDbContextInitialiser(
             return;
         }
 
-        var lostResult = await sender.Send(new MarkAsLostBorrowingTransactionCommand(transactionResult.Value.Id));
+        var lostResult = await sender.Send(new MarkAsLostBorrowingTransactionCommand(transactionResult.Value.Id, Convert.ToBase64String(transactionResult.Value.RowVersion ?? [])));
 
         if (lostResult.IsFailure)
         {

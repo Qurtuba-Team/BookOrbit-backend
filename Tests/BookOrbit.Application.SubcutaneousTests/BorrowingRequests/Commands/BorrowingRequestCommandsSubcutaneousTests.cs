@@ -179,7 +179,7 @@ public class BorrowingRequestCommandsSubcutaneousTests
             var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-acc");
             var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-acc");
             var book = StudentTestFactory.CreateBook();
-            var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, DateTimeOffset.UtcNow);
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
             var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
             var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
 
@@ -208,7 +208,7 @@ public class BorrowingRequestCommandsSubcutaneousTests
 
             var borrower = StudentTestFactory.CreateStudent(name: "Borrower Reject", userId: "borrower-rej");
             var book = StudentTestFactory.CreateBook();
-            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), DateTimeOffset.UtcNow);
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), BookCopyCondition.New);
             var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
             var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
 
@@ -236,7 +236,7 @@ public class BorrowingRequestCommandsSubcutaneousTests
 
             var borrower = StudentTestFactory.CreateStudent(name: "Borrower Cancel", userId: "borrower-canc");
             var book = StudentTestFactory.CreateBook();
-            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), DateTimeOffset.UtcNow);
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), BookCopyCondition.New);
             var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
             var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
 
@@ -264,7 +264,7 @@ public class BorrowingRequestCommandsSubcutaneousTests
 
             var borrower = StudentTestFactory.CreateStudent(name: "Borrower Expire", userId: "borrower-exp");
             var book = StudentTestFactory.CreateBook();
-            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), DateTimeOffset.UtcNow);
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), BookCopyCondition.New);
             var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
             var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
 

@@ -100,14 +100,18 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         context.BorrowingTransactions.Add(transaction);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MarkAsReturnedBorrowingTransactionCommandHandler(
             context,
             TimeProvider.System,
+            concurrencyService,
             NullLogger<MarkAsReturnedBorrowingTransactionCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id), CancellationToken.None);
+        var rowVersion = StudentTestFactory.CreateRowVersionBase64();
+        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id, rowVersion), CancellationToken.None);
 
         // Assert
         result.Errors.Select(error => error.Code).Should().BeEmpty();
@@ -144,12 +148,15 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         context.BorrowingTransactions.Add(transaction);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MarkAsLostBorrowingTransactionCommandHandler(
             context,
+            concurrencyService,
             NullLogger<MarkAsLostBorrowingTransactionCommandHandler>.Instance);
 
         // Act
-        var result = await handler.Handle(new MarkAsLostBorrowingTransactionCommand(transaction.Id), CancellationToken.None);
+        var result = await handler.Handle(new MarkAsLostBorrowingTransactionCommand(transaction.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.Errors.Select(error => error.Code).Should().BeEmpty();
@@ -254,14 +261,17 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         context.BorrowingTransactions.Add(transaction);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MarkAsReturnedBorrowingTransactionCommandHandler(
             context,
             TimeProvider.System,
+            concurrencyService,
             NullLogger<MarkAsReturnedBorrowingTransactionCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id), CancellationToken.None);
+        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -276,9 +286,12 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
         var cache = StudentTestFactory.CreateHybridCache();
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MarkAsReturnedBorrowingTransactionCommandHandler(
             context,
             TimeProvider.System,
+            concurrencyService,
             NullLogger<MarkAsReturnedBorrowingTransactionCommandHandler>.Instance,
             cache);
 
