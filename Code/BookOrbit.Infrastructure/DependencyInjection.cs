@@ -1,4 +1,3 @@
-
 namespace BookOrbit.Infrastructure;
 static public class DependencyInjection
 {
@@ -96,6 +95,7 @@ static public class DependencyInjection
         services.AddTransient<IRealTimeService, RealTimeService>();
         services.AddTransient<IOutboxMessageService, OutboxMessageService>();
         services.AddTransient<ISerializationService, SerializationService>();
+        services.AddTransient<IConcurrencyService, ConcurrencyService>();
         return services;
     }
     static private IServiceCollection AddPolicies(this IServiceCollection services)

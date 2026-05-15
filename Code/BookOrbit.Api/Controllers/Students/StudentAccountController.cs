@@ -127,7 +127,8 @@ public class StudentAccountController(
             new UpdateStudentCommand(
                 studentId,
             request.Name,
-            imageFileName),
+            imageFileName,
+            request.RowVersion),
             ct);
 
         if(result.IsSuccess)

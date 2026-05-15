@@ -2,7 +2,7 @@ using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Domain.Students;
 
-public class Student : Entity, IAuditableEntity
+public class Student : Entity, IAuditableEntity , IConcurrencyEntity
 {
     public DateTimeOffset CreatedAtUtc { get; }
     public string? CreatedBy { get; }
@@ -21,6 +21,7 @@ public class Student : Entity, IAuditableEntity
    //Identity
    public string UserId { get; } = null!;
 
+    public byte[] RowVersion { get; private set; } = null!;
 
     private Student()
     { }

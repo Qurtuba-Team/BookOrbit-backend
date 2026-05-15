@@ -11,6 +11,7 @@ public record StudentDtoWithContactInfo
     public DateTimeOffset? JoinDate { get; set; }
     public string? PhoneNumber { get; set; } = null;
     public string? TelegramUserId { get; set; } = null;
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private StudentDtoWithContactInfo() { }
@@ -24,7 +25,8 @@ public record StudentDtoWithContactInfo
     StudentState state,
     DateTimeOffset? joinDate,
     string? phoneNumber,
-    string? telegramUserId
+    string? telegramUserId,
+    byte[] rowVersion
     )
     {
         Id = id;
@@ -35,6 +37,7 @@ public record StudentDtoWithContactInfo
         JoinDate = joinDate;
         PhoneNumber = phoneNumber;
         TelegramUserId = telegramUserId;
+        RowVersion = rowVersion;
     }
 
     static public StudentDtoWithContactInfo FromEntity(Student entity)
@@ -47,6 +50,7 @@ public record StudentDtoWithContactInfo
             entity.State,
             entity.JoinDateUtc,
             entity.PhoneNumber?.Value,
-            entity.TelegramUserId?.Value);
+            entity.TelegramUserId?.Value,
+            entity.RowVersion);
 
 }

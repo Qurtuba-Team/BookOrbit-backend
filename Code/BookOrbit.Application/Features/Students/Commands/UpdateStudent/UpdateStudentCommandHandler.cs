@@ -3,7 +3,8 @@
 public class UpdateStudentCommandHandler
     (ILogger<UpdateStudentCommandHandler>logger,
     IAppDbContext context,
-    HybridCache cache)
+    HybridCache cache,
+    IConcurrencyService concurrencyService)
     : IRequestHandler<UpdateStudentCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(UpdateStudentCommand command, CancellationToken ct)
@@ -29,6 +30,12 @@ public class UpdateStudentCommandHandler
 
         if (updateResult.IsFailure)
             return updateResult.Errors;
+
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(student, command.RowVersion);
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
+
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(StudentCachingConstants.StudentTag, ct);
