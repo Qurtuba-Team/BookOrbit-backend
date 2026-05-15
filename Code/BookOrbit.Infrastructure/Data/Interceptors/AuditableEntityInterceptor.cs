@@ -37,12 +37,12 @@ public class AuditableEntityInterceptor
 
                 if (entry.State == EntityState.Added)
                 {
-                    auditableEntity.CreatedBy = userId;
-                    auditableEntity.CreatedAtUtc = utcNow;
+                    entry.Property(nameof(IAuditableEntity.CreatedBy)).CurrentValue = userId;
+                    entry.Property(nameof(IAuditableEntity.CreatedAtUtc)).CurrentValue = utcNow;
                 }
 
-                auditableEntity.LastModifiedBy = userId;
-                auditableEntity.LastModifiedUtc = utcNow;
+                entry.Property(nameof(IAuditableEntity.LastModifiedBy)).CurrentValue = userId;
+                entry.Property(nameof(IAuditableEntity.LastModifiedUtc)).CurrentValue = utcNow;
 
                 foreach (var ownedEntry in entry.References)
                 {
@@ -50,12 +50,12 @@ public class AuditableEntityInterceptor
                     {
                         if (ownedEntry.TargetEntry.State == EntityState.Added)
                         {
-                            ownedEntity.CreatedBy = userId;
-                            ownedEntity.CreatedAtUtc = utcNow;
+                            ownedEntry.TargetEntry.Property(nameof(IAuditableEntity.CreatedBy)).CurrentValue = userId;
+                            ownedEntry.TargetEntry.Property(nameof(IAuditableEntity.CreatedAtUtc)).CurrentValue = utcNow;
                         }
 
-                        ownedEntity.LastModifiedBy = userId;
-                        ownedEntity.LastModifiedUtc = utcNow;
+                        ownedEntry.TargetEntry.Property(nameof(IAuditableEntity.LastModifiedBy)).CurrentValue = userId;
+                        ownedEntry.TargetEntry.Property(nameof(IAuditableEntity.LastModifiedUtc)).CurrentValue = utcNow;
                     }
                 }
             }

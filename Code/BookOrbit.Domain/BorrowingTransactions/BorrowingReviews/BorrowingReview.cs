@@ -4,10 +4,10 @@ namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 
 public class BorrowingReview : Entity, IAuditableEntity
 {
-    public DateTimeOffset CreatedAtUtc { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTimeOffset LastModifiedUtc { get; set; }
-    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
 
     public Guid ReviewerStudentId { get; }
     public Guid ReviewedStudentId { get; }

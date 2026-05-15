@@ -2,6 +2,6 @@
 
 public interface IExpirableEntity
 {
-    DateTimeOffset? ExpirationDateUtc { get; set; }
+    DateTimeOffset? ExpirationDateUtc { get;}
 }
 

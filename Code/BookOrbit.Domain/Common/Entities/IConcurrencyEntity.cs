@@ -2,5 +2,5 @@
 
 public interface IConcurrencyEntity
 {
-    byte[] RowVersion { get; set; }
+    byte[] RowVersion { get; }
 }

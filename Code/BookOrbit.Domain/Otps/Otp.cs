@@ -2,16 +2,16 @@
 namespace BookOrbit.Domain.Otps;
 public class Otp : Entity, IAuditableEntity, IExpirableEntity
 {
-    public DateTimeOffset CreatedAtUtc { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTimeOffset LastModifiedUtc { get; set; }
-    public string? LastModifiedBy { get; set; }
-    public DateTimeOffset? ExpirationDateUtc { get; set; }
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+    public DateTimeOffset? ExpirationDateUtc { get; }
 
-    public Guid TargetId { get; set; }
-    public string Code { get; set; }
-    public OtpType Type { get; set; }
-    public bool IsUsed { get; set; }
+    public Guid TargetId { get; }
+    public string Code { get; }
+    public OtpType Type { get; }
+    public bool IsUsed { get; private set; }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private Otp() { }

@@ -5,11 +5,11 @@ namespace BookOrbit.Domain.BorrowingRequests;
 
 public class BorrowingRequest : Entity, IAuditableEntity, IExpirableEntity
 {
-    public DateTimeOffset CreatedAtUtc { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTimeOffset LastModifiedUtc { get; set; }
-    public string? LastModifiedBy { get; set; }
-    public DateTimeOffset? ExpirationDateUtc { get; set; }
+    public DateTimeOffset CreatedAtUtc { get;}
+    public string? CreatedBy { get;}
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+    public DateTimeOffset? ExpirationDateUtc { get; }
 
     public Guid BorrowingStudentId { get; }
     public Guid LendingRecordId { get; }

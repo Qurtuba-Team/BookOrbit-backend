@@ -1,10 +1,10 @@
 namespace BookOrbit.Domain.Books;
 public class Book : Entity, IAuditableEntity
 {
-    public DateTimeOffset CreatedAtUtc { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTimeOffset LastModifiedUtc { get; set; }
-    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset CreatedAtUtc { get;}
+    public string? CreatedBy { get;}
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
 
     public BookTitle Title { get; private set; } = null!;
     public ISBN ISBN { get; } = null!;

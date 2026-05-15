@@ -2,10 +2,10 @@
 
 public class BorrowingTransactionEvent : Entity, IAuditableEntity
 {
-    public DateTimeOffset CreatedAtUtc { get; set; }
-    public string? CreatedBy { get; set; }
-    public DateTimeOffset LastModifiedUtc { get; set; }
-    public string? LastModifiedBy { get; set; }
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
 
     public Guid BorrowingTransactionId { get; }
     public BorrowingTransactionState State { get; }
