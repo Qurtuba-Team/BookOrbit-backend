@@ -2,8 +2,13 @@ using BookOrbit.Domain.Students.DomainEvents;
 
 namespace BookOrbit.Domain.Students;
 
-public class Student : AuditableEntity
+public class Student : Entity, IAuditableEntity , IConcurrencyEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+
     public StudentName Name { get; private set; } = null!;
     public PhoneNumber? PhoneNumber { get; }
     public TelegramUserId? TelegramUserId { get; }
@@ -16,6 +21,7 @@ public class Student : AuditableEntity
    //Identity
    public string UserId { get; } = null!;
 
+    public byte[] RowVersion { get; private set; } = [];
 
     private Student()
     { }
@@ -37,7 +43,7 @@ public class Student : AuditableEntity
         PhoneNumber = phoneNumber;
         TelegramUserId = telegramUserId;
         State = StudentState.Pending;
-        Points = new Point(Point.StudentInitialPoint);
+        Points = Point.StudentInitialPoint;
     }
 
 

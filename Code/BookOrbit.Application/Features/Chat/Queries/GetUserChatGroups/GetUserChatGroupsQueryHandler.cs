@@ -1,8 +1,5 @@
-using BookOrbit.Application.Features.Chat.Dtos;
-
 namespace BookOrbit.Application.Features.Chat.Queries.GetUserChatGroups;
 public class GetUserChatGroupsQueryHandler(
-    ILogger<GetUserChatGroupsQueryHandler> logger,
     IAppDbContext context) : IRequestHandler<GetUserChatGroupsQuery, Result<PaginatedList<ChatGroupListItemDto>>>
 {
     public async Task<Result<PaginatedList<ChatGroupListItemDto>>> Handle(GetUserChatGroupsQuery query, CancellationToken ct)

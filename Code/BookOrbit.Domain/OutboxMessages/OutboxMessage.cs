@@ -1,6 +1,14 @@
 ﻿namespace BookOrbit.Domain.OutboxMessages;
-public class OutboxMessage : AuditableEntity
+public class OutboxMessage : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+    public OutboxMessageState State { get; private set; }
+    public string Payload { get; private set; }
+    public int RetryCount { get; private set; }
+
     private OutboxMessage(
         Guid id,
         string payload) : base(id)
@@ -10,9 +18,7 @@ public class OutboxMessage : AuditableEntity
         RetryCount = 0;
     }
 
-    public OutboxMessageState State { get; private set; }
-    public string Payload { get; private set; } = null!;
-    public int RetryCount { get; private set; }
+
 
 
     static public Result<OutboxMessage> Create(Guid id,

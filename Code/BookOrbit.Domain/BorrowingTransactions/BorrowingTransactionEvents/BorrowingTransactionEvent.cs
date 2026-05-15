@@ -1,7 +1,12 @@
 ﻿namespace BookOrbit.Domain.BorrowingTransactions.BorrowingTransactionEvents;
 
-public class BorrowingTransactionEvent : AuditableEntity
+public class BorrowingTransactionEvent : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+
     public Guid BorrowingTransactionId { get; }
     public BorrowingTransactionState State { get; }
 

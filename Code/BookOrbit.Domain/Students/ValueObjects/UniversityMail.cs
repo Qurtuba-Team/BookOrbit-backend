@@ -1,12 +1,16 @@
 ﻿namespace BookOrbit.Domain.Students.ValueObjects;
 
-public record UniversityMail(string Value) : ValueObject<string>(Value)
+public record UniversityMail : ValueObject<string>
 {
     private static readonly Regex UniversityMailRegex =
    new(@"^[A-Za-z0-9._%+-]+@std\.mans\.edu\.eg$", RegexOptions.Compiled);
 
     public const int MaxLength = 320;
 
+
+    private UniversityMail(string Value) : base(Value)
+    {
+    }
 
     public static string Normalize(string value)
     {

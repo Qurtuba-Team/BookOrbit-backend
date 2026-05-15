@@ -3,8 +3,13 @@ using BookOrbit.Domain.Students;
 
 namespace BookOrbit.Domain.ChatMessages;
 
-public class ChatMessage : AuditableEntity
+public class ChatMessage : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+
     public string Content { get; private set; } = null!;
     public Guid SenderId { get; }
     public Guid ChatGroupId { get; }

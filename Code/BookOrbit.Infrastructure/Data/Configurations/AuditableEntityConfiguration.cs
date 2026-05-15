@@ -3,7 +3,7 @@
     public static class AuditableEntityConfiguration
     {
         public static void ConfigureAuditable<T>(this EntityTypeBuilder<T> builder)
-            where T : AuditableEntity
+            where T : class, IAuditableEntity
         {
             builder.Property(e => e.CreatedAtUtc)
                 .HasColumnType("datetimeoffset")

@@ -2,8 +2,13 @@ using BookOrbit.Domain.BorrowingTransactions.BorrowingReviews.DomainEvents;
 
 namespace BookOrbit.Domain.BorrowingTransactions.BorrowingReviews;
 
-public class BorrowingReview : AuditableEntity
+public class BorrowingReview : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+
     public Guid ReviewerStudentId { get; }
     public Guid ReviewedStudentId { get; }
     public Guid BorrowingTransactionId { get; }

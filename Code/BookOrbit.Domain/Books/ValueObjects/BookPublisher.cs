@@ -1,5 +1,5 @@
 ﻿namespace BookOrbit.Domain.Books.ValueObjects;
-public record BookPublisher(string Value) : ValueObject<string>(Value)
+public record BookPublisher : ValueObject<string>
 {
 
     private static readonly Regex BookPublisherRegex =
@@ -7,6 +7,10 @@ public record BookPublisher(string Value) : ValueObject<string>(Value)
 
     public const int MinLength = 3;
     public const int MaxLength = 150;
+
+    private BookPublisher(string Value) : base(Value)
+    {
+    }
 
     public static string Normalize(string value)
     {

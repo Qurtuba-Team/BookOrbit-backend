@@ -12,6 +12,8 @@ public record StudentListItemDto
     public int Points { get; set; }
     public StudentState State { get; set; }
     public DateTimeOffset? JoinDate { get; set; }
+    public byte[] RowVersion { get; set; } = [];
+
 
     [JsonConstructor]
     private StudentListItemDto() { }
@@ -24,7 +26,8 @@ public record StudentListItemDto
   string universityMailAddress,
   int points,
   StudentState state,
-  DateTimeOffset? joinDate)
+  DateTimeOffset? joinDate,
+  byte[] rowVersion)
     {
         Id = id;
         Name = name;
@@ -34,6 +37,7 @@ public record StudentListItemDto
         Points = points;
         State = state;
         JoinDate = joinDate;
+        RowVersion = rowVersion;
     }
 
     public static Expression<Func<Student, StudentListItemDto>> Projection =>
@@ -45,7 +49,8 @@ public record StudentListItemDto
         s.UniversityMail.Value,
         s.Points.Value,
         s.State,
-        s.JoinDateUtc
+        s.JoinDateUtc,
+        s.RowVersion
     );
 
 }

@@ -8,6 +8,7 @@ public record StudentDto
     public int Points { get; set; }
     public StudentState State { get; set; }
     public DateTimeOffset? JoinDate { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private StudentDto() { }
@@ -18,13 +19,15 @@ public record StudentDto
     string name,
     int points,
     StudentState state,
-    DateTimeOffset? joinDate)
+    DateTimeOffset? joinDate,
+    byte[] rowVersion)
     {
         Id = id;
         Name = name;
         Points = points;
         State = state;
         JoinDate = joinDate;
+        RowVersion = rowVersion;
     }
 
     static public StudentDto FromEntity(Student entity)
@@ -34,6 +37,7 @@ public record StudentDto
             entity.Name.Value,
             entity.Points.Value,
             entity.State,
-            entity.JoinDateUtc);
+            entity.JoinDateUtc,
+            entity.RowVersion);
 
 }

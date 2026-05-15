@@ -6,5 +6,9 @@ public class RejectStudentCommandValidator : AbstractValidator<RejectStudentComm
         RuleFor(x => x.StudentId)
             .Cascade(CascadeMode.Stop)
             .StudentIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

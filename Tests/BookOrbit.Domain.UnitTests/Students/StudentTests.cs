@@ -92,7 +92,7 @@ public class StudentTests
         result.Value.PhoneNumber.Should().Be(phoneNumber);
         result.Value.TelegramUserId.Should().BeNull();
         result.Value.State.Should().Be(StudentState.Pending);
-        result.Value.Points.Value.Should().Be(Point.StudentInitialPoint);
+        result.Value.Points.Value.Should().Be(Point.StudentInitialPoint.Value);
         result.Value.JoinDateUtc.Should().BeNull();
     }
 
@@ -355,7 +355,7 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        var pointsToAdd = new Point(2);
+        var pointsToAdd = Point.Create(2).Value;
         var originalPoints = student.Points.Value;
 
         // Act
@@ -371,8 +371,8 @@ public class StudentTests
     {
         // Arrange
         var student = CreateValidStudent();
-        student.AddPoints(new Point(2));
-        var pointsToDeduct = new Point(1);
+        student.AddPoints(Point.Create(2).Value);
+        var pointsToDeduct = Point.Create(1).Value;
         var originalPoints = student.Points.Value;
 
         // Act

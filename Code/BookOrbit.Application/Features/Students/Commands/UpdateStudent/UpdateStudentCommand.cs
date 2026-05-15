@@ -3,4 +3,5 @@
 public record UpdateStudentCommand(
     Guid Id,
     string Name,
-    string PersonalPhotoFileName) : IRequest<Result<Updated>>;
+    string PersonalPhotoFileName,
+    string RowVersion) : ConcurrencyCommand<Result<Updated>>(RowVersion);

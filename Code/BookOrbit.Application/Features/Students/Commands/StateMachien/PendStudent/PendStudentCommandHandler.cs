@@ -1,8 +1,9 @@
 ﻿
 namespace BookOrbit.Application.Features.Students.Commands.StateMachien.PendStudent;
 public class PendStudentCommandHandler(
-    ILogger<PendStudentCommandHandler> logger,
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
+    ILogger<PendStudentCommandHandler> logger,
     HybridCache cache) : IRequestHandler<PendStudentCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(PendStudentCommand command, CancellationToken ct)
@@ -20,6 +21,11 @@ public class PendStudentCommandHandler(
 
         if (pendResult.IsFailure)
             return pendResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(student, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(StudentCachingConstants.StudentTag,ct);

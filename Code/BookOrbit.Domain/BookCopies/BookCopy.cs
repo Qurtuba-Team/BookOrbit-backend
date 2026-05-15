@@ -1,6 +1,11 @@
 ﻿namespace BookOrbit.Domain.BookCopies;
-public class BookCopy : AuditableEntity
+public class BookCopy : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get;}
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+
     public Guid OwnerId { get; }
     public Guid BookId { get; }
     public BookCopyCondition Condition { get; private set; }

@@ -5,6 +5,7 @@ public class StudentConfiguration : IEntityTypeConfiguration<Student>
     public void Configure(EntityTypeBuilder<Student> builder)
     {
         builder.ConfigureAuditable();
+        builder.ConfigureConcurrency();
 
         builder.ToTable("Students");
 

@@ -60,7 +60,7 @@ public class BorrowingRequestCommandsSubcutaneousTests
         result.Value.State.Should().Be(BorrowingRequestState.Pending);
 
         context.BorrowingRequests.Should().HaveCount(1);
-        borrower.Points.Value.Should().Be(Point.StudentInitialPoint + 10 - lendingRecord.Cost.Value);
+        borrower.Points.Value.Should().Be(Point.StudentInitialPoint.Value + 10 - lendingRecord.Cost.Value);
     }
 
     [Fact]

@@ -1,6 +1,11 @@
 ﻿namespace BookOrbit.Domain.Notifications;
-public class Notification : AuditableEntity
+public class Notification : Entity, IAuditableEntity
 {
+    public DateTimeOffset CreatedAtUtc { get; }
+    public string? CreatedBy { get; }
+    public DateTimeOffset LastModifiedUtc { get; }
+    public string? LastModifiedBy { get; }
+
     public Guid StudentId { get; }
     public string Title { get; } = null!;
     public string Message { get; } = null!;

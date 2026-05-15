@@ -16,5 +16,9 @@ public class UpdateStudentCommandValidator : AbstractValidator<UpdateStudentComm
 
         RuleFor(x => x.PersonalPhotoFileName)
             .StudentPersonalImageRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

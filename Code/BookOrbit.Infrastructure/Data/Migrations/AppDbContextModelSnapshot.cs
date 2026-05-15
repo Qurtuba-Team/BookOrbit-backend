@@ -571,7 +571,6 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                     b.Property<string>("Payload")
                         .IsRequired()
-                        .HasMaxLength(15000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RetryCount")
@@ -662,6 +661,12 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                         .HasMaxLength(255)
                         .IsUnicode(false)
                         .HasColumnType("varchar(255)");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("State")
                         .IsRequired()
