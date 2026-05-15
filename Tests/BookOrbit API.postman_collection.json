@@ -599,6 +599,15 @@
                 "{{borrowingtransactionid}}",
                 "lost"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rowVersion\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         },
@@ -628,7 +637,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"OtpCode\":\"790105\"}",
+              "raw": "{\"OtpCode\":\"790105\",\"rowVersion\":\"\"}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1110,6 +1119,15 @@
                     "{{borrowingrequestid}}",
                     "cancel"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             },
@@ -1136,6 +1154,15 @@
                     "{{borrowingrequestid}}",
                     "reject"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             },
@@ -1162,6 +1189,15 @@
                     "{{borrowingrequestid}}",
                     "accept"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             }
@@ -1529,6 +1565,15 @@
                 "{{bookid}}",
                 "reject"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rowVersion\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         },
@@ -1555,6 +1600,15 @@
                 "{{bookid}}",
                 "available"
               ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rowVersion\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         },
@@ -1844,13 +1898,25 @@
               ]
             },
             "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "json"
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "Title",
+                  "value": "",
+                  "type": "text"
+                },
+                {
+                  "key": "CoverImage",
+                  "value": "",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "RowVersion",
+                  "value": "",
+                  "type": "text"
                 }
-              }
+              ]
             }
           },
           "event": [
@@ -2004,7 +2070,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\"condition\":\"Acceptable\"}",
+              "raw": "{\"condition\":\"Acceptable\",\"rowVersion\":\"\"}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2249,6 +2315,78 @@
           "id": "20d38172-5016-454f-bd6b-a117eb69e62c",
           "name": "Management",
           "item": [
+            {
+              "id": "76d8b9e0-1234-5678-9abc-def012345678",
+              "name": "Make Available",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}/available",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies",
+                    "{{bookcopyid}}",
+                    "available"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "87e9c0f1-2345-6789-abcd-ef0123456789",
+              "name": "Make Unavailable",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}/unavailable",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies",
+                    "{{bookcopyid}}",
+                    "unavailable"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
             {
               "id": "07ac952f-0629-4d5d-a40d-1997ee12af3c",
               "name": "ListBookCopy",
@@ -2606,6 +2744,11 @@
                       "key": "PersonalPhoto",
                       "value": "",
                       "type": "text"
+                    },
+                    {
+                      "key": "RowVersion",
+                      "value": "",
+                      "type": "text"
                     }
                   ]
                 }
@@ -2713,6 +2856,15 @@
                     "{{studentid}}",
                     "approve"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             },
@@ -2739,6 +2891,15 @@
                     "{{studentid}}",
                     "ban"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             },
@@ -2765,6 +2926,15 @@
                     "{{studentid}}",
                     "unban"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             },
@@ -2791,6 +2961,15 @@
                     "{{studentid}}",
                     "reject"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             },
@@ -2817,6 +2996,50 @@
                     "{{studentid}}",
                     "activate"
                   ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "id": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+              "name": "Pend Student",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/pend",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "pend"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
                 }
               }
             }
@@ -2964,7 +3187,7 @@
             },
             {
               "id": "1f630229-0426-4848-a8f8-dd061355bb45",
-              "name": "Gent Current Student",
+              "name": "Get Current Student",
               "request": {
                 "method": "GET",
                 "header": [
@@ -3152,6 +3375,41 @@
               ]
             }
           }
+        },
+        {
+          "id": "98f0a1b2-c3d4-4e5f-6g7h-8i9j0k1l2m3n",
+          "name": "Close",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/close",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "lendinglist",
+                "{{lendinglistrecordid}}",
+                "close"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"rowVersion\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
         }
       ]
     },
@@ -3336,7 +3594,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseurl}}/api/v1/chat/groups/{{chatgroupid}}}/read",
+              "raw": "{{baseurl}}/api/v1/chat/groups/{{chatgroupid}}/read",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3345,7 +3603,7 @@
                 "v1",
                 "chat",
                 "groups",
-                "{{chatgroupid}}}",
+                "{{chatgroupid}}",
                 "read"
               ]
             }
