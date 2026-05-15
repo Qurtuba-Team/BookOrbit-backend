@@ -90,6 +90,7 @@ public class GetBooksQueryHandler(
             b.Author.Value,
             context.BookCopies.Count(c => c.BookId == b.Id && c.State == BookCopyState.Available),
             baseUrl + "/" + b.CoverImageFileName,
-            b.Status));
+            b.Status,
+            b.RowVersion));
     }
 }

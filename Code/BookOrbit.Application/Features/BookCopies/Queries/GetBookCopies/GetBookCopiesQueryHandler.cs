@@ -74,11 +74,13 @@ public class GetBookCopiesQueryHandler(
             b.State,
             b.Owner!.Name.Value,
             b.Book!.Title.Value,
-            context.LendingListRecords.Any(l =>
+            context.LendingListRecords.Any(l => 
                 l.BookCopyId == b.Id &&
                 (l.State == LendingListRecordState.Available ||
                  l.State == LendingListRecordState.Reserved ||
                  l.State == LendingListRecordState.Borrowed)),
-            baseUrl + "/" + b.Book!.CoverImageFileName));
+            baseUrl + "/" + b.Book!.CoverImageFileName,
+            b.RowVersion));
+        
     }
 }

@@ -5,6 +5,7 @@ using BookOrbit.Domain.Students;
 namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMachien.MarkAsLostBorrowingTransaction;
 public class MarkAsLostBorrowingTransactionCommandHandler(
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<MarkAsLostBorrowingTransactionCommandHandler> logger)
     : IRequestHandler<MarkAsLostBorrowingTransactionCommand, Result<Updated>>
 {
@@ -75,6 +76,11 @@ public class MarkAsLostBorrowingTransactionCommandHandler(
         }
 
         student.DeductPoints(pointsToDeductCreationResult.Value, PointTransactionReason.Penalty);
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(transactionData.BorrowingTransaction, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
 

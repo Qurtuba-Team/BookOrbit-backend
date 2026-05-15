@@ -12,6 +12,7 @@ public record LendingListRecordListItemDto
     public int BorrowingDurationInDays { get; set; }
     public int Cost { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private LendingListRecordListItemDto() { }
@@ -27,7 +28,8 @@ public record LendingListRecordListItemDto
         LendingListRecordState state,
         int borrowingDurationInDays,
         int cost,
-        DateTimeOffset createdAt)
+        DateTimeOffset createdAt,
+        byte[] rowVersion)
     {
         Id = id;
         BookCopyId = bookCopyId;
@@ -40,6 +42,7 @@ public record LendingListRecordListItemDto
         BorrowingDurationInDays = borrowingDurationInDays;
         Cost = cost;
         CreatedAt = createdAt;
+        RowVersion = rowVersion;
     }
 
     public static Expression<Func<LendingListRecord, LendingListRecordListItemDto>> Projection =>
@@ -54,5 +57,6 @@ public record LendingListRecordListItemDto
             lr.State,
             lr.BorrowingDurationInDays,
             lr.Cost.Value,
-            lr.CreatedAtUtc);
+            lr.CreatedAtUtc,
+            lr.RowVersion);
 }

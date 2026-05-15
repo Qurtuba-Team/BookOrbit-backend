@@ -14,6 +14,7 @@ public record BookCopyDtoWithBookDetails
     public string Author { get; set; } = string.Empty;
     public bool IsListed { get; set; }
     public string BookCoverImageUrl { get; set; } = string.Empty;
+    public byte[] RowVersion { get; set; } = [];
 
 
     [JsonConstructor]
@@ -31,7 +32,8 @@ public record BookCopyDtoWithBookDetails
                                       BookCategory category,
                                       string author,
                                       bool isListed,
-                                      string bookCoverImageUrl)
+                                      string bookCoverImageUrl,
+                                      byte[] rowVersion)
     {
         Id = id;
         BookId = bookId;
@@ -46,6 +48,7 @@ public record BookCopyDtoWithBookDetails
         Author = author;
         IsListed = isListed;
         BookCoverImageUrl = bookCoverImageUrl;
+        RowVersion = rowVersion;
     }
 
     static public BookCopyDtoWithBookDetails FromEntity(
@@ -67,5 +70,6 @@ public record BookCopyDtoWithBookDetails
             book.Category,
             book.Author,
             isListed,
-            book.BookCoverImageUrl);
+            book.BookCoverImageUrl,
+            bookCopy.RowVersion);
 }

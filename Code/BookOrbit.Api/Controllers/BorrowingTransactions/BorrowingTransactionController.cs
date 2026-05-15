@@ -171,7 +171,7 @@ public class BorrowingTransactionController(
             return Problem(otpVerificationResult.Errors, HttpContext);
         }
 
-        var result = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(borrowingTransactionId), ct);
+        var result = await sender.Send(new MarkAsReturnedBorrowingTransactionCommand(borrowingTransactionId, request.RowVersion), ct);
 
         return result.Match(
             _ => NoContent(),
@@ -192,9 +192,9 @@ public class BorrowingTransactionController(
     [EndpointName("MarkBorrowingTransactionAsLost")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> MarkBorrowingTransactionAsLost([FromRoute] Guid borrowingTransactionId, CancellationToken ct)
+    public async Task<ActionResult> MarkBorrowingTransactionAsLost([FromRoute] Guid borrowingTransactionId, [FromBody] BorrowingTransactionStateChangeRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new MarkAsLostBorrowingTransactionCommand(borrowingTransactionId), ct);
+        var result = await sender.Send(new MarkAsLostBorrowingTransactionCommand(borrowingTransactionId, request.RowVersion), ct);
 
         return result.Match(
             _ => NoContent(),

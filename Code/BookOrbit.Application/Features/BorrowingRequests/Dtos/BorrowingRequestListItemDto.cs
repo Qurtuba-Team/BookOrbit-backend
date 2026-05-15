@@ -12,6 +12,7 @@ public record BorrowingRequestListItemDto
     public BorrowingRequestState State { get; set; }
     public DateTimeOffset? ExpirationDateUtc { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
 
     [JsonConstructor]
@@ -28,7 +29,8 @@ public record BorrowingRequestListItemDto
         Guid bookCopyId,
         BorrowingRequestState state,
         DateTimeOffset? expirationDateUtc,
-        DateTimeOffset createdAtUtc)
+        DateTimeOffset createdAtUtc,
+        byte[] rowVersion)
     {
         Id = id;
         BorrowingStudentId = borrowingStudentId;
@@ -41,6 +43,7 @@ public record BorrowingRequestListItemDto
         State = state;
         ExpirationDateUtc = expirationDateUtc;
         CreatedAtUtc = createdAtUtc;
+        RowVersion = rowVersion;
     }
 
     public static Expression<Func<BorrowingRequest, BorrowingRequestListItemDto>> Projection =>
@@ -55,5 +58,6 @@ public record BorrowingRequestListItemDto
             br.LendingRecord!.BookCopyId,
             br.State,
             br.ExpirationDateUtc,
-            br.CreatedAtUtc);
+            br.CreatedAtUtc,
+            br.RowVersion);
 }

@@ -2,6 +2,7 @@
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.AcceptBorrowingRequest;
 public class AcceptBorrowingRequestCommandHandler(
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<AcceptBorrowingRequestCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<AcceptBorrowingRequestCommand, Result<Updated>>
@@ -49,6 +50,10 @@ public class AcceptBorrowingRequestCommandHandler(
         if (lendingRecordMarkingResult.IsFailure)
             return lendingRecordMarkingResult.Errors;
 
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(borrowingRequestData.BorrowingRequest, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

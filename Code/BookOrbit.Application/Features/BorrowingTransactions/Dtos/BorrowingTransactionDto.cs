@@ -9,6 +9,7 @@ public record BorrowingTransactionDto
     public BorrowingTransactionState State { get; set; }
     public DateTimeOffset ExpectedReturnDate { get; set; }
     public DateTimeOffset? ActualReturnDate { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private BorrowingTransactionDto() { }
@@ -21,7 +22,8 @@ public record BorrowingTransactionDto
         Guid bookCopyId,
         BorrowingTransactionState state,
         DateTimeOffset expectedReturnDate,
-        DateTimeOffset? actualReturnDate)
+        DateTimeOffset? actualReturnDate,
+        byte[] rowVersion)
     {
         Id = id;
         BorrowingRequestId = borrowingRequestId;
@@ -31,6 +33,7 @@ public record BorrowingTransactionDto
         State = state;
         ExpectedReturnDate = expectedReturnDate;
         ActualReturnDate = actualReturnDate;
+        RowVersion = rowVersion;
     }
 
     public static BorrowingTransactionDto FromEntity(BorrowingTransaction transaction)
@@ -42,5 +45,6 @@ public record BorrowingTransactionDto
             transaction.BookCopyId,
             transaction.State,
             transaction.ExpectedReturnDate,
-            transaction.ActualReturnDate);
+            transaction.ActualReturnDate,
+            transaction.RowVersion);
 }

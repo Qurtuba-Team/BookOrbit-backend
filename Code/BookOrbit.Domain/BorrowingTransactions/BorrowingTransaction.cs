@@ -2,7 +2,7 @@ using BookOrbit.Domain.BorrowingTransactions.DomainEvents;
 
 namespace BookOrbit.Domain.BorrowingTransactions;
 
-public class BorrowingTransaction : Entity, IAuditableEntity
+public class BorrowingTransaction : Entity, IAuditableEntity, IConcurrencyEntity
 {
     public DateTimeOffset CreatedAtUtc { get; }
     public string? CreatedBy { get; }
@@ -22,6 +22,7 @@ public class BorrowingTransaction : Entity, IAuditableEntity
     public Student? LenderStudent { get; private set; }
     public Student? BorrowerStudent { get; private set; }
     public BookCopy? BookCopy { get; private set; }
+    public byte[] RowVersion { get; private set; } = [];
 
     private BorrowingTransaction() { }
 

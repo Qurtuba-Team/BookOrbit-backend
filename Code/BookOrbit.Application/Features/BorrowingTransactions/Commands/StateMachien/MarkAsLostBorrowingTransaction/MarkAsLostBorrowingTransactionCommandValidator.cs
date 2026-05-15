@@ -7,5 +7,8 @@ public class MarkAsLostBorrowingTransactionCommandValidator : AbstractValidator<
         RuleFor(x => x.BorrowingTransactionId)
             .Cascade(CascadeMode.Stop)
             .BorrowingTransactionIdRules();
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

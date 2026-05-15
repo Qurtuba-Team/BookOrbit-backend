@@ -11,6 +11,9 @@ using BookOrbit.Domain.Books.Enums;
 using BookOrbit.Domain.Students.Enums;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using BookOrbit.Infrastructure.Services.ConcurrencyServices;
+using BookOrbit.Infrastructure.Common.Errors;
+using BookOrbit.Domain.Common.Results;
 using Xunit;
 
 public class BookCopyCommandsSubcutaneousTests
@@ -69,12 +72,15 @@ public class BookCopyCommandsSubcutaneousTests
         context.BookCopies.Add(bookCopy);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new UpdateBookCopyCommandHandler(
             NullLogger<UpdateBookCopyCommandHandler>.Instance,
             context,
+            concurrencyService,
             cache);
 
-        var command = new UpdateBookCopyCommand(bookCopy.Id, BookCopyCondition.Acceptable);
+        var command = new UpdateBookCopyCommand(bookCopy.Id, BookCopyCondition.Acceptable, Convert.ToBase64String(new byte[] {1,2,3}));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -132,13 +138,16 @@ public class BookCopyCommandsSubcutaneousTests
         context.BookCopies.Add(bookCopy);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MakeUnAvilableBookCopyCommandHandler(
             context,
+            concurrencyService,
             NullLogger<MakeUnAvilableBookCopyCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id), CancellationToken.None);
+        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id, Convert.ToBase64String(new byte[] {1,2,3})), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -162,16 +171,152 @@ public class BookCopyCommandsSubcutaneousTests
         context.LendingListRecords.Add(lendingRecord);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MakeUnAvilableBookCopyCommandHandler(
             context,
+            concurrencyService,
             NullLogger<MakeUnAvilableBookCopyCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id), CancellationToken.None);
+        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id, Convert.ToBase64String(new byte[] {1,2,3})), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();
         result.Errors.Should().Contain(e => e.Code == "BookCopy.BookCopyInUse");
     }
+
+    [Theory]
+    [MemberData(nameof(ConcurrencyTokenRequiredScenarios))]
+    public async Task Commands_ShouldReturnConcurrencyTokenRequired_WhenRowVersionIsMissing(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var result = await act();
+
+        result.IsFailure.Should().BeTrue($"{scenario} should fail when the concurrency token is missing");
+        result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.ConcurrencyTokenRequired.Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidConcurrencyFormatScenarios))]
+    public async Task Commands_ShouldReturnInvalidConcurrencyFormat_WhenRowVersionIsMalformed(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var result = await act();
+
+        result.IsFailure.Should().BeTrue($"{scenario} should fail when the concurrency token is malformed");
+        result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.InvalidConcurrencyFormat.Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(ConcurrencyConflictScenarios))]
+    public async Task Commands_ShouldThrowDbUpdateConcurrencyException_WhenRowVersionConflicts(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var action = async () => await act();
+
+        await action.Should().ThrowAsync<Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException>($"{scenario} should throw when the row version conflicts");
+    }
+
+    public static IEnumerable<object[]> ConcurrencyTokenRequiredScenarios()
+    {
+        yield return new object[] { nameof(MakeAvilableBookCopyCommandHandler), CreateMakeAvilableExecution(null) };
+        yield return new object[] { nameof(MakeUnAvilableBookCopyCommandHandler), CreateMakeUnAvilableExecution(null) };
+        yield return new object[] { nameof(UpdateBookCopyCommandHandler), CreateUpdateBookCopyExecution(null) };
+    }
+
+    public static IEnumerable<object[]> InvalidConcurrencyFormatScenarios()
+    {
+        const string invalidRowVersion = "not-a-base64-token";
+
+        yield return new object[] { nameof(MakeAvilableBookCopyCommandHandler), CreateMakeAvilableExecution(invalidRowVersion) };
+        yield return new object[] { nameof(MakeUnAvilableBookCopyCommandHandler), CreateMakeUnAvilableExecution(invalidRowVersion) };
+        yield return new object[] { nameof(UpdateBookCopyCommandHandler), CreateUpdateBookCopyExecution(invalidRowVersion) };
+    }
+
+    public static IEnumerable<object[]> ConcurrencyConflictScenarios()
+    {
+        string conflictRowVersion = Convert.ToBase64String(new byte[] { 9, 9, 9 });
+
+        yield return new object[] { nameof(MakeAvilableBookCopyCommandHandler), CreateMakeAvilableExecution(conflictRowVersion) };
+        yield return new object[] { nameof(MakeUnAvilableBookCopyCommandHandler), CreateMakeUnAvilableExecution(conflictRowVersion) };
+        yield return new object[] { nameof(UpdateBookCopyCommandHandler), CreateUpdateBookCopyExecution(conflictRowVersion) };
+    }
+
+    private static Func<Task<Result<Updated>>> CreateMakeAvilableExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+            var book = StudentTestFactory.CreateBook();
+            var owner = StudentTestFactory.CreateStudent();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, owner.Id);
+            bookCopy.MarkAsUnAvilable();
+
+            context.Students.Add(owner);
+            context.Books.Add(book);
+            context.BookCopies.Add(bookCopy);
+            await context.SaveChangesAsync();
+
+            var handler = new MakeAvilableBookCopyCommandHandler(
+                context,
+                concurrencyService,
+                NullLogger<MakeAvilableBookCopyCommandHandler>.Instance,
+                cache);
+
+            return await handler.Handle(new MakeAvilableBookCopyCommand(bookCopy.Id, rowVersion!), CancellationToken.None);
+        };
+
+    private static Func<Task<Result<Updated>>> CreateMakeUnAvilableExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+            var book = StudentTestFactory.CreateBook();
+            var owner = StudentTestFactory.CreateStudent();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, owner.Id);
+
+            context.Students.Add(owner);
+            context.Books.Add(book);
+            context.BookCopies.Add(bookCopy);
+            await context.SaveChangesAsync();
+
+            var handler = new MakeUnAvilableBookCopyCommandHandler(
+                context,
+                concurrencyService,
+                NullLogger<MakeUnAvilableBookCopyCommandHandler>.Instance,
+                cache);
+
+            return await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id, rowVersion!), CancellationToken.None);
+        };
+
+    private static Func<Task<Result<Updated>>> CreateUpdateBookCopyExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+            var book = StudentTestFactory.CreateBook();
+            var owner = StudentTestFactory.CreateStudent();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, owner.Id, BookCopyCondition.New);
+
+            context.Students.Add(owner);
+            context.Books.Add(book);
+            context.BookCopies.Add(bookCopy);
+            await context.SaveChangesAsync();
+
+            var handler = new UpdateBookCopyCommandHandler(
+                NullLogger<UpdateBookCopyCommandHandler>.Instance,
+                context,
+                concurrencyService,
+                cache);
+
+            return await handler.Handle(new UpdateBookCopyCommand(bookCopy.Id, BookCopyCondition.Acceptable, rowVersion!), CancellationToken.None);
+        };
 }

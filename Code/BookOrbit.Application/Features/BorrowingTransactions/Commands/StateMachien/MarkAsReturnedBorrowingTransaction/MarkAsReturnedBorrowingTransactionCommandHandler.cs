@@ -3,6 +3,7 @@ namespace BookOrbit.Application.Features.BorrowingTransactions.Commands.StateMac
 public class MarkAsReturnedBorrowingTransactionCommandHandler(
     IAppDbContext context,
     TimeProvider timeProvider,
+    IConcurrencyService concurrencyService,
     ILogger<MarkAsReturnedBorrowingTransactionCommandHandler> logger,
     HybridCache hybridCache)
     : IRequestHandler<MarkAsReturnedBorrowingTransactionCommand, Result<Updated>>
@@ -51,6 +52,11 @@ public class MarkAsReturnedBorrowingTransactionCommandHandler(
 
             return updateBookCopyResult.Errors;
         }
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(transaction.borrowingTransaction, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await hybridCache.RemoveByTagAsync(BorrowingTransactionCachingConstants.BorrowingTransactionTag, ct);

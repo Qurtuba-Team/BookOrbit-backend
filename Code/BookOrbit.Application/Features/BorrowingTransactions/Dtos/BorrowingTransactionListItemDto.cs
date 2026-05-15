@@ -13,6 +13,7 @@ public record BorrowingTransactionListItemDto
     public DateTimeOffset ExpectedReturnDate { get; set; }
     public DateTimeOffset? ActualReturnDate { get; set; }
     public DateTimeOffset CreatedAtUtc { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private BorrowingTransactionListItemDto() { }
@@ -29,7 +30,8 @@ public record BorrowingTransactionListItemDto
         BorrowingTransactionState state,
         DateTimeOffset expectedReturnDate,
         DateTimeOffset? actualReturnDate,
-        DateTimeOffset createdAtUtc)
+        DateTimeOffset createdAtUtc,
+        byte[] rowVersion)
     {
         Id = id;
         BorrowingRequestId = borrowingRequestId;
@@ -43,6 +45,7 @@ public record BorrowingTransactionListItemDto
         ExpectedReturnDate = expectedReturnDate;
         ActualReturnDate = actualReturnDate;
         CreatedAtUtc = createdAtUtc;
+        RowVersion = rowVersion;
     }
 
     public static Expression<Func<BorrowingTransaction, BorrowingTransactionListItemDto>> Projection =>
@@ -58,5 +61,6 @@ public record BorrowingTransactionListItemDto
             bt.State,
             bt.ExpectedReturnDate,
             bt.ActualReturnDate,
-            bt.CreatedAtUtc);
+            bt.CreatedAtUtc,
+            bt.RowVersion);
 }

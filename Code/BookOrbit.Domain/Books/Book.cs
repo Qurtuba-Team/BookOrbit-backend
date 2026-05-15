@@ -1,5 +1,5 @@
 namespace BookOrbit.Domain.Books;
-public class Book : Entity, IAuditableEntity
+public class Book : Entity, IAuditableEntity, IConcurrencyEntity
 {
     public DateTimeOffset CreatedAtUtc { get;}
     public string? CreatedBy { get;}
@@ -13,6 +13,7 @@ public class Book : Entity, IAuditableEntity
     public BookAuthor Author { get; } = null!;
     public string CoverImageFileName { get; private set; } = null!;
     public BookStatus Status { get; private set; }
+    public byte[] RowVersion { get; private set; } = [];
 
     private Book() { }
 

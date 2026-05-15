@@ -5,6 +5,8 @@ public class BorrowingTransactionConfiguration : IEntityTypeConfiguration<Borrow
     public void Configure(EntityTypeBuilder<BorrowingTransaction> builder)
     {
         builder.ConfigureAuditable();
+        builder.ConfigureConcurrency();
+
 
         builder.ToTable("BorrowingTransactions");
 

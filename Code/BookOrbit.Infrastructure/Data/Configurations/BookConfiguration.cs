@@ -6,6 +6,7 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
     public void Configure(EntityTypeBuilder<Book> builder)
     {
         builder.ConfigureAuditable();
+        builder.ConfigureConcurrency();
 
         builder.ToTable("Books");
 
@@ -71,5 +72,6 @@ public class BookConfiguration : IEntityTypeConfiguration<Book>
              .HasMaxLength(BookAuthor.MaxLength)
              .IsRequired();
         });
+
     }
 }

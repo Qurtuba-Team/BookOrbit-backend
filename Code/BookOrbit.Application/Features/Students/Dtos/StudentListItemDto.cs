@@ -1,4 +1,4 @@
-﻿
+
 
 namespace BookOrbit.Application.Features.Students.Dtos;
 
@@ -47,7 +47,7 @@ public record StudentListItemDto
         s.PhoneNumber != null ? s.PhoneNumber.Value : null,
         s.TelegramUserId != null ? s.TelegramUserId.Value : null,
         s.UniversityMail.Value,
-        s.Points.Value,
+        s.Points != null ? s.Points.Value : 0,
         s.State,
         s.JoinDateUtc,
         s.RowVersion

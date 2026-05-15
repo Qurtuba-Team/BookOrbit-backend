@@ -2,6 +2,7 @@
 public class UpdateBookCopyCommandHandler(
     ILogger<UpdateBookCopyCommandHandler> logger,
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     HybridCache cache) : IRequestHandler<UpdateBookCopyCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(UpdateBookCopyCommand command, CancellationToken ct)
@@ -20,6 +21,11 @@ public class UpdateBookCopyCommandHandler(
 
         if (updateResult.IsFailure)
             return updateResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(bookCopy, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BookCopyCachingConstants.BookCopyTag, ct);

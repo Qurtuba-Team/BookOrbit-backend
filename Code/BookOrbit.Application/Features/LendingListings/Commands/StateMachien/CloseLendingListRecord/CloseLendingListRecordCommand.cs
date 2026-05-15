@@ -1,3 +1,4 @@
 namespace BookOrbit.Application.Features.LendingListings.Commands.StateMachien.CloseLendingListRecord;
 public record CloseLendingListRecordCommand(
-Guid LendingListRecordId) : IRequest<Result<Updated>>;
+    Guid LendingListRecordId,
+    string RowVersion) : ConcurrencyCommand<Result<Updated>>(RowVersion);

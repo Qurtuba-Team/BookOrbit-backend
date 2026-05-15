@@ -2,7 +2,8 @@ namespace BookOrbit.Application.Features.Books.Commands.StateMachien.MakeBookAvi
 public class MakeBookAvilableCommandHandler(
     IAppDbContext context,
     ILogger<MakeBookAvilableCommandHandler> logger,
-    HybridCache cache)
+    HybridCache cache,
+    IConcurrencyService concurrencyService)
     : IRequestHandler<MakeBookAvilableCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(MakeBookAvilableCommand command, CancellationToken ct)
@@ -20,6 +21,11 @@ public class MakeBookAvilableCommandHandler(
 
         if (availableResult.IsFailure)
             return availableResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(book, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BookCachingConstants.BookTag, ct);

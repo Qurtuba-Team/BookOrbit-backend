@@ -1,4 +1,4 @@
-﻿namespace BookOrbit.Application.SubcutaneousTests.Students;
+namespace BookOrbit.Application.SubcutaneousTests.Students;
 
 using BookOrbit.Domain.BookCopies;
 using BookOrbit.Domain.BookCopies.Enums;
@@ -91,7 +91,7 @@ internal static class StudentTestFactory
         var publisher = BookPublisher.Create(publisherValue).Value;
         var author = BookAuthor.Create(authorValue).Value;
 
-        return Book.Create(
+        var book = Book.Create(
             Guid.NewGuid(),
             titleObject,
             isbn,
@@ -99,11 +99,17 @@ internal static class StudentTestFactory
             BookCategory.Science,
             author,
             "cover.png").Value;
+
+        SetRowVersion(book, CreateRowVersion());
+
+        return book;
     }
 
     public static BookCopy CreateBookCopy(Book book, Guid ownerId, BookCopyCondition condition = BookCopyCondition.New)
     {
-        return BookCopy.Create(Guid.NewGuid(), ownerId, book.Id, condition).Value;
+        var bookCopy = BookCopy.Create(Guid.NewGuid(), ownerId, book.Id, condition).Value;
+        SetRowVersion(bookCopy, CreateRowVersion());
+        return bookCopy;
     }
 
     public static LendingListRecord CreateLendingListRecord(BookCopy bookCopy, DateTimeOffset now)
@@ -111,13 +117,17 @@ internal static class StudentTestFactory
         var expirationDate = now.AddDays(10);
         var cost = Point.Create(5).Value;
 
-        return LendingListRecord.Create(
+        var record = LendingListRecord.Create(
             Guid.NewGuid(),
             bookCopy.Id,
             LendingListRecord.MinBorrowingDurationInDays,
             cost,
             expirationDate,
             now).Value;
+
+        SetRowVersion(record, CreateRowVersion());
+
+        return record;
     }
 
     public static BorrowingRequest CreateBorrowingRequest(
@@ -127,12 +137,16 @@ internal static class StudentTestFactory
     {
         var expirationDate = now.AddDays(5);
 
-        return BorrowingRequest.Create(
+        var request = BorrowingRequest.Create(
             Guid.NewGuid(),
             borrowingStudentId,
             lendingRecordId,
             expirationDate,
             now).Value;
+
+        SetRowVersion(request, CreateRowVersion());
+
+        return request;
     }
 
     public static BorrowingTransaction CreateBorrowingTransaction(
@@ -143,7 +157,7 @@ internal static class StudentTestFactory
         DateTimeOffset now,
         int borrowingDurationInDays = LendingListRecord.MinBorrowingDurationInDays)
     {
-        return BorrowingTransaction.Create(
+        var transaction = BorrowingTransaction.Create(
             Guid.NewGuid(),
             borrowingRequestId,
             lenderStudentId,
@@ -151,6 +165,10 @@ internal static class StudentTestFactory
             bookCopyId,
             now.AddDays(borrowingDurationInDays),
             now).Value;
+
+        SetRowVersion(transaction, CreateRowVersion());
+
+        return transaction;
     }
 
     public static BorrowingTransactionEvent CreateBorrowingTransactionEvent(

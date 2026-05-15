@@ -6,5 +6,9 @@ public class MakeBookAvilableCommandValidator : AbstractValidator<MakeBookAvilab
         RuleFor(x => x.BookId)
             .Cascade(CascadeMode.Stop)
             .BookIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

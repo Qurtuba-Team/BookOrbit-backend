@@ -270,6 +270,17 @@ public class StudentCommandsSubcutaneousTests
         result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.InvalidConcurrencyFormat.Code);
     }
 
+    [Theory]
+    [MemberData(nameof(ConcurrencyConflictScenarios))]
+    public async Task Commands_ShouldThrowDbUpdateConcurrencyException_WhenRowVersionConflicts(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var action = async () => await act();
+
+        await action.Should().ThrowAsync<Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException>($"{scenario} should throw when the row version conflicts");
+    }
+
     public static IEnumerable<object[]> ConcurrencyTokenRequiredScenarios()
     {
         yield return new object[] { nameof(ActivateStudentCommandHandler), CreateActivateStudentExecution(null) };
@@ -292,6 +303,19 @@ public class StudentCommandsSubcutaneousTests
         yield return new object[] { nameof(RejectStudentCommandHandler), CreateRejectStudentExecution(invalidRowVersion) };
         yield return new object[] { nameof(UnBanStudentCommandHandler), CreateUnBanStudentExecution(invalidRowVersion) };
         yield return new object[] { nameof(UpdateStudentCommandHandler), CreateUpdateStudentExecution(invalidRowVersion) };
+    }
+
+    public static IEnumerable<object[]> ConcurrencyConflictScenarios()
+    {
+        string conflictRowVersion = Convert.ToBase64String([9, 9, 9]);
+
+        yield return new object[] { nameof(ActivateStudentCommandHandler), CreateActivateStudentExecution(conflictRowVersion) };
+        yield return new object[] { nameof(ApproveStudentCommandHandler), CreateApproveStudentExecution(conflictRowVersion) };
+        yield return new object[] { nameof(BanStudentCommandHandler), CreateBanStudentExecution(conflictRowVersion) };
+        yield return new object[] { nameof(PendStudentCommandHandler), CreatePendStudentExecution(conflictRowVersion) };
+        yield return new object[] { nameof(RejectStudentCommandHandler), CreateRejectStudentExecution(conflictRowVersion) };
+        yield return new object[] { nameof(UnBanStudentCommandHandler), CreateUnBanStudentExecution(conflictRowVersion) };
+        yield return new object[] { nameof(UpdateStudentCommandHandler), CreateUpdateStudentExecution(conflictRowVersion) };
     }
 
     private static Func<Task<Result<Updated>>> CreateActivateStudentExecution(string? rowVersion)

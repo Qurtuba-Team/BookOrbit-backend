@@ -4,6 +4,7 @@ public class BookCopyConfiguration : IEntityTypeConfiguration<BookCopy>
     public void Configure(EntityTypeBuilder<BookCopy> builder)
     {
         builder.ConfigureAuditable();
+        builder.ConfigureConcurrency();
 
         builder.ToTable("BookCopies");
 
@@ -43,5 +44,6 @@ public class BookCopyConfiguration : IEntityTypeConfiguration<BookCopy>
         builder.HasIndex(bc => bc.BookId);
         builder.HasIndex(bc => bc.State);
         builder.HasIndex(bc => bc.Condition);
+
     }
 }

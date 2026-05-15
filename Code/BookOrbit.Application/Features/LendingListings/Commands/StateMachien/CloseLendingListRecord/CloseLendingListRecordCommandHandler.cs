@@ -2,7 +2,8 @@ namespace BookOrbit.Application.Features.LendingListings.Commands.StateMachien.C
 public class CloseLendingListRecordCommandHandler(
     IAppDbContext context,
     ILogger<CloseLendingListRecordCommandHandler> logger,
-    HybridCache cache)
+    HybridCache cache,
+    IConcurrencyService concurrencyService)
     : IRequestHandler<CloseLendingListRecordCommand, Result<Updated>>
 {
     public async Task<Result<Updated>> Handle(CloseLendingListRecordCommand command, CancellationToken ct)
@@ -23,6 +24,11 @@ public class CloseLendingListRecordCommandHandler(
 
         if (closeResult.IsFailure)
             return closeResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(lendingListRecord, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(LendingListCachingConstants.LendingListTag, ct);

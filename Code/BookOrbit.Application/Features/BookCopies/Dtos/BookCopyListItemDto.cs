@@ -10,6 +10,7 @@ public record BookCopyListItemDto
     public string Title { get; set; } = string.Empty;
     public bool IsListed { get; set; }
     public string BookCoverImageUrl { get; set; } = string.Empty;
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private BookCopyListItemDto() { }
@@ -23,7 +24,8 @@ public record BookCopyListItemDto
         string ownerName,
         string title,
         bool isListed,
-        string bookCoverImageUrl)
+        string bookCoverImageUrl,
+        byte[] rowVersion)
     {
         Id = id;
         BookId = bookId;
@@ -34,5 +36,6 @@ public record BookCopyListItemDto
         Title = title;
         IsListed = isListed;
         BookCoverImageUrl = bookCoverImageUrl;
+        RowVersion = rowVersion;
     }
 }

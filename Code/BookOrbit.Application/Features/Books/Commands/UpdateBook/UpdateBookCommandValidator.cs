@@ -14,5 +14,9 @@ public class UpdateBookCommandValidator : AbstractValidator<UpdateBookCommand>
 
         RuleFor(x => x.BookCoverImageFileName)
             .BookCoverImageFileNameRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

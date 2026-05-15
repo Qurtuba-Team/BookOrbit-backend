@@ -10,6 +10,7 @@ public class BookCopyWithIsListedDto
     public string Title { get; set; } = string.Empty;
     public bool IsListed { get; set; }
     public string BookCoverImageFileName { get; set; } = string.Empty;
+    public byte[] RowVersion { get; set; } = [];
 
     public BookCopyWithIsListedDto(
     Guid id,
@@ -20,7 +21,8 @@ public class BookCopyWithIsListedDto
     string ownerName,
     string title,
     bool isListed,
-    string bookCoverImageFileName)
+    string bookCoverImageFileName,
+    byte[] rowVersion)
     {
         Id = id;
         BookId = bookId;
@@ -31,9 +33,6 @@ public class BookCopyWithIsListedDto
         Title = title;
         IsListed = isListed;
         BookCoverImageFileName = bookCoverImageFileName;
-    }
-
-    public BookCopyWithIsListedDto()
-    {
+        RowVersion = rowVersion;
     }
 }

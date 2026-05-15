@@ -5,6 +5,7 @@ public class LendingListRecordConfiguration : IEntityTypeConfiguration<LendingLi
     public void Configure(EntityTypeBuilder<LendingListRecord> builder)
     {
         builder.ConfigureAuditable();
+        builder.ConfigureConcurrency();
 
         builder.ToTable("LendingListRecords");
 

@@ -52,6 +52,12 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("State")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -98,6 +104,12 @@ namespace BookOrbit.Infrastructure.Data.Migrations
                     b.Property<DateTimeOffset>("LastModifiedUtc")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -137,6 +149,12 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("LendingRecordId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -232,6 +250,12 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                     b.Property<Guid>("LenderStudentId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -439,6 +463,12 @@ namespace BookOrbit.Infrastructure.Data.Migrations
 
                     b.Property<DateTimeOffset>("LastModifiedUtc")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("State")
                         .IsRequired()

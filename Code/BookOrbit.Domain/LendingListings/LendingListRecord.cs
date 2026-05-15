@@ -1,7 +1,6 @@
 
-
 namespace BookOrbit.Domain.LendingListings;
-public class LendingListRecord : Entity, IAuditableEntity, IExpirableEntity
+public class LendingListRecord : Entity, IAuditableEntity, IExpirableEntity, IConcurrencyEntity
 {
     public DateTimeOffset CreatedAtUtc { get; }
     public string? CreatedBy { get; }
@@ -13,6 +12,8 @@ public class LendingListRecord : Entity, IAuditableEntity, IExpirableEntity
     public LendingListRecordState State { get; private set; }
     public int BorrowingDurationInDays { get; }
     public Point Cost { get; } = null!;
+
+    public byte[] RowVersion { get; private set; } = [];
 
     public BookCopy? BookCopy { get; private set; }
 

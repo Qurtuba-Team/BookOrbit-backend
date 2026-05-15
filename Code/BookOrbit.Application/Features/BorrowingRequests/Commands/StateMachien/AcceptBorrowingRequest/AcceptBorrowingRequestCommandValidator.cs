@@ -6,5 +6,9 @@ public class AcceptBorrowingRequestCommandValidator : AbstractValidator<AcceptBo
         RuleFor(x => x.BorrowingRequestId)
             .Cascade(CascadeMode.Stop)
             .BorrowingRequestIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

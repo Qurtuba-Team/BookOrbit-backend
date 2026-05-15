@@ -13,6 +13,9 @@ using BookOrbit.Domain.LendingListings.Enums;
 using BookOrbit.Domain.PointTransactions.ValueObjects;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using BookOrbit.Infrastructure.Services.ConcurrencyServices;
+using BookOrbit.Infrastructure.Common.Errors;
+using BookOrbit.Domain.Common.Results;
 using Xunit;
 
 public class BorrowingRequestCommandsSubcutaneousTests
@@ -103,6 +106,183 @@ public class BorrowingRequestCommandsSubcutaneousTests
         result.Errors.Should().Contain(e => e.Code == "BorrowingRequest.LendingRecordNotAvailable");
     }
 
+    [Theory]
+    [MemberData(nameof(ConcurrencyTokenRequiredScenarios))]
+    public async Task Commands_ShouldReturnConcurrencyTokenRequired_WhenRowVersionIsMissing(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var result = await act();
+
+        result.IsFailure.Should().BeTrue($"{scenario} should fail when the concurrency token is missing");
+        result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.ConcurrencyTokenRequired.Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidConcurrencyFormatScenarios))]
+    public async Task Commands_ShouldReturnInvalidConcurrencyFormat_WhenRowVersionIsMalformed(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var result = await act();
+
+        result.IsFailure.Should().BeTrue($"{scenario} should fail when the concurrency token is malformed");
+        result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.InvalidConcurrencyFormat.Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(ConcurrencyConflictScenarios))]
+    public async Task Commands_ShouldThrowDbUpdateConcurrencyException_WhenRowVersionConflicts(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var action = async () => await act();
+
+        await action.Should().ThrowAsync<Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException>($"{scenario} should throw when the row version conflicts");
+    }
+
+    public static IEnumerable<object[]> ConcurrencyTokenRequiredScenarios()
+    {
+        yield return new object[] { nameof(AcceptBorrowingRequestCommandHandler), CreateAcceptBorrowingRequestExecution(null) };
+        yield return new object[] { nameof(RejectBorrowingRequestCommandHandler), CreateRejectBorrowingRequestExecution(null) };
+        yield return new object[] { nameof(CancelBorrowingRequestCommandHandler), CreateCancelBorrowingRequestExecution(null) };
+        yield return new object[] { nameof(ExpireBorrowingRequestCommandHandler), CreateExpireBorrowingRequestExecution(null) };
+    }
+
+    public static IEnumerable<object[]> InvalidConcurrencyFormatScenarios()
+    {
+        const string invalidRowVersion = "not-a-base64-token";
+
+        yield return new object[] { nameof(AcceptBorrowingRequestCommandHandler), CreateAcceptBorrowingRequestExecution(invalidRowVersion) };
+        yield return new object[] { nameof(RejectBorrowingRequestCommandHandler), CreateRejectBorrowingRequestExecution(invalidRowVersion) };
+        yield return new object[] { nameof(CancelBorrowingRequestCommandHandler), CreateCancelBorrowingRequestExecution(invalidRowVersion) };
+        yield return new object[] { nameof(ExpireBorrowingRequestCommandHandler), CreateExpireBorrowingRequestExecution(invalidRowVersion) };
+    }
+
+    public static IEnumerable<object[]> ConcurrencyConflictScenarios()
+    {
+        string conflictRowVersion = Convert.ToBase64String(new byte[] { 9, 9, 9 });
+
+        yield return new object[] { nameof(AcceptBorrowingRequestCommandHandler), CreateAcceptBorrowingRequestExecution(conflictRowVersion) };
+        yield return new object[] { nameof(RejectBorrowingRequestCommandHandler), CreateRejectBorrowingRequestExecution(conflictRowVersion) };
+        yield return new object[] { nameof(CancelBorrowingRequestCommandHandler), CreateCancelBorrowingRequestExecution(conflictRowVersion) };
+        yield return new object[] { nameof(ExpireBorrowingRequestCommandHandler), CreateExpireBorrowingRequestExecution(conflictRowVersion) };
+    }
+
+    private static Func<Task<Result<Updated>>> CreateAcceptBorrowingRequestExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var now = DateTimeOffset.UtcNow;
+
+            var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-acc");
+            var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-acc");
+            var book = StudentTestFactory.CreateBook();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
+            var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
+            var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
+
+            StudentTestFactory.SetNavigation(borrowingRequest, "LendingRecord", lendingRecord);
+
+            context.Students.AddRange(lender, borrower);
+            context.Books.Add(book);
+            context.BookCopies.Add(bookCopy);
+            context.LendingListRecords.Add(lendingRecord);
+            context.BorrowingRequests.Add(borrowingRequest);
+            await context.SaveChangesAsync();
+
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+
+            var handler = new AcceptBorrowingRequestCommandHandler(context, concurrencyService, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
+
+            return await handler.Handle(new AcceptBorrowingRequestCommand(borrowingRequest.Id, rowVersion!), CancellationToken.None);
+        };
+
+    private static Func<Task<Result<Updated>>> CreateRejectBorrowingRequestExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var now = DateTimeOffset.UtcNow;
+
+            var borrower = StudentTestFactory.CreateStudent(name: "Borrower Reject", userId: "borrower-rej");
+            var book = StudentTestFactory.CreateBook();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), BookCopyCondition.New);
+            var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
+            var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
+
+            StudentTestFactory.SetNavigation(borrowingRequest, "LendingRecord", lendingRecord);
+            StudentTestFactory.SetNavigation(borrowingRequest, "BorrowingStudent", borrower);
+
+            context.Students.Add(borrower);
+            context.LendingListRecords.Add(lendingRecord);
+            context.BorrowingRequests.Add(borrowingRequest);
+            await context.SaveChangesAsync();
+
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+
+            var handler = new RejectBorrowingRequestCommandHandler(context, concurrencyService, NullLogger<RejectBorrowingRequestCommandHandler>.Instance, cache);
+
+            return await handler.Handle(new RejectBorrowingRequestCommand(borrowingRequest.Id, rowVersion!), CancellationToken.None);
+        };
+
+    private static Func<Task<Result<Updated>>> CreateCancelBorrowingRequestExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var now = DateTimeOffset.UtcNow;
+
+            var borrower = StudentTestFactory.CreateStudent(name: "Borrower Cancel", userId: "borrower-canc");
+            var book = StudentTestFactory.CreateBook();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), BookCopyCondition.New);
+            var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
+            var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
+
+            StudentTestFactory.SetNavigation(borrowingRequest, "LendingRecord", lendingRecord);
+            StudentTestFactory.SetNavigation(borrowingRequest, "BorrowingStudent", borrower);
+
+            context.Students.Add(borrower);
+            context.LendingListRecords.Add(lendingRecord);
+            context.BorrowingRequests.Add(borrowingRequest);
+            await context.SaveChangesAsync();
+
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+
+            var handler = new CancelBorrowingRequestCommandHandler(context, concurrencyService, NullLogger<CancelBorrowingRequestCommandHandler>.Instance, cache);
+
+            return await handler.Handle(new CancelBorrowingRequestCommand(borrowingRequest.Id, rowVersion!), CancellationToken.None);
+        };
+
+    private static Func<Task<Result<Updated>>> CreateExpireBorrowingRequestExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var now = DateTimeOffset.UtcNow;
+
+            var borrower = StudentTestFactory.CreateStudent(name: "Borrower Expire", userId: "borrower-exp");
+            var book = StudentTestFactory.CreateBook();
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, Guid.NewGuid(), BookCopyCondition.New);
+            var lendingRecord = StudentTestFactory.CreateLendingListRecord(bookCopy, now);
+            var borrowingRequest = StudentTestFactory.CreateBorrowingRequest(borrower.Id, lendingRecord.Id, now);
+
+            StudentTestFactory.SetNavigation(borrowingRequest, "LendingRecord", lendingRecord);
+            StudentTestFactory.SetNavigation(borrowingRequest, "BorrowingStudent", borrower);
+
+            context.Students.Add(borrower);
+            context.LendingListRecords.Add(lendingRecord);
+            context.BorrowingRequests.Add(borrowingRequest);
+            await context.SaveChangesAsync();
+
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+
+            var handler = new ExpireBorrowingRequestCommandHandler(context, concurrencyService, NullLogger<ExpireBorrowingRequestCommandHandler>.Instance, cache);
+
+            return await handler.Handle(new ExpireBorrowingRequestCommand(borrowingRequest.Id, rowVersion!), CancellationToken.None);
+        };
+
     [Fact]
     public async Task AcceptBorrowingRequestCommand_ShouldUpdateStateAndReserveLendingRecord()
     {
@@ -127,10 +307,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new AcceptBorrowingRequestCommandHandler(context, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new AcceptBorrowingRequestCommandHandler(context, concurrencyService, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new AcceptBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new AcceptBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -160,10 +342,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new RejectBorrowingRequestCommandHandler(context, NullLogger<RejectBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService2 = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new RejectBorrowingRequestCommandHandler(context, concurrencyService2, NullLogger<RejectBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new RejectBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new RejectBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -192,10 +376,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new CancelBorrowingRequestCommandHandler(context, NullLogger<CancelBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService3 = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new CancelBorrowingRequestCommandHandler(context, concurrencyService3, NullLogger<CancelBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new CancelBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new CancelBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -224,10 +410,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.Add(borrowingRequest);
         await context.SaveChangesAsync();
 
-        var handler = new ExpireBorrowingRequestCommandHandler(context, NullLogger<ExpireBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyService4 = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new ExpireBorrowingRequestCommandHandler(context, concurrencyService4, NullLogger<ExpireBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new ExpireBorrowingRequestCommand(borrowingRequest.Id), CancellationToken.None);
+        var result = await handler.Handle(new ExpireBorrowingRequestCommand(borrowingRequest.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -299,10 +487,12 @@ public class BorrowingRequestCommandsSubcutaneousTests
         context.BorrowingRequests.AddRange(request1, request2);
         await context.SaveChangesAsync();
 
-        var handler = new AcceptBorrowingRequestCommandHandler(context, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
+        var concurrencyServiceFail = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
+        var handler = new AcceptBorrowingRequestCommandHandler(context, concurrencyServiceFail, NullLogger<AcceptBorrowingRequestCommandHandler>.Instance, cache);
 
         // Act
-        var result = await handler.Handle(new AcceptBorrowingRequestCommand(request2.Id), CancellationToken.None);
+        var result = await handler.Handle(new AcceptBorrowingRequestCommand(request2.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();

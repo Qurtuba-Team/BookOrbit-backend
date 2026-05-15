@@ -2,6 +2,7 @@
 namespace BookOrbit.Application.Features.BorrowingRequests.Commands.StateMachien.ExpireBorrowingRequest;
 public class ExpireBorrowingRequestCommandHandler(
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<ExpireBorrowingRequestCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<ExpireBorrowingRequestCommand, Result<Updated>>
@@ -31,6 +32,11 @@ public class ExpireBorrowingRequestCommandHandler(
 
         if (expireResult.IsFailure)
             return expireResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(borrowingRequestData.BorrowingRequest, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BorrowingRequestCachingConstants.BorrowingRequestTag, ct);

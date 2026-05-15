@@ -3,7 +3,7 @@ using BookOrbit.Domain.BorrowingRequests.DomainEvents;
 
 namespace BookOrbit.Domain.BorrowingRequests;
 
-public class BorrowingRequest : Entity, IAuditableEntity, IExpirableEntity
+public class BorrowingRequest : Entity, IAuditableEntity, IExpirableEntity, IConcurrencyEntity
 {
     public DateTimeOffset CreatedAtUtc { get;}
     public string? CreatedBy { get;}
@@ -18,6 +18,8 @@ public class BorrowingRequest : Entity, IAuditableEntity, IExpirableEntity
 
     public Student? BorrowingStudent { get; private set; }
     public LendingListRecord? LendingRecord { get; private set; }
+
+    public byte[] RowVersion { get; private set; } = [];
 
     public const int DefaultExpirationDays = 14;
 
