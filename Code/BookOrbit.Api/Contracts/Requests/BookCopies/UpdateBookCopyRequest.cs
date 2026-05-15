@@ -2,4 +2,5 @@
 public class UpdateBookCopyRequest
 {
     public BookCopyCondition Condition { get; set; }
+    public string? RowVersion { get; set; }
 }

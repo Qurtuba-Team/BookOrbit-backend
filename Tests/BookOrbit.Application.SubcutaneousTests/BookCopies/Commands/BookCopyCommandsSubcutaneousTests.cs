@@ -69,12 +69,15 @@ public class BookCopyCommandsSubcutaneousTests
         context.BookCopies.Add(bookCopy);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new UpdateBookCopyCommandHandler(
             NullLogger<UpdateBookCopyCommandHandler>.Instance,
             context,
+            concurrencyService,
             cache);
 
-        var command = new UpdateBookCopyCommand(bookCopy.Id, BookCopyCondition.Acceptable);
+        var command = new UpdateBookCopyCommand(bookCopy.Id, BookCopyCondition.Acceptable, Convert.ToBase64String(new byte[] {1,2,3}));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);
@@ -132,13 +135,16 @@ public class BookCopyCommandsSubcutaneousTests
         context.BookCopies.Add(bookCopy);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MakeUnAvilableBookCopyCommandHandler(
             context,
+            concurrencyService,
             NullLogger<MakeUnAvilableBookCopyCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id), CancellationToken.None);
+        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id, Convert.ToBase64String(new byte[] {1,2,3})), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -162,13 +168,16 @@ public class BookCopyCommandsSubcutaneousTests
         context.LendingListRecords.Add(lendingRecord);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new MakeUnAvilableBookCopyCommandHandler(
             context,
+            concurrencyService,
             NullLogger<MakeUnAvilableBookCopyCommandHandler>.Instance,
             cache);
 
         // Act
-        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id), CancellationToken.None);
+        var result = await handler.Handle(new MakeUnAvilableBookCopyCommand(bookCopy.Id, Convert.ToBase64String(new byte[] {1,2,3})), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();

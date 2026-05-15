@@ -6,5 +6,9 @@ public class MakeUnAvilableBookCopyCommandValidator : AbstractValidator<MakeUnAv
         RuleFor(x => x.BookCopyId)
             .Cascade(CascadeMode.Stop)
             .BookCopyIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

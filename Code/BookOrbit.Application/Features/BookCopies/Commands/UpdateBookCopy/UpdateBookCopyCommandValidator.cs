@@ -10,5 +10,9 @@ public class UpdateBookCopyCommandValidator : AbstractValidator<UpdateBookCopyCo
         RuleFor(x => x.Condition)
             .Cascade(CascadeMode.Stop)
             .BookCopyConditionRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

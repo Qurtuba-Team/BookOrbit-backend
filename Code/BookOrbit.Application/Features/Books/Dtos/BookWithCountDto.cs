@@ -10,6 +10,7 @@ public record BookWithCountDto
     public int AvailableCopiesCount { get; set; }
     public string BookCoverImageFileName { get; set; } = string.Empty;
     public BookStatus Status { get; set; }
+    public byte[] RowVersion { get; set; } = [];
 
     public BookWithCountDto(
         Guid id, 
@@ -20,7 +21,8 @@ public record BookWithCountDto
         string author,
         int availableCopiesCount,
         string bookCoverImageFileName,
-        BookStatus bookStatus)
+        BookStatus bookStatus,
+        byte[] rowVersion)
     {
         Id = id;
         Title = title;
@@ -31,8 +33,6 @@ public record BookWithCountDto
         AvailableCopiesCount = availableCopiesCount;
         BookCoverImageFileName = bookCoverImageFileName;
         Status = bookStatus;
-    }
-    public BookWithCountDto()
-    {
+        RowVersion = rowVersion;
     }
 }

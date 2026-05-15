@@ -10,7 +10,7 @@ public record BookListItemDto
     public int AvailableCopiesCount { get; set; }
     public string BookCoverImageUrl { get; set; } = string.Empty;
     public BookStatus Status { get; set; }
-
+    public byte[] RowVersion { get; set; } = [];
 
     [JsonConstructor]
     private BookListItemDto() { }
@@ -24,7 +24,8 @@ public record BookListItemDto
         string author,
         int availableCopiesCount,
         string bookCoverImageUrl,
-        BookStatus bookStatus)
+        BookStatus bookStatus,
+        byte[] rowVersion)
     {
         Id = id;
         Title = title;
@@ -35,5 +36,6 @@ public record BookListItemDto
         AvailableCopiesCount = availableCopiesCount;
         BookCoverImageUrl = bookCoverImageUrl;
         Status = bookStatus;
+        RowVersion = rowVersion;
     }
 }

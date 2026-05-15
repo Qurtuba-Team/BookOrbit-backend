@@ -1,5 +1,5 @@
 ﻿namespace BookOrbit.Domain.BookCopies;
-public class BookCopy : Entity, IAuditableEntity
+public class BookCopy : Entity, IAuditableEntity, IConcurrencyEntity
 {
     public DateTimeOffset CreatedAtUtc { get; }
     public string? CreatedBy { get;}
@@ -13,6 +13,8 @@ public class BookCopy : Entity, IAuditableEntity
 
     public Student? Owner { get; private set; }
     public Book? Book { get; private set; }
+
+    public byte[] RowVersion { get; private set; } = [];
 
     private BookCopy() { }
 

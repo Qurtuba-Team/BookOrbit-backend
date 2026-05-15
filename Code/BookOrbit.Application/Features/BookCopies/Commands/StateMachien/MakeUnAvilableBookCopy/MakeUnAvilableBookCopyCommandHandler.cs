@@ -1,6 +1,7 @@
 namespace BookOrbit.Application.Features.BookCopies.Commands.StateMachien.MakeUnAvilableBookCopy;
 public class MakeUnAvilableBookCopyCommandHandler(
     IAppDbContext context,
+    IConcurrencyService concurrencyService,
     ILogger<MakeUnAvilableBookCopyCommandHandler> logger,
     HybridCache cache)
     : IRequestHandler<MakeUnAvilableBookCopyCommand, Result<Updated>>
@@ -42,6 +43,11 @@ public class MakeUnAvilableBookCopyCommandHandler(
 
         if (unavailableResult.IsFailure)
             return unavailableResult.Errors;
+
+        var concurrencyResult = concurrencyService.SetOriginalRowVersion(bookCopy, command.RowVersion);
+
+        if (concurrencyResult.IsFailure)
+            return concurrencyResult.Errors;
 
         await context.SaveChangesAsync(ct);
         await cache.RemoveByTagAsync(BookCopyCachingConstants.BookCopyTag, ct);

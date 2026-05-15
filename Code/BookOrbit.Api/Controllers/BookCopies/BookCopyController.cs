@@ -68,7 +68,8 @@ public class BookCopyController(
         var result = await sender.Send(
             new UpdateBookCopyCommand(
                 bookCopyId,
-            request.Condition),
+            request.Condition,
+            request.RowVersion!),
             ct);
 
         return result.Match(
@@ -91,9 +92,9 @@ public class BookCopyController(
     [EndpointName("MakeBookCopyAvailable")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> MakeBookCopyAvailable([FromRoute] Guid bookCopyId, CancellationToken ct)
+    public async Task<ActionResult> MakeBookCopyAvailable([FromRoute] Guid bookCopyId, [FromBody] MakeBookCopyAvailableRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new MakeAvilableBookCopyCommand(bookCopyId), ct);
+        var result = await sender.Send(new MakeAvilableBookCopyCommand(bookCopyId, request.RowVersion), ct);
 
         return result.Match(
            _ => NoContent(),
@@ -115,9 +116,9 @@ public class BookCopyController(
     [EndpointName("MakeBookCopyUnAvailable")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult> MakeBookCopyUnAvailable([FromRoute] Guid bookCopyId, CancellationToken ct)
+    public async Task<ActionResult> MakeBookCopyUnAvailable([FromRoute] Guid bookCopyId, [FromBody] MakeBookCopyUnAvailableRequest request, CancellationToken ct)
     {
-        var result = await sender.Send(new MakeUnAvilableBookCopyCommand(bookCopyId), ct);
+        var result = await sender.Send(new MakeUnAvilableBookCopyCommand(bookCopyId, request.RowVersion), ct);
 
         return result.Match(
            _ => NoContent(),

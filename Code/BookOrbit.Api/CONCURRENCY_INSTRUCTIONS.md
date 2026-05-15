@@ -27,7 +27,7 @@ Use this pattern when adding optimistic concurrency to any command and entity:
 6. **DTOs**
    - Add `byte[] RowVersion` to all DTOs that must send the concurrency token back to the client.
    - Ensure DTO factories/projections populate `RowVersion` from the entity.
-
+   - even ItemslistDto should have RowVersion in their porjection 
 ## Reference pattern
 Use these files as the model implementation:
 
