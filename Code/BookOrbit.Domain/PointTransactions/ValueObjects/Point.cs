@@ -23,6 +23,10 @@ public record Point : ValueObject<int>
     {
     }
 
+    private Point() : base(0)
+    {
+    }
+
     public static int Normalize(int value)
     {
         return value;
@@ -49,10 +53,10 @@ public record Point : ValueObject<int>
         return validationResult.Errors;
     }
 
-    static public bool operator >(Point left, Point right) => left.Value > right.Value;
-    static public bool operator <(Point left, Point right) => left.Value < right.Value; 
-    static public Point operator +(Point left, Point right) => new Point(left.Value + right.Value);
-    static public Point operator -(Point left, Point right) => new Point(left.Value - right.Value);
+    static public bool operator >(Point left, Point right) => (left?.Value ?? 0) > (right?.Value ?? 0);
+    static public bool operator <(Point left, Point right) => (left?.Value ?? 0) < (right?.Value ?? 0); 
+    static public Point operator +(Point left, Point right) => new((left?.Value ?? 0) + (right?.Value ?? 0));
+    static public Point operator -(Point left, Point right) => new((left?.Value ?? 0) - (right?.Value ?? 0));
 
 }
 
