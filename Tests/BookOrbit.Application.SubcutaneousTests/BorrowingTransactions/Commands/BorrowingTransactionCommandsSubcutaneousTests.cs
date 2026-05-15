@@ -11,6 +11,9 @@ using BookOrbit.Domain.BorrowingTransactions.Enums;
 using BookOrbit.Domain.LendingListings.Enums;
 using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
+using BookOrbit.Infrastructure.Services.ConcurrencyServices;
+using BookOrbit.Infrastructure.Common.Errors;
+using BookOrbit.Domain.Common.Results;
 using Xunit;
 
 public class BorrowingTransactionCommandsSubcutaneousTests
@@ -302,4 +305,126 @@ public class BorrowingTransactionCommandsSubcutaneousTests
         result.IsFailure.Should().BeTrue();
         result.Errors.Should().Contain(e => e.Code == "BorrowingTransaction.BorrowingTransaction.NotFound");
     }
+
+    [Theory]
+    [MemberData(nameof(ConcurrencyTokenRequiredScenarios))]
+    public async Task Commands_ShouldReturnConcurrencyTokenRequired_WhenRowVersionIsMissing(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var result = await act();
+
+        result.IsFailure.Should().BeTrue($"{scenario} should fail when the concurrency token is missing");
+        result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.ConcurrencyTokenRequired.Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(InvalidConcurrencyFormatScenarios))]
+    public async Task Commands_ShouldReturnInvalidConcurrencyFormat_WhenRowVersionIsMalformed(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var result = await act();
+
+        result.IsFailure.Should().BeTrue($"{scenario} should fail when the concurrency token is malformed");
+        result.Errors.Should().Contain(e => e.Code == InfrastrucureConcurrencyErrors.InvalidConcurrencyFormat.Code);
+    }
+
+    [Theory]
+    [MemberData(nameof(ConcurrencyConflictScenarios))]
+    public async Task Commands_ShouldThrowDbUpdateConcurrencyException_WhenRowVersionConflicts(
+        string scenario,
+        Func<Task<Result<Updated>>> act)
+    {
+        var action = async () => await act();
+
+        await action.Should().ThrowAsync<Microsoft.EntityFrameworkCore.DbUpdateConcurrencyException>($"{scenario} should throw when the row version conflicts");
+    }
+
+    public static IEnumerable<object[]> ConcurrencyTokenRequiredScenarios()
+    {
+        yield return new object[] { nameof(MarkAsReturnedBorrowingTransactionCommandHandler), CreateMarkAsReturnedExecution(null) };
+        yield return new object[] { nameof(MarkAsLostBorrowingTransactionCommandHandler), CreateMarkAsLostExecution(null) };
+    }
+
+    public static IEnumerable<object[]> InvalidConcurrencyFormatScenarios()
+    {
+        const string invalidRowVersion = "not-a-base64-token";
+
+        yield return new object[] { nameof(MarkAsReturnedBorrowingTransactionCommandHandler), CreateMarkAsReturnedExecution(invalidRowVersion) };
+        yield return new object[] { nameof(MarkAsLostBorrowingTransactionCommandHandler), CreateMarkAsLostExecution(invalidRowVersion) };
+    }
+
+    public static IEnumerable<object[]> ConcurrencyConflictScenarios()
+    {
+        string conflictRowVersion = Convert.ToBase64String(new byte[] { 9, 9, 9 });
+
+        yield return new object[] { nameof(MarkAsReturnedBorrowingTransactionCommandHandler), CreateMarkAsReturnedExecution(conflictRowVersion) };
+        yield return new object[] { nameof(MarkAsLostBorrowingTransactionCommandHandler), CreateMarkAsLostExecution(conflictRowVersion) };
+    }
+
+    private static Func<Task<Result<Updated>>> CreateMarkAsReturnedExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var cache = StudentTestFactory.CreateHybridCache();
+            var now = DateTimeOffset.UtcNow.AddDays(-2);
+
+            var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-rt");
+            var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-rt");
+            var book = StudentTestFactory.CreateBook(title: "Returnable Book RT");
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
+            var transaction = StudentTestFactory.CreateBorrowingTransaction(Guid.NewGuid(), lender.Id, borrower.Id, bookCopy.Id, now);
+
+            bookCopy.MarkAsBorrowed();
+            StudentTestFactory.SetNavigation(transaction, "BookCopy", bookCopy);
+
+            context.Students.AddRange(lender, borrower);
+            context.Books.Add(book);
+            context.BookCopies.Add(bookCopy);
+            context.BorrowingTransactions.Add(transaction);
+            await context.SaveChangesAsync();
+
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+
+            var handler = new MarkAsReturnedBorrowingTransactionCommandHandler(
+                context,
+                TimeProvider.System,
+                concurrencyService,
+                NullLogger<MarkAsReturnedBorrowingTransactionCommandHandler>.Instance,
+                cache);
+
+            return await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id, rowVersion!), CancellationToken.None);
+        };
+
+    private static Func<Task<Result<Updated>>> CreateMarkAsLostExecution(string? rowVersion)
+        => async () =>
+        {
+            using var context = StudentTestFactory.CreateDbContext();
+            var now = DateTimeOffset.UtcNow.AddDays(-1);
+
+            var lender = StudentTestFactory.CreateStudent(name: "Lender", userId: "lender-lost");
+            var borrower = StudentTestFactory.CreateStudent(name: "Borrower", userId: "borrower-lost");
+            var book = StudentTestFactory.CreateBook(title: "Lost Book LT");
+            var bookCopy = StudentTestFactory.CreateBookCopy(book, lender.Id, BookCopyCondition.New);
+            var transaction = StudentTestFactory.CreateBorrowingTransaction(Guid.NewGuid(), lender.Id, borrower.Id, bookCopy.Id, now);
+
+            bookCopy.MarkAsBorrowed();
+            StudentTestFactory.SetNavigation(transaction, "BookCopy", bookCopy);
+
+            context.Students.AddRange(lender, borrower);
+            context.Books.Add(book);
+            context.BookCopies.Add(bookCopy);
+            context.BorrowingTransactions.Add(transaction);
+            await context.SaveChangesAsync();
+
+            var concurrencyService = new ConcurrencyService(context, NullLogger<ConcurrencyService>.Instance);
+
+            var handler = new MarkAsLostBorrowingTransactionCommandHandler(
+                context,
+                concurrencyService,
+                NullLogger<MarkAsLostBorrowingTransactionCommandHandler>.Instance);
+
+            return await handler.Handle(new MarkAsLostBorrowingTransactionCommand(transaction.Id, rowVersion!), CancellationToken.None);
+        };
 }
