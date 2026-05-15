@@ -113,7 +113,7 @@ public class BorrowingTransactionCommandsSubcutaneousTests
             cache);
 
         // Act
-        var rowVersion = StudentTestFactory.CreateRowVersionBase64();
+        var rowVersion = Convert.ToBase64String(transaction.RowVersion ?? []);
         var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id, rowVersion), CancellationToken.None);
 
         // Assert
@@ -159,7 +159,7 @@ public class BorrowingTransactionCommandsSubcutaneousTests
             NullLogger<MarkAsLostBorrowingTransactionCommandHandler>.Instance);
 
         // Act
-        var result = await handler.Handle(new MarkAsLostBorrowingTransactionCommand(transaction.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
+        var result = await handler.Handle(new MarkAsLostBorrowingTransactionCommand(transaction.Id, Convert.ToBase64String(transaction.RowVersion ?? [])), CancellationToken.None);
 
         // Assert
         result.Errors.Select(error => error.Code).Should().BeEmpty();
@@ -253,6 +253,7 @@ public class BorrowingTransactionCommandsSubcutaneousTests
             expectedReturnDate.AddDays(-5));
             
         var transaction = transactionResult.Value;
+        StudentTestFactory.SetRowVersion(transaction, StudentTestFactory.CreateRowVersion());
 
         bookCopy.MarkAsBorrowed();
         StudentTestFactory.SetCreatedAt(transaction, expectedReturnDate.AddDays(-5));
@@ -274,7 +275,7 @@ public class BorrowingTransactionCommandsSubcutaneousTests
             cache);
 
         // Act
-        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id, StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
+        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(transaction.Id, Convert.ToBase64String(transaction.RowVersion ?? [])), CancellationToken.None);
 
         // Assert
         result.IsSuccess.Should().BeTrue();
@@ -299,7 +300,7 @@ public class BorrowingTransactionCommandsSubcutaneousTests
             cache);
 
         // Act
-        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(Guid.NewGuid()), CancellationToken.None);
+        var result = await handler.Handle(new MarkAsReturnedBorrowingTransactionCommand(Guid.NewGuid(), StudentTestFactory.CreateRowVersionBase64()), CancellationToken.None);
 
         // Assert
         result.IsFailure.Should().BeTrue();

@@ -688,7 +688,7 @@ public class AppDbContextInitialiser(
             return;
         }
 
-        var closeResult = await sender.Send(new CloseLendingListRecordCommand(listResult.Value.Id));
+        var closeResult = await sender.Send(new CloseLendingListRecordCommand(listResult.Value.Id, Convert.ToBase64String(listResult.Value.RowVersion)));
 
         if (closeResult.IsFailure)
         {

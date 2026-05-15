@@ -103,8 +103,16 @@ public class StudentQueriesSubcutaneousTests
     {
         // Arrange
         using var context = StudentTestFactory.CreateDbContext();
-        context.Students.Add(StudentTestFactory.CreateStudent(name: "Student A", userId: "user-a"));
-        context.Students.Add(StudentTestFactory.CreateStudent(name: "Student B", userId: "user-b"));
+        var studentA = StudentTestFactory.CreateStudent(name: "Student A", userId: "user-a");
+        var studentB = StudentTestFactory.CreateStudent(name: "Student B", userId: "user-b");
+        
+        studentA.MarkAsApproved(DateTimeOffset.UtcNow);
+        studentA.MarkAsActivated();
+        studentB.MarkAsApproved(DateTimeOffset.UtcNow);
+        studentB.MarkAsActivated();
+        
+        context.Students.Add(studentA);
+        context.Students.Add(studentB);
         await context.SaveChangesAsync();
 
         var handler = new GetStudentsQueryHandler(context, new StudentQueryService(context));

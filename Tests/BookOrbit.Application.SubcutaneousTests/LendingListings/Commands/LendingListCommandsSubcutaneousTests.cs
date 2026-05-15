@@ -69,12 +69,15 @@ public class LendingListCommandsSubcutaneousTests
         context.LendingListRecords.Add(record);
         await context.SaveChangesAsync();
 
+        var concurrencyService = new BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService(context, NullLogger<BookOrbit.Infrastructure.Services.ConcurrencyServices.ConcurrencyService>.Instance);
+
         var handler = new CloseLendingListRecordCommandHandler(
             context,
             NullLogger<CloseLendingListRecordCommandHandler>.Instance,
-            cache);
+            cache,
+            concurrencyService);
 
-        var command = new CloseLendingListRecordCommand(record.Id);
+        var command = new CloseLendingListRecordCommand(record.Id, Convert.ToBase64String(record.RowVersion ?? []));
 
         // Act
         var result = await handler.Handle(command, CancellationToken.None);

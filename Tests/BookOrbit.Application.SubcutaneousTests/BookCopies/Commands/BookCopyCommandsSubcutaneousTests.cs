@@ -256,6 +256,7 @@ public class BookCopyCommandsSubcutaneousTests
             var book = StudentTestFactory.CreateBook();
             var owner = StudentTestFactory.CreateStudent();
             var bookCopy = StudentTestFactory.CreateBookCopy(book, owner.Id);
+            bookCopy.MarkAsUnAvilable();
 
             context.Students.Add(owner);
             context.Books.Add(book);
