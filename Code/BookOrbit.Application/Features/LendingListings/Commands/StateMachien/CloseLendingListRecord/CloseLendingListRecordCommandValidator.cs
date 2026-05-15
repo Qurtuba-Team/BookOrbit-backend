@@ -6,5 +6,9 @@ public class CloseLendingListRecordCommandValidator : AbstractValidator<CloseLen
         RuleFor(x => x.LendingListRecordId)
             .Cascade(CascadeMode.Stop)
             .LendingListIdRules();
+
+        RuleFor(x => x.RowVersion)
+            .Cascade(CascadeMode.Stop)
+            .NotEmpty();
     }
 }

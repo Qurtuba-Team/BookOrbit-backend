@@ -146,9 +146,9 @@ public class LendingListController(
     [EndpointName("CloseLendingListRecord")]
     [MapToApiVersion("1.0")]
     [EnableRateLimiting(ApiConstants.NormalRateLimitingPolicyName)]
-    public async Task<ActionResult<BorrowingRequestDto>> CloseLendingListRecord([FromRoute] Guid lendingListRecordId, CancellationToken ct)
+    public async Task<ActionResult<BorrowingRequestDto>> CloseLendingListRecord([FromRoute] Guid lendingListRecordId, [FromBody] CloseLendingListRecordRequest request, CancellationToken ct)
     {
-       var command = new CloseLendingListRecordCommand(lendingListRecordId);
+       var command = new CloseLendingListRecordCommand(lendingListRecordId, request.RowVersion);
 
         var result = await sender.Send(command, ct);
         return result.Match(
