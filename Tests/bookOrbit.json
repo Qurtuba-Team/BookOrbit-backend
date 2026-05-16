@@ -1,0 +1,122 @@
+{
+  "name": "bookOrbit",
+  "variables": [
+    {
+      "name": "studentemail",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "accesstoken",
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxZjJiY2U3NC1iYjQ5LTQzMzktOWMxMi1lYzUxY2I0N2RjMWUiLCJlbWFpbCI6InN0dWRlbnQxQHN0ZC5tYW5zLmVkdS5lZyIsInJvbGUiOiJzdHVkZW50IiwibmJmIjoxNzc4ODgzOTg2LCJleHAiOjE3Nzg4ODQ4ODYsImlhdCI6MTc3ODg4Mzk4NiwiaXNzIjoibG9jYWxob3N0IiwiYXVkIjoibG9jYWxob3N0In0.HJdnpobzZulLsu5NpUJDfPsNJbbnw_7kUODZUAzQi3o",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "refreshtoken",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "baseurl",
+      "value": "http://localhost:7240",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "studentid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "bookid",
+      "value": "46b439ea-862a-41c4-ace5-dc30e58bf09c",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "bookcopyid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "lendinglistrecordid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "userid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "borrowingrequestid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "borrowingtransactionid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "pointTransactionId",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "borrowingTransactionEventId",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "borrowingreviewid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "notificationId",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    },
+    {
+      "name": "chatgroupid",
+      "value": "",
+      "type": "text",
+      "enabled": true,
+      "secret": false
+    }
+  ],
+  "info": {
+    "type": "bruno-environment",
+    "exportedAt": "2026-05-16T14:14:04.047Z",
+    "exportedUsing": "Bruno/v3.3.0"
+  }
+}

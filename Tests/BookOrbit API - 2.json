@@ -3831,6 +3831,373 @@
           }
         }
       ]
+    },
+    {
+      "name": "Identity",
+      "item": [
+        {
+          "name": "To be called From Specific Pages",
+          "item": [
+            {
+              "name": "Confirm Email",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/identity/confirm-email?token=Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09&email=eyaddre2d12d3345a@std.mans.edu.eg",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "identity",
+                    "confirm-email?token=Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09&email=eyaddre2d12d3345a@std.mans.edu.eg"
+                  ],
+                  "query": [
+                    {
+                      "key": "token",
+                      "value": "Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09"
+                    },
+                    {
+                      "key": "email",
+                      "value": "eyaddre2d12d3345a@std.mans.edu.eg"
+                    }
+                  ],
+                  "variable": []
+                }
+              }
+            },
+            {
+              "name": "Reset Password",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/identity/reset-password",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "identity",
+                    "reset-password"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"email\":\"\",\"encodedtoken\":\"\",\"newpassword\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "authorization",
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/users/me/change-password",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "me",
+                "change-password"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\"OldPassword\":\"\",\"NewPassword\":\"\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Send Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/users/send-reset-password?email=",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "send-reset-password?email="
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": ""
+                }
+              ],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/token/refresh",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "token",
+                "refresh"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshtoken}}\",\n  \"expiredAccessToken\": \"{{accesstoken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "var json = pm.response.json();",
+                  "  pm.environment.set('accesstoken', json.accessToken);",
+                  "pm.environment.set('refreshtoken', json.refreshToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Send Confirm Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/users/send-email-confirmation?email=eyaddre2d12d3345a@std.mans.edu.eg",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "send-email-confirmation?email=eyaddre2d12d3345a@std.mans.edu.eg"
+              ],
+              "query": [
+                {
+                  "key": "email",
+                  "value": "eyaddre2d12d3345a@std.mans.edu.eg"
+                }
+              ],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Login (Generate Token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/token",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "token"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"admin@bookorbit.com\",\n    \"password\": \"Admin@123456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "var json = pm.response.json();",
+                  "pm.environment.set('accesstoken', json.accessToken);",
+                  "pm.environment.set('refreshtoken', json.refreshToken);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
+              }
+            ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/api/v1/identity/users/me",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "identity",
+                "users",
+                "me"
+              ],
+              "query": [],
+              "variable": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {},
+                "exec": [
+                  "var json = pm.response.json();",
+                  "  pm.environment.set('userid', json.userId);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
@@ -3840,12 +4207,12 @@
       "type": "default"
     },
     {
-      "key": "accesstoken",
+      "key": "bookid",
       "value": "",
       "type": "default"
     },
     {
-      "key": "bookid",
+      "key": "accesstoken",
       "value": "",
       "type": "default"
     },
@@ -3896,6 +4263,11 @@
     },
     {
       "key": "pointTransactionId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "refreshtoken",
       "value": "",
       "type": "default"
     }
