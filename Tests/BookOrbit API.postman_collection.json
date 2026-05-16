@@ -1,27 +1,32 @@
 {
   "info": {
-    "name": "BookOrbit API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Postman collection for BookOrbit API v1"
+    "name": "BookOrbit API - 2",
+    "description": "Postman collection for BookOrbit API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "id": "0020064e-cb31-4c41-a9c1-daffb50734a4",
       "name": "Borrowing Reviews",
       "item": [
         {
-          "id": "0656c277-b6a6-4ff0-ba1f-2788105062f2",
           "name": "Create Review",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/review",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -31,7 +36,9 @@
                 "borrowingtransactions",
                 "{{borrowingtransactionid}}",
                 "review"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -45,25 +52,31 @@
           }
         },
         {
-          "id": "a3ffa5f5-1c23-493b-a220-566e5c7a1d83",
           "name": "Get All",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingreviews?Page=1&PageSize=15",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "borrowingreviews"
+                "borrowingreviews?Page=1&PageSize=15"
               ],
               "query": [
                 {
@@ -76,51 +89,52 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "ReviewerStudentId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "ReviewedStudentId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingTransactionId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "8feb9032-4852-4067-8213-6fcf07deda82",
           "name": "Get By ID",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingreviews/{{borrowingreviewid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -129,36 +143,43 @@
                 "v1",
                 "borrowingreviews",
                 "{{borrowingreviewid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         }
       ]
     },
     {
-      "id": "4f16c5df-8c6e-41be-b171-5a42a9d1438b",
       "name": "Borrowing Transaction Event",
       "item": [
         {
-          "id": "8084c431-a26f-437f-8e9d-942ca1c3c4b0",
           "name": "Get All",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactionevents?Page=1&PageSize=15",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "borrowingtransactionevents"
+                "borrowingtransactionevents?Page=1&PageSize=15"
               ],
               "query": [
                 {
@@ -171,46 +192,48 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingTransactionId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "dbd93c93-b5e6-4e20-b934-5285cb1dc845",
           "name": "Get By Id",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactionevents/{{borrowingTransactionEventId}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -219,36 +242,43 @@
                 "v1",
                 "borrowingtransactionevents",
                 "{{borrowingTransactionEventId}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         }
       ]
     },
     {
-      "id": "30a3dd1e-45c1-4464-aa23-057cc7bbb3cb",
       "name": "Point Transactions",
       "item": [
         {
-          "id": "fe752432-e408-4475-9086-6e58da4597f9",
           "name": "Get All",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/pointtransactions?Page=1&PageSize=5&StudentId=cb10ee1b-75bf-452e-8d2a-66d33a9518b1",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "pointtransactions"
+                "pointtransactions?Page=1&PageSize=5&StudentId=cb10ee1b-75bf-452e-8d2a-66d33a9518b1"
               ],
               "query": [
                 {
@@ -261,18 +291,15 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "StudentId",
@@ -280,31 +307,36 @@
                 },
                 {
                   "key": "BorrowingReviewId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "Reasons",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "cd419229-95c5-4670-bc1c-2c7ad1f04912",
           "name": "Get By Id",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/pointtransactions/{{pointTransactionId}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -313,29 +345,36 @@
                 "v1",
                 "pointtransactions",
                 "{{pointTransactionId}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         }
       ]
     },
     {
-      "id": "ecb97129-d1b1-4772-966d-383a33bbde1a",
       "name": "BorrowingTransaction",
       "item": [
         {
-          "id": "d27a57e4-b076-4e1c-b1b9-6a6217e67d48",
           "name": "Send Return Otp",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/otp",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -345,30 +384,38 @@
                 "borrowingtransactions",
                 "{{borrowingtransactionid}}",
                 "otp"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "1372825c-80f6-4e75-ba87-afdbcef71654",
           "name": "Get All",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=30&Page=1",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "borrowingtransactions"
+                "borrowingtransactions?PageSize=30&Page=1"
               ],
               "query": [
                 {
@@ -377,38 +424,31 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowerStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
                 },
                 {
                   "key": "LenderStudentId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
                 },
                 {
                   "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 },
                 {
                   "key": "Page",
@@ -416,31 +456,36 @@
                 },
                 {
                   "key": "States",
-                  "value": "overdue",
-                  "disabled": true
+                  "value": "overdue"
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "026d80db-768b-4735-bc31-014d1851f3f5",
           "name": "Get All Out",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/out?PageSize=10&SortColumn=actualReturnDate&SortDirection=desc&Page=1&States=Returned",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -449,7 +494,7 @@
                 "v1",
                 "borrowingtransactions",
                 "me",
-                "out"
+                "out?PageSize=10&SortColumn=actualReturnDate&SortDirection=desc&Page=1&States=Returned"
               ],
               "query": [
                 {
@@ -458,8 +503,7 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
@@ -471,18 +515,15 @@
                 },
                 {
                   "key": "LenderStudentId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
                 },
                 {
                   "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 },
                 {
                   "key": "Page",
@@ -490,30 +531,36 @@
                 },
                 {
                   "key": "States",
-                  "value": "overdue",
-                  "disabled": true
+                  "value": "overdue"
                 },
                 {
                   "key": "States",
                   "value": "Returned"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "019192bd-4c77-49cd-b513-7d5a0535c885",
           "name": "Get All IN",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/me/in?PageSize=10&Page=1&States=Borrowed",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -522,7 +569,7 @@
                 "v1",
                 "borrowingtransactions",
                 "me",
-                "in"
+                "in?PageSize=10&Page=1&States=Borrowed"
               ],
               "query": [
                 {
@@ -531,33 +578,27 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowerStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
                 },
                 {
                   "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 },
                 {
                   "key": "Page",
@@ -565,30 +606,36 @@
                 },
                 {
                   "key": "States",
-                  "value": "overdue",
-                  "disabled": true
+                  "value": "overdue"
                 },
                 {
                   "key": "States",
                   "value": "Borrowed"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "58e87d36-5cd2-469d-bf5a-d1724fc15c99",
           "name": "Mark As Lost",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/lost",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -598,7 +645,9 @@
                 "borrowingtransactions",
                 "{{borrowingtransactionid}}",
                 "lost"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -612,18 +661,24 @@
           }
         },
         {
-          "id": "e18ab40c-9d77-424d-be28-846e8f62c3b3",
           "name": "Mark As Returned",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}/return",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -633,7 +688,9 @@
                 "borrowingtransactions",
                 "{{borrowingtransactionid}}",
                 "return"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -647,25 +704,31 @@
           }
         },
         {
-          "id": "2232b8b0-f311-49d5-aefb-4661c0c3dd3e",
           "name": "Get BorrowingTransactions",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions?PageSize=10&Page=1",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "borrowingtransactions"
+                "borrowingtransactions?PageSize=10&Page=1"
               ],
               "query": [
                 {
@@ -674,38 +737,31 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowerStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
                 },
                 {
                   "key": "LenderStudentId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
                 },
                 {
                   "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingRequestId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 },
                 {
                   "key": "Page",
@@ -713,31 +769,36 @@
                 },
                 {
                   "key": "States",
-                  "value": "overdue",
-                  "disabled": true
+                  "value": "overdue"
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "ad900ea1-446a-4c60-8d76-af242959f0ec",
           "name": "Get Borrowing Transaction By Id",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingtransactions/{{borrowingtransactionid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -746,23 +807,31 @@
                 "v1",
                 "borrowingtransactions",
                 "{{borrowingtransactionid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "91ba64d9-1941-41b9-bb53-c288d350cd08",
           "name": "Create Borrowing Transaction",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/deliver",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -772,7 +841,9 @@
                 "borrowingrequests",
                 "{{borrowingrequestid}}",
                 "deliver"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -789,6 +860,8 @@
               "listen": "test",
               "script": {
                 "type": "text/javascript",
+                "packages": {},
+                "requests": {},
                 "exec": [
                   "var json = pm.response.json();",
                   "pm.environment.set('borrowingtransactionid', json.id);"
@@ -800,22 +873,161 @@
       ]
     },
     {
-      "id": "224f9eed-3527-4226-bdf0-9a0058a3aeb9",
       "name": "BorrowingRequests",
       "item": [
         {
-          "id": "d80c49ae-7871-489c-b701-1ae964212dad",
+          "name": "State Machien",
+          "item": [
+            {
+              "name": "cancel",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/cancel",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "borrowingrequests",
+                    "{{borrowingrequestid}}",
+                    "cancel"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "reject",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/reject",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "borrowingrequests",
+                    "{{borrowingrequestid}}",
+                    "reject"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "accept",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/accept",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "borrowingrequests",
+                    "{{borrowingrequestid}}",
+                    "accept"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
           "name": "Send Deliver Otp",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/otp",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -825,23 +1037,31 @@
                 "borrowingrequests",
                 "{{borrowingrequestid}}",
                 "otp"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "7c5e8a48-1a5f-457a-82fa-7122e4d41fe5",
           "name": "Get Out Going Requests",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingrequests/me/out?Page=1&PageSize=10",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -850,7 +1070,7 @@
                 "v1",
                 "borrowingrequests",
                 "me",
-                "out"
+                "out?Page=1&PageSize=10"
               ],
               "query": [
                 {
@@ -863,51 +1083,52 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "8665b7e9-30a0-440d-b203-b39e664ee0e8",
-                  "disabled": true
+                  "value": "8665b7e9-30a0-440d-b203-b39e664ee0e8"
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "LendingStudentId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "4ee64ca8-7a21-474e-a481-80fc4f7e115b",
           "name": "Get Incomming Requests",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingrequests/me/in?Page=1&PageSize=12&States=accepted",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -916,7 +1137,7 @@
                 "v1",
                 "borrowingrequests",
                 "me",
-                "in"
+                "in?Page=1&PageSize=12&States=accepted"
               ],
               "query": [
                 {
@@ -929,57 +1150,59 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
                 },
                 {
                   "key": "States",
                   "value": "accepted"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "f5708702-dccc-4d8a-9206-195f40d5fe8f",
           "name": "Get Borrowing Requests",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingrequests?Page=1&PageSize=10",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "borrowingrequests"
+                "borrowingrequests?Page=1&PageSize=10"
               ],
               "query": [
                 {
@@ -992,56 +1215,56 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "BorrowingStudentId",
-                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a",
-                  "disabled": true
+                  "value": "b9b386a7-e238-44bc-aee9-693e5a833e1a"
                 },
                 {
                   "key": "LendingListRecordId",
-                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7",
-                  "disabled": true
+                  "value": "e301a512-7c1b-41f6-8b36-28e4a7573da7"
                 },
                 {
                   "key": "States",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "LendingStudentId",
-                  "value": "ef052e79-4038-49e6-a004-33670b6de87a",
-                  "disabled": true
+                  "value": "ef052e79-4038-49e6-a004-33670b6de87a"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "d28f3aaf-41ee-4a2a-8f46-977dcef0c243",
           "name": "Get Borrowing Request By ID",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1050,23 +1273,31 @@
                 "v1",
                 "borrowingrequests",
                 "{{borrowingrequestid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "7c89bacc-5dc0-4782-a0fc-e92b1449b3b3",
           "name": "Create Borrowing Request",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1076,7 +1307,9 @@
                 "lendinglist",
                 "{{lendinglistrecordid}}",
                 "request"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           },
           "event": [
@@ -1084,6 +1317,8 @@
               "listen": "test",
               "script": {
                 "type": "text/javascript",
+                "packages": {},
+                "requests": {},
                 "exec": [
                   "var json = pm.response.json();",
                   "pm.environment.set('borrowingrequestid', json.id);"
@@ -1091,445 +1326,31 @@
               }
             }
           ]
-        },
-        {
-          "id": "3e384eec-01f7-4aee-98b1-4a4cec3e1b0b",
-          "name": "State Machien",
-          "item": [
-            {
-              "id": "09a6b5da-e8c3-4315-a03f-3341d27d968f",
-              "name": "cancel",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/cancel",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "borrowingrequests",
-                    "{{borrowingrequestid}}",
-                    "cancel"
-                  ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\"rowVersion\":\"\"}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "id": "eebfda26-bbb2-4e34-9ad0-ece2ffa84ed8",
-              "name": "reject",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/reject",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "borrowingrequests",
-                    "{{borrowingrequestid}}",
-                    "reject"
-                  ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\"rowVersion\":\"\"}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "id": "710a1336-237a-4c1c-8f5c-d2312a9fbaac",
-              "name": "accept",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/borrowingrequests/{{borrowingrequestid}}/accept",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "borrowingrequests",
-                    "{{borrowingrequestid}}",
-                    "accept"
-                  ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\"rowVersion\":\"\"}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              }
-            }
-          ]
         }
       ]
     },
     {
-      "id": "c9a82470-7e2f-4e2c-84d9-90e23e7ea0e9",
-      "name": "Identity",
-      "item": [
-        {
-          "id": "2c57b098-cb33-4fa2-b9ea-ed295d605a3b",
-          "name": "Change Password",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/identity/users/me/change-password",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "users",
-                "me",
-                "change-password"
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\"OldPassword\":\"\",\"NewPassword\":\"\"}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "af3db29b-f31f-4a7d-9e83-9a488544de34",
-          "name": "Send Reset Password",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/identity/users/send-reset-password?email=",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "users",
-                "send-reset-password"
-              ],
-              "query": [
-                {
-                  "key": "email",
-                  "value": ""
-                }
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "",
-              "options": {
-                "raw": {
-                  "language": "text"
-                }
-              }
-            }
-          }
-        },
-        {
-          "id": "cc6260dd-4681-4708-bdec-f77674f34b4a",
-          "name": "Refresh Token",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/identity/token/refresh",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "token",
-                "refresh"
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshtoken}}\",\n  \"expiredAccessToken\": \"{{accesstoken}}\"\n}",
-              "options": {
-                "raw": {
-                  "language": "text"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var json = pm.response.json();",
-                  "  pm.environment.set('accesstoken', json.accessToken);",
-                  "pm.environment.set('refreshtoken', json.refreshToken);"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "id": "a6d50eb3-bfca-450c-8b52-63ba4a58669b",
-          "name": "Send Confirm Email",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/identity/users/send-email-confirmation?email=eyaddre2d12d3345a@std.mans.edu.eg",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "users",
-                "send-email-confirmation"
-              ],
-              "query": [
-                {
-                  "key": "email",
-                  "value": "eyaddre2d12d3345a@std.mans.edu.eg"
-                }
-              ]
-            }
-          }
-        },
-        {
-          "id": "6feb1e1d-ce6f-4d64-97a3-0004a733e164",
-          "name": "Login (Generate Token)",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/identity/token",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "token"
-              ]
-            },
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"email\": \"student1@std.mans.edu.eg\",\n    \"password\": \"sa123456\"\n}",
-              "options": {
-                "raw": {
-                  "language": "text"
-                }
-              }
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var json = pm.response.json();",
-                  "pm.environment.set('accesstoken', json.accessToken);",
-                  "pm.environment.set('refreshtoken', json.refreshToken);"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "id": "3a08ca52-344e-401d-911c-5f361a4c3d4d",
-          "name": "Get Current User",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseurl}}/api/v1/identity/users/me",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "identity",
-                "users",
-                "me"
-              ]
-            }
-          },
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "var json = pm.response.json();",
-                  "  pm.environment.set('userid', json.userId);"
-                ]
-              }
-            }
-          ]
-        },
-        {
-          "id": "92635b6a-c5ef-417d-b564-371c0d709dea",
-          "name": "To be called From Specific Pages",
-          "item": [
-            {
-              "id": "9498fc55-a4bc-4fd5-b5e0-50147ce025b9",
-              "name": "Confirm Email",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/identity/confirm-email?token=Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09&email=eyaddre2d12d3345a@std.mans.edu.eg",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "identity",
-                    "confirm-email"
-                  ],
-                  "query": [
-                    {
-                      "key": "token",
-                      "value": "Q2ZESjhQYWRQSDZTTDI5R2djd1JTd1d6RlpCeVJjd0VWRC9yVm1udGRXYUJDZ2tXdUZLQ2IwY09raVJnaExWQWIybzlCSU0rOEhUaTRFTG1WcVNjNUFUUE5VN1pCby9sVk9hMUtLZklpcmgya3ExUFN3TjREY3pySk5MT0ZaeVdUUU44U1NVR08zOG94MFo5QTcwSWhqUUMwRnlXcWVSaHpFSG9vdlJtaDkrb2NzYzlSZTB2MnUxcjhaWXg1eGk5WGRsRW52Vjh1U25KdjVLZUVaRkdaODV6R3A0bkVEZWhJTnpuVG1PYkVKaHQrZTNDT25MajJEdTV2VTdxV1oyeEJheGt2QT09"
-                    },
-                    {
-                      "key": "email",
-                      "value": "eyaddre2d12d3345a@std.mans.edu.eg"
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "6789a692-27a3-4af2-acb6-440040013aa1",
-              "name": "Reset Password",
-              "request": {
-                "method": "POST",
-                "header": [],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/identity/reset-password",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "identity",
-                    "reset-password"
-                  ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\"email\":\"\",\"encodedtoken\":\"\",\"newpassword\":\"\"}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "ba93a48a-b396-4453-9070-d42cee908578",
       "name": "Books",
       "item": [
         {
-          "id": "16ff5a03-4336-4a9d-a38f-f29f560cd763",
           "name": "Book Categories",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/categories",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1538,23 +1359,31 @@
                 "v1",
                 "books",
                 "categories"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "c0292d67-699c-4707-b138-c86afeb41b84",
           "name": "Reject",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/{{bookid}}/reject",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1564,7 +1393,9 @@
                 "books",
                 "{{bookid}}",
                 "reject"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -1578,18 +1409,24 @@
           }
         },
         {
-          "id": "58af7838-d07e-4742-99e9-66ba00a4a935",
           "name": "Make Available",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/{{bookid}}/available",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1599,7 +1436,9 @@
                 "books",
                 "{{bookid}}",
                 "available"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -1613,18 +1452,24 @@
           }
         },
         {
-          "id": "ce734fb4-4161-4460-b3a4-a23259a11ca3",
           "name": "Create Book",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1632,50 +1477,60 @@
                 "api",
                 "v1",
                 "books"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "formdata",
               "formdata": [
                 {
                   "key": "Title",
-                  "value": "القس المجنون",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "القس المجنون"
                 },
                 {
                   "key": "ISBN",
-                  "value": "9789770914571",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "9789770914571"
                 },
                 {
                   "key": "Publisher",
-                  "value": "دار الشروق",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "دار الشروق"
                 },
                 {
                   "key": "Author",
-                  "value": "أحمد خالد توفيق",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "أحمد خالد توفيق"
                 },
                 {
                   "key": "CoverImage",
-                  "value": "",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": ""
                 },
                 {
                   "key": "Categories",
-                  "value": "Fiction",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "Fiction"
                 },
                 {
                   "key": "Categories",
-                  "value": "NonFiction",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "NonFiction"
                 },
                 {
                   "key": "Categories",
-                  "value": "Horror",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "Horror"
                 }
               ]
             }
@@ -1685,6 +1540,8 @@
               "listen": "test",
               "script": {
                 "type": "text/javascript",
+                "packages": {},
+                "requests": {},
                 "exec": [
                   "var json = pm.response.json();",
                   "pm.environment.set('bookid', json.id);"
@@ -1694,18 +1551,27 @@
           ]
         },
         {
-          "id": "9e66d119-a1b1-4ad0-84c8-a811cb608b34",
           "name": "Get Book By Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/{{bookid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1714,68 +1580,84 @@
                 "v1",
                 "books",
                 "{{bookid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "formdata",
               "formdata": [
                 {
                   "key": "Title",
-                  "value": "ما وراء الطبيعة الجزء الأول",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "ما وراء الطبيعة الجزء الأول"
                 },
                 {
                   "key": "ISBN",
-                  "value": "9789770933571",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "9789770933571"
                 },
                 {
                   "key": "Publisher",
-                  "value": "دار الشروق",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "دار الشروق"
                 },
                 {
                   "key": "Author",
-                  "value": "أحمد خالد توفيق",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "أحمد خالد توفيق"
                 },
                 {
                   "key": "CoverImage",
-                  "value": "",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": ""
                 },
                 {
                   "key": "Categories",
-                  "value": "Fiction",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "Fiction"
                 },
                 {
                   "key": "Categories",
-                  "value": "Thriller",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "Thriller"
                 },
                 {
                   "key": "Categories",
-                  "value": "Horror",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "Horror"
                 }
               ]
             }
           }
         },
         {
-          "id": "93ca6b08-84e7-4338-8f57-c66b514599cc",
           "name": "DeleteBook",
           "request": {
             "method": "DELETE",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/{{bookid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1788,44 +1670,47 @@
               "query": [
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "Categories",
-                  "value": "fiction",
-                  "disabled": true
+                  "value": "fiction"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "266b85c1-f331-47fb-9db4-dad719d20e00",
           "name": "Get Books",
-          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books?Page=1&PageSize=15&Statuses=available",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "books"
+                "books?Page=1&PageSize=15&Statuses=available"
               ],
               "query": [
                 {
@@ -1838,28 +1723,23 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "العادات الذرية",
-                  "disabled": true
+                  "value": "العادات الذرية"
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "Categories",
-                  "value": "fiction",
-                  "disabled": true
+                  "value": "fiction"
                 },
                 {
                   "key": "Categories",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "Statuses",
@@ -1867,26 +1747,32 @@
                 },
                 {
                   "key": "Statuses",
-                  "value": "pending",
-                  "disabled": true
+                  "value": "pending"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "1ed30a65-e7c0-4eba-9996-909cf125b3ad",
           "name": "Update Book",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/{{bookid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -1895,26 +1781,30 @@
                 "v1",
                 "books",
                 "{{bookid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "formdata",
               "formdata": [
                 {
                   "key": "Title",
-                  "value": "",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "المجنون بيه"
                 },
                 {
                   "key": "CoverImage",
-                  "value": "",
+                  "disabled": true,
                   "type": "text",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "RowVersion",
-                  "value": "",
-                  "type": "text"
+                  "disabled": false,
+                  "type": "text",
+                  "value": "AAAAAAAA8xI="
                 }
               ]
             }
@@ -1924,6 +1814,8 @@
               "listen": "test",
               "script": {
                 "type": "text/javascript",
+                "packages": {},
+                "requests": {},
                 "exec": [
                   "pm.test('Status code is 201/200 or validation error (400)', function () {",
                   "    pm.expect([",
@@ -1992,22 +1884,416 @@
       ]
     },
     {
-      "id": "b6a76796-96c9-42ae-8116-fe64bf88b1e3",
       "name": "Book Copies",
       "item": [
         {
-          "id": "ebcfc62c-43b7-4d44-9cc0-8ef874b4fbe8",
+          "name": "Queries",
+          "item": [
+            {
+              "name": "Get Copies By Book Id",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/{{bookid}}/copies?Page=1&PageSize=5",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "{{bookid}}",
+                    "copies?Page=1&PageSize=5"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "5"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": "booktitle"
+                    },
+                    {
+                      "key": "States",
+                      "value": "available"
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable"
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new"
+                    }
+                  ],
+                  "variable": []
+                }
+              }
+            },
+            {
+              "name": "Get Book Copy By Id",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies",
+                    "{{bookcopyid}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                }
+              }
+            },
+            {
+              "name": "Get Copies By Student Id",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/books/copies?Page=1&PageSize=15",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "{{studentid}}",
+                    "books",
+                    "copies?Page=1&PageSize=15"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": ""
+                    },
+                    {
+                      "key": "States",
+                      "value": "available"
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable"
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "15"
+                    }
+                  ],
+                  "variable": []
+                }
+              }
+            },
+            {
+              "name": "Get Copies",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/copies?Page=1&Conditions=acceptable&PageSize=55",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies?Page=1&Conditions=acceptable&PageSize=55"
+                  ],
+                  "query": [
+                    {
+                      "key": "Page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "SearchTerm",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortColumn",
+                      "value": ""
+                    },
+                    {
+                      "key": "SortDirection",
+                      "value": ""
+                    },
+                    {
+                      "key": "States",
+                      "value": "available"
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "acceptable"
+                    },
+                    {
+                      "key": "Conditions",
+                      "value": "new"
+                    },
+                    {
+                      "key": "PageSize",
+                      "value": "55"
+                    }
+                  ],
+                  "variable": []
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Management",
+          "item": [
+            {
+              "name": "Make Available",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}/available",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies",
+                    "{{bookcopyid}}",
+                    "available"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "Make Unavailable",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}/unavailable",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "books",
+                    "copies",
+                    "{{bookcopyid}}",
+                    "unavailable"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\"rowVersion\":\"\"}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "name": "ListBookCopy",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
+                  }
+                ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
+                "url": {
+                  "raw": "{{baseurl}}/api/v1/students/me/books/copies/{{bookcopyid}}/list?borrowingDurationInDays=30",
+                  "protocol": "",
+                  "host": [
+                    "{{baseurl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "students",
+                    "me",
+                    "books",
+                    "copies",
+                    "{{bookcopyid}}",
+                    "list?borrowingDurationInDays=30"
+                  ],
+                  "query": [
+                    {
+                      "key": "borrowingDurationInDays",
+                      "value": "30"
+                    }
+                  ],
+                  "variable": []
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "pm.environment.set('lendinglistrecordid', json.id);"
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "name": "Create Book Copy",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/students/me/books/{{bookid}}/copies",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -2019,7 +2305,9 @@
                 "books",
                 "{{bookid}}",
                 "copies"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -2036,6 +2324,8 @@
               "listen": "test",
               "script": {
                 "type": "text/javascript",
+                "packages": {},
+                "requests": {},
                 "exec": [
                   "var json = pm.response.json();",
                   "pm.environment.set('bookcopyid', json.id);"
@@ -2045,18 +2335,24 @@
           ]
         },
         {
-          "id": "05996647-9e14-4070-a7be-872b19d8c20a",
           "name": "Update Book Copy",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -2066,7 +2362,9 @@
                 "books",
                 "copies",
                 "{{bookcopyid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -2078,440 +2376,33 @@
               }
             }
           }
-        },
-        {
-          "id": "db60e9cd-f399-4fbf-bdac-dc7943876d65",
-          "name": "Queries",
-          "item": [
-            {
-              "id": "c1af58d5-85d6-4088-a84c-405a503414f3",
-              "name": "Get Copies By Book Id",
-              "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/books/{{bookid}}/copies?Page=1&PageSize=5",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "{{bookid}}",
-                    "copies"
-                  ],
-                  "query": [
-                    {
-                      "key": "Page",
-                      "value": "1"
-                    },
-                    {
-                      "key": "PageSize",
-                      "value": "5"
-                    },
-                    {
-                      "key": "SearchTerm",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortColumn",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortDirection",
-                      "value": "booktitle",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "available",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "acceptable",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "new",
-                      "disabled": true
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "81568adc-ec72-4b36-9480-fdd7f3823627",
-              "name": "Get Book Copy By Id",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "copies",
-                    "{{bookcopyid}}"
-                  ]
-                }
-              }
-            },
-            {
-              "id": "6f0b9a76-e262-4d62-a129-46ca289c682a",
-              "name": "Get Copies By Student Id",
-              "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/students/{{studentid}}/books/copies?Page=1&PageSize=15",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "{{studentid}}",
-                    "books",
-                    "copies"
-                  ],
-                  "query": [
-                    {
-                      "key": "Page",
-                      "value": "1"
-                    },
-                    {
-                      "key": "SearchTerm",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortColumn",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortDirection",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "available",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "acceptable",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "new",
-                      "disabled": true
-                    },
-                    {
-                      "key": "PageSize",
-                      "value": "15"
-                    }
-                  ]
-                }
-              }
-            },
-            {
-              "id": "4571a6c1-35ae-4836-999d-6921ce1111a9",
-              "name": "Get Copies",
-              "description": "Support Sorting By \\[createdat,ownername,booktitle,updatedat\\] asc / desc",
-              "request": {
-                "method": "GET",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/books/copies?Page=1&Conditions=acceptable&PageSize=55",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "copies"
-                  ],
-                  "query": [
-                    {
-                      "key": "Page",
-                      "value": "1"
-                    },
-                    {
-                      "key": "SearchTerm",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortColumn",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "SortDirection",
-                      "value": "",
-                      "disabled": true
-                    },
-                    {
-                      "key": "States",
-                      "value": "available",
-                      "disabled": true
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "acceptable"
-                    },
-                    {
-                      "key": "Conditions",
-                      "value": "new",
-                      "disabled": true
-                    },
-                    {
-                      "key": "PageSize",
-                      "value": "55"
-                    }
-                  ]
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "20d38172-5016-454f-bd6b-a117eb69e62c",
-          "name": "Management",
-          "item": [
-            {
-              "id": "76d8b9e0-1234-5678-9abc-def012345678",
-              "name": "Make Available",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}/available",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "copies",
-                    "{{bookcopyid}}",
-                    "available"
-                  ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\"rowVersion\":\"\"}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "id": "87e9c0f1-2345-6789-abcd-ef0123456789",
-              "name": "Make Unavailable",
-              "request": {
-                "method": "PATCH",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/books/copies/{{bookcopyid}}/unavailable",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "books",
-                    "copies",
-                    "{{bookcopyid}}",
-                    "unavailable"
-                  ]
-                },
-                "body": {
-                  "mode": "raw",
-                  "raw": "{\"rowVersion\":\"\"}",
-                  "options": {
-                    "raw": {
-                      "language": "json"
-                    }
-                  }
-                }
-              }
-            },
-            {
-              "id": "07ac952f-0629-4d5d-a40d-1997ee12af3c",
-              "name": "ListBookCopy",
-              "request": {
-                "method": "POST",
-                "header": [
-                  {
-                    "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
-                  }
-                ],
-                "url": {
-                  "raw": "{{baseurl}}/api/v1/students/me/books/copies/{{bookcopyid}}/list?borrowingDurationInDays=30",
-                  "host": [
-                    "{{baseurl}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "students",
-                    "me",
-                    "books",
-                    "copies",
-                    "{{bookcopyid}}",
-                    "list"
-                  ],
-                  "query": [
-                    {
-                      "key": "borrowingDurationInDays",
-                      "value": "30"
-                    }
-                  ]
-                }
-              },
-              "event": [
-                {
-                  "listen": "test",
-                  "script": {
-                    "type": "text/javascript",
-                    "exec": [
-                      "var json = pm.response.json();",
-                      "pm.environment.set('lendinglistrecordid', json.id);"
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
         }
       ]
     },
     {
-      "id": "78a68774-604b-4060-8caa-81297b2a74f3",
       "name": "API",
       "item": [
         {
-          "id": "fa29a1aa-6fae-4075-8422-9bdc630f32ac",
-          "name": "Metrics",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseurl}}/metrics",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "metrics"
-              ]
-            }
-          }
-        },
-        {
-          "id": "76305467-b978-4e2c-bed3-8a197793c8fc",
-          "name": "Open Api",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseurl}}/openapi/v1.json",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "openapi",
-                "v1.json"
-              ]
-            }
-          }
-        },
-        {
-          "id": "131017aa-7372-40c4-a33b-02cf92d3fc5d",
-          "name": "Health",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseurl}}/health",
-              "host": [
-                "{{baseurl}}"
-              ],
-              "path": [
-                "health"
-              ]
-            }
-          }
-        },
-        {
-          "id": "6dc894c7-80dd-4e10-ae84-c711f2bcf7bd",
           "name": "Important URLs",
           "item": [
             {
-              "id": "ab9906ac-cd73-49bd-8fdf-638999dea03b",
               "name": "Grafana",
               "request": {
                 "method": "GET",
                 "header": [],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "http://localhost:3000",
                   "protocol": "http",
                   "host": [
-                    "localhost"
+                    "localhost:3000"
                   ],
                   "path": [],
-                  "port": "3000"
+                  "query": [],
+                  "variable": []
                 }
               },
               "event": [
@@ -2519,9 +2410,11 @@
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
                     "exec": [
                       "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
+                      "    pm.expect(pm.response.code).to.equal(200);",
                       "})",
                       "",
                       "pm.test('Body is not empty', function () {",
@@ -2533,19 +2426,23 @@
               ]
             },
             {
-              "id": "975bc6c4-15da-47a3-bfd3-1f7b5eb5094e",
               "name": "Jaeger",
               "request": {
                 "method": "GET",
                 "header": [],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "http://localhost:16686",
                   "protocol": "http",
                   "host": [
-                    "localhost"
+                    "localhost:16686"
                   ],
                   "path": [],
-                  "port": "16686"
+                  "query": [],
+                  "variable": []
                 }
               },
               "event": [
@@ -2553,9 +2450,11 @@
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
                     "exec": [
                       "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
+                      "    pm.expect(pm.response.code).to.equal(200);",
                       "})",
                       "",
                       "pm.test('Body is not empty', function () {",
@@ -2567,19 +2466,23 @@
               ]
             },
             {
-              "id": "881ebca7-0364-4791-95a3-c63b61a1e9ca",
               "name": "Prometheus",
               "request": {
                 "method": "GET",
                 "header": [],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "http://localhost:9090",
                   "protocol": "http",
                   "host": [
-                    "localhost"
+                    "localhost:9090"
                   ],
                   "path": [],
-                  "port": "9090"
+                  "query": [],
+                  "variable": []
                 }
               },
               "event": [
@@ -2587,9 +2490,11 @@
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
                     "exec": [
                       "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
+                      "    pm.expect(pm.response.code).to.equal(200);",
                       "})",
                       "",
                       "pm.test('Prometheus metrics endpoint returns text', function () {",
@@ -2606,19 +2511,23 @@
               ]
             },
             {
-              "id": "582c1485-4cfd-4d75-92d3-3c7a485a3bfc",
               "name": "Seq",
               "request": {
                 "method": "GET",
                 "header": [],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "http://localhost:8081",
                   "protocol": "http",
                   "host": [
-                    "localhost"
+                    "localhost:8081"
                   ],
                   "path": [],
-                  "port": "8081"
+                  "query": [],
+                  "variable": []
                 }
               },
               "event": [
@@ -2626,9 +2535,11 @@
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
                     "exec": [
                       "pm.test('Status code is 200', function () {",
-                      "    pm.response.to.have.status(200);",
+                      "    pm.expect(pm.response.code).to.equal(200);",
                       "})",
                       "",
                       "pm.test('Body is not empty', function () {",
@@ -2640,26 +2551,101 @@
               ]
             }
           ]
+        },
+        {
+          "name": "Metrics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/metrics",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "metrics"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Open Api",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/openapi/v1.json",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "openapi",
+                "v1.json"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
+        },
+        {
+          "name": "Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/health",
+              "protocol": "",
+              "host": [
+                "{{baseurl}}"
+              ],
+              "path": [
+                "health"
+              ],
+              "query": [],
+              "variable": []
+            }
+          }
         }
       ]
     },
     {
-      "id": "47f5318c-e55d-4264-9e80-73b313902fb2",
       "name": "Images",
       "item": [
         {
-          "id": "ffaeb482-aa08-4e7c-bde3-a9943b4636f8",
           "name": "GetStudentImage",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/images/students/{{studentid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -2669,23 +2655,31 @@
                 "images",
                 "students",
                 "{{studentid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "bbf5d9d0-e55e-4826-9372-9595ee0a25bb",
           "name": "GetBookCoverImage",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/images/books/{{bookid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -2695,33 +2689,39 @@
                 "images",
                 "books",
                 "{{bookid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         }
       ]
     },
     {
-      "id": "2f75e982-5af3-4715-9407-2d95cf1ca823",
       "name": "Students",
       "item": [
         {
-          "id": "c7952d71-cc9f-4270-8238-09aa4c1224ab",
           "name": "Register",
           "item": [
             {
-              "id": "b393b0d8-e902-480d-ab6d-e45b8f8b74aa",
               "name": "Update Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2730,32 +2730,36 @@
                     "v1",
                     "students",
                     "{{studentid}}"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "formdata",
                   "formdata": [
                     {
                       "key": "Name",
-                      "value": "Ah",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": "Ah"
                     },
                     {
                       "key": "PersonalPhoto",
-                      "value": "",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": ""
                     },
                     {
                       "key": "RowVersion",
-                      "value": "",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": ""
                     }
                   ]
                 }
               }
             },
             {
-              "id": "592a8f62-21bc-4c4d-aa68-8192bd06815d",
               "name": "CreateStudent",
               "request": {
                 "method": "POST",
@@ -2764,11 +2768,16 @@
                     "key": "Authorization",
                     "value": "Bearer {{accesstoken}}",
                     "disabled": true,
-                    "description": "NOT REQUIRED , But For Created By Column If User Is Authorized"
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2776,40 +2785,48 @@
                     "api",
                     "v1",
                     "students"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "formdata",
                   "formdata": [
                     {
                       "key": "Name",
-                      "value": "إياد رضا",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": "إياد رضا"
                     },
                     {
                       "key": "PhoneNumber",
-                      "value": "01015146587",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": "01015146587"
                     },
                     {
                       "key": "TelegramUserId",
-                      "value": "EyaddDe2v1122353322",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": "EyaddDe2v1122353322"
                     },
                     {
                       "key": "PersonalPhoto",
-                      "value": "",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": ""
                     },
                     {
                       "key": "UniversityMailAddress",
-                      "value": "eyaddre2d12d3345a@std.mans.edu.eg",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": "eyaddre2d12d3345a@std.mans.edu.eg"
                     },
                     {
                       "key": "Password",
-                      "value": "sa123456",
-                      "type": "text"
+                      "disabled": false,
+                      "type": "text",
+                      "value": "sa123456"
                     }
                   ]
                 }
@@ -2819,6 +2836,8 @@
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
                     "exec": [
                       "var json = pm.response.json();",
                       "pm.environment.set('studentid', json.id);"
@@ -2830,22 +2849,27 @@
           ]
         },
         {
-          "id": "9d5f52a3-bc2a-4c1d-af6a-50c6be3a33ae",
           "name": "Management",
           "item": [
             {
-              "id": "d86d8474-fd1d-4eae-8c9a-59bb8d3e913f",
               "name": "Approve Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}/approve",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2855,7 +2879,9 @@
                     "students",
                     "{{studentid}}",
                     "approve"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "raw",
@@ -2869,18 +2895,24 @@
               }
             },
             {
-              "id": "a33db63e-6bdd-4dca-ac4d-fc1b0e80647a",
               "name": "Ban Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}/ban",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2890,7 +2922,9 @@
                     "students",
                     "{{studentid}}",
                     "ban"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "raw",
@@ -2904,18 +2938,24 @@
               }
             },
             {
-              "id": "981c3317-0a74-4b6d-ac0d-c4be9e052ee9",
               "name": "Un Ban Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}/unban",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2925,7 +2965,9 @@
                     "students",
                     "{{studentid}}",
                     "unban"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "raw",
@@ -2939,18 +2981,24 @@
               }
             },
             {
-              "id": "847ed3b6-ccac-41ba-a4c1-850a17fc9a2f",
               "name": "Reject Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}/reject",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2960,7 +3008,9 @@
                     "students",
                     "{{studentid}}",
                     "reject"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "raw",
@@ -2974,18 +3024,24 @@
               }
             },
             {
-              "id": "2e4c5200-f256-4227-9c17-c86812edbb3b",
               "name": "Activate Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}/activate",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -2995,7 +3051,9 @@
                     "students",
                     "{{studentid}}",
                     "activate"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "raw",
@@ -3009,18 +3067,24 @@
               }
             },
             {
-              "id": "1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
               "name": "Pend Student",
               "request": {
                 "method": "PATCH",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}/pend",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -3030,7 +3094,9 @@
                     "students",
                     "{{studentid}}",
                     "pend"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 },
                 "body": {
                   "mode": "raw",
@@ -3046,22 +3112,27 @@
           ]
         },
         {
-          "id": "68d40149-6f93-438a-8ab4-8dd6402755f3",
           "name": "Queries",
           "item": [
             {
-              "id": "a94f3993-fa2b-40d9-b790-1af7f472c334",
               "name": "Get Student Profile",
               "request": {
                 "method": "GET",
                 "header": [
                   {
                     "key": "authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/profiles/{{studentid}}",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -3071,31 +3142,38 @@
                     "students",
                     "profiles",
                     "{{studentid}}"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 }
               }
             },
             {
-              "id": "fb2eb4a9-b9ef-483e-8169-238ad3dd60d8",
               "name": "Get Students",
-              "description": "allow sorting by \\[joindate,state,name,updatedat,createdat\\] asc / desc",
               "request": {
                 "method": "GET",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students?Page=1&PageSize=25",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
                   "path": [
                     "api",
                     "v1",
-                    "students"
+                    "students?Page=1&PageSize=25"
                   ],
                   "query": [
                     {
@@ -3108,71 +3186,68 @@
                     },
                     {
                       "key": "SearchTerm",
-                      "value": "Ahmed",
-                      "disabled": true
+                      "value": "Ahmed"
                     },
                     {
                       "key": "SortColumn",
-                      "value": "name",
-                      "disabled": true
+                      "value": "name"
                     },
                     {
                       "key": "SortDirection",
-                      "value": "asc",
-                      "disabled": true
+                      "value": "asc"
                     },
                     {
                       "key": "EmailConfirmed",
-                      "value": "true",
-                      "disabled": true
+                      "value": "true"
                     },
                     {
                       "key": "States",
-                      "value": "Approved",
-                      "disabled": true
+                      "value": "Approved"
                     },
                     {
                       "key": "States",
-                      "value": "Pending",
-                      "disabled": true
+                      "value": "Pending"
                     },
                     {
                       "key": "States",
-                      "value": "Banned",
-                      "disabled": true
+                      "value": "Banned"
                     },
                     {
                       "key": "States",
-                      "value": "Active",
-                      "disabled": true
+                      "value": "Active"
                     },
                     {
                       "key": "States",
-                      "value": "UnBanned",
-                      "disabled": true
+                      "value": "UnBanned"
                     },
                     {
                       "key": "States",
-                      "value": "Rejected",
-                      "disabled": true
+                      "value": "Rejected"
                     }
-                  ]
+                  ],
+                  "variable": []
                 }
               }
             },
             {
-              "id": "adcb692f-93c7-4d7f-9e76-26b0ba420b45",
               "name": "GetStudentById",
               "request": {
                 "method": "GET",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/{{studentid}}",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -3181,23 +3256,31 @@
                     "v1",
                     "students",
                     "{{studentid}}"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 }
               }
             },
             {
-              "id": "1f630229-0426-4848-a8f8-dd061355bb45",
               "name": "Get Current Student",
               "request": {
                 "method": "GET",
                 "header": [
                   {
                     "key": "Authorization",
-                    "value": "Bearer {{accesstoken}}"
+                    "value": "Bearer {{accesstoken}}",
+                    "disabled": false,
+                    "type": "default"
                   }
                 ],
+                "auth": {
+                  "type": "noauth"
+                },
+                "description": "",
                 "url": {
                   "raw": "{{baseurl}}/api/v1/students/me",
+                  "protocol": "",
                   "host": [
                     "{{baseurl}}"
                   ],
@@ -3206,7 +3289,9 @@
                     "v1",
                     "students",
                     "me"
-                  ]
+                  ],
+                  "query": [],
+                  "variable": []
                 }
               },
               "event": [
@@ -3214,6 +3299,8 @@
                   "listen": "test",
                   "script": {
                     "type": "text/javascript",
+                    "packages": {},
+                    "requests": {},
                     "exec": [
                       "var json = pm.response.json();",
                       "pm.environment.set('studentid', json.id);"
@@ -3227,22 +3314,27 @@
       ]
     },
     {
-      "id": "16cd0eda-a9e9-4e7e-9efb-c811fd4317c1",
       "name": "Lending List",
       "item": [
         {
-          "id": "254fa098-bb89-4d36-904c-17c5c55d7ab5",
           "name": "Get Student Contacts",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/contact-info",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3252,23 +3344,31 @@
                 "lendinglist",
                 "{{lendinglistrecordid}}",
                 "contact-info"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "d7751572-86c5-4217-8061-b4257380a68d",
           "name": "Request Book Copy",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/request",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3278,47 +3378,51 @@
                 "lendinglist",
                 "{{lendinglistrecordid}}",
                 "request"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "d89fea04-0b7e-4914-b1b3-d869575e19d4",
           "name": "GetAll",
-          "description": "Support \\[createdat,updatedat,cost,borrowingduration,expirationdate,state\\]",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/lendinglist?States=available&Page=1&PageSize=10",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "lendinglist"
+                "lendinglist?States=available&Page=1&PageSize=10"
               ],
               "query": [
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "States",
@@ -3334,36 +3438,40 @@
                 },
                 {
                   "key": "BookId",
-                  "value": "d91b6325-0606-46ee-85d3-3e652739e9aa",
-                  "disabled": true
+                  "value": "d91b6325-0606-46ee-85d3-3e652739e9aa"
                 },
                 {
                   "key": "BookCopyId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "OwnerId",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "67d2dada-8edc-4038-8d35-5dcd7ad5122c",
           "name": "GetById",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3372,23 +3480,31 @@
                 "v1",
                 "lendinglist",
                 "{{lendinglistrecordid}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "98f0a1b2-c3d4-4e5f-6g7h-8i9j0k1l2m3n",
           "name": "Close",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/lendinglist/{{lendinglistrecordid}}/close",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3398,7 +3514,9 @@
                 "lendinglist",
                 "{{lendinglistrecordid}}",
                 "close"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -3414,30 +3532,34 @@
       ]
     },
     {
-      "id": "8c48e596-7a97-4a4f-9570-8f8763ea27c8",
       "name": "Notifications",
       "item": [
         {
-          "id": "c3a244d8-dc1d-4842-89fc-212c47d4edb7",
           "name": "GetNotitfications",
-          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/notifications?Page=1&PageSize=15&SortDirection=desc",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "notifications"
+                "notifications?Page=1&PageSize=15&SortDirection=desc"
               ],
               "query": [
                 {
@@ -3450,13 +3572,11 @@
                 },
                 {
                   "key": "SearchTerm",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortColumn",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "SortDirection",
@@ -3464,32 +3584,36 @@
                 },
                 {
                   "key": "IsRead",
-                  "value": "",
-                  "disabled": true
+                  "value": ""
                 },
                 {
                   "key": "Types",
-                  "value": "normal",
-                  "disabled": true
+                  "value": "normal"
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "128af644-f42a-4bef-9edd-a9e084fdc559",
           "name": "Get By Id",
-          "description": "Allow Sorting By \\[createdat,updatedat,title,publisher,author\\]",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "Authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/notifications/{{notificationId}}",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3498,23 +3622,31 @@
                 "v1",
                 "notifications",
                 "{{notificationId}}"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "71a0c61e-924d-498e-ad52-f0c4474dcdfb",
           "name": "Mark As Read",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/notifications/read?=",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3522,14 +3654,15 @@
                 "api",
                 "v1",
                 "notifications",
-                "read"
+                "read?="
               ],
               "query": [
                 {
                   "key": "",
                   "value": ""
                 }
-              ]
+              ],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -3545,22 +3678,27 @@
       ]
     },
     {
-      "id": "4f9c1d51-8592-4a36-a5f0-33cfebed33b4",
       "name": "Chat",
       "item": [
         {
-          "id": "9ca34ddf-a43c-4d7c-88cd-24fbd0c8b23e",
           "name": "Send Message",
           "request": {
             "method": "POST",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/chat/messages",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3569,7 +3707,9 @@
                 "v1",
                 "chat",
                 "messages"
-              ]
+              ],
+              "query": [],
+              "variable": []
             },
             "body": {
               "mode": "raw",
@@ -3583,18 +3723,24 @@
           }
         },
         {
-          "id": "59abc8c2-62a4-4ca1-9595-010de65a25ee",
           "name": "Mark Message As Read",
           "request": {
             "method": "PATCH",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/chat/groups/{{chatgroupid}}/read",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3605,23 +3751,31 @@
                 "groups",
                 "{{chatgroupid}}",
                 "read"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         },
         {
-          "id": "3de4bd05-8747-4997-8d43-952b7babe956",
           "name": "Get Chat History",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/chat/groups/{{chatgroupid}}/messages?=",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3631,30 +3785,37 @@
                 "chat",
                 "groups",
                 "{{chatgroupid}}",
-                "messages"
+                "messages?="
               ],
               "query": [
                 {
                   "key": "",
                   "value": ""
                 }
-              ]
+              ],
+              "variable": []
             }
           }
         },
         {
-          "id": "e2a58aa3-3274-4e47-b920-df24d521930d",
           "name": "GetUserChatGroups",
           "request": {
             "method": "GET",
             "header": [
               {
                 "key": "authorization",
-                "value": "Bearer {{accesstoken}}"
+                "value": "Bearer {{accesstoken}}",
+                "disabled": false,
+                "type": "default"
               }
             ],
+            "auth": {
+              "type": "noauth"
+            },
+            "description": "",
             "url": {
               "raw": "{{baseurl}}/api/v1/chat/groups",
+              "protocol": "",
               "host": [
                 "{{baseurl}}"
               ],
@@ -3663,11 +3824,80 @@
                 "v1",
                 "chat",
                 "groups"
-              ]
+              ],
+              "query": [],
+              "variable": []
             }
           }
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseurl",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "accesstoken",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "bookid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "bookcopyid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "studentid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "borrowingtransactionid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "borrowingreviewid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "borrowingTransactionEventId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "lendinglistrecordid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "borrowingrequestid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "chatgroupid",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "notificationId",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "pointTransactionId",
+      "value": "",
+      "type": "default"
     }
   ]
 }
