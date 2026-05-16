@@ -64,14 +64,14 @@ public class TokenProvider
 
         //create new one
 
-        var refreshTokenExpritesInMinutes = int.Parse(jwtSettings["RefreshTokenExpirationInDays"]!);
+        var refreshTokenExpritesInDays = int.Parse(jwtSettings["RefreshTokenExpirationInDays"]!);
 
 
         var refreshTokenCreationResult = RefreshToken.Create(
             Guid.NewGuid(),
             GenerateRefreshToken(),
             user.UserId,
-            DateTime.UtcNow.AddDays(refreshTokenExpritesInMinutes));
+            DateTime.UtcNow.AddDays(refreshTokenExpritesInDays));
 
         if (refreshTokenCreationResult.IsFailure)
         {

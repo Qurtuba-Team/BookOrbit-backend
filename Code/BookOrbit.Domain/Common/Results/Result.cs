@@ -45,6 +45,8 @@ public sealed class Result<TValue> :
     private Result(Error error)
     {
         _errors = [error];
+        IsSuccess = false;
+
     }
 
     private Result(List<Error> errors)
